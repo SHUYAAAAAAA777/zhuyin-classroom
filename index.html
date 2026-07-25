@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>阿吹的注音教室｜给拼音使用者的注音打字入门</title>
+<meta name="description" content="拼音对照注音、键盘键位记忆、按键发音的注音学习网页">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234f56e8'/%3E%3Ctext x='50' y='72' font-size='58' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E3%84%85%3C/text%3E%3C/svg%3E">
+<!-- 大陆版：不引用 Google Fonts（境内连不上），改用系统内建字型 -->
+<style>
+/* ========== 设计变数 ========== */
+:root{
+  --bg:#f5f3ee; --panel:#ffffff; --panel2:#edebe4;
+  --ink:#26282f; --mut:#8b8fa0; --line:#e6e3da;
+  --ci:#2f6df6;  /* 声母 蓝 */
+  --cm:#8b5cf6;  /* 介音 紫 */
+  --cf:#0ea373;  /* 韵母 绿 */
+  --ct:#e08a00;  /* 声调 橘 */
+  --acc:#4f56e8;
+  --kw:58px; --kh:56px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Microsoft JhengHei','Microsoft YaHei','PingFang TC','PingFang SC',system-ui,sans-serif;
+  line-height:1.55;
+}
+main{width:min(1080px,96vw); margin:0 auto 60px}
+
+/* ========== 页首 ========== */
+header{
+  width:min(1080px,96vw); margin:22px auto 10px;
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+}
+.logo{
+  width:54px; height:54px; border-radius:14px; flex:none;
+  background:linear-gradient(135deg,#4f56e8,#7aa5ff);
+  color:#fff; font-size:22px; font-weight:900;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 6px 16px rgba(79,86,232,.28);
+}
+header h1{font-size:22px; margin:0; letter-spacing:1px}
+header .sub{font-size:13px; color:var(--mut); margin-top:2px}
+.hcontrols{margin-left:auto; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.hcontrols select{
+  max-width:220px; padding:7px 10px; border:1px solid var(--line);
+  border-radius:10px; background:#fff; font-family:inherit; font-size:13px; color:var(--ink);
+}
+.iconbtn{
+  border:1px solid var(--line); background:#fff; border-radius:10px;
+  padding:7px 12px; font-size:14px; cursor:pointer; font-family:inherit;
+}
+.iconbtn:hover{border-color:#c9c6bb}
+#voiceWarn{display:none; font-size:12px; color:#b45309; background:#fef3c7; border:1px solid #fde68a; border-radius:8px; padding:4px 8px}
+
+/* ========== 分页 ========== */
+.tabs{
+  width:min(1080px,96vw); margin:8px auto 18px;
+  display:flex; gap:6px; background:var(--panel2); padding:6px; border-radius:14px;
+}
+.tabs button{
+  flex:1; border:none; background:transparent; padding:10px 6px;
+  font-family:inherit; font-size:15px; font-weight:700; color:#6d7180;
+  border-radius:10px; cursor:pointer; transition:all .15s;
+}
+.tabs button.on{background:#fff; color:var(--acc); box-shadow:0 2px 8px rgba(0,0,0,.08)}
+
+.panel{background:var(--panel); border-radius:18px; padding:22px; box-shadow:0 2px 14px rgba(40,40,60,.06); margin-bottom:18px}
+section[id^="tab-"]{display:none}
+section.show{display:block}
+
+h2{font-size:18px; margin:0 0 6px}
+.desc{font-size:13.5px; color:var(--mut); margin:0 0 14px}
+kbd{
+  display:inline-block; min-width:20px; text-align:center;
+  border:1px solid #d5d2c8; border-bottom-width:2px; border-radius:5px;
+  background:#faf9f6; padding:1px 5px; font-size:11.5px;
+  font-family:Consolas,ui-monospace,monospace; color:#555;
+}
+
+/* ========== 虚拟键盘 ========== */
+.kbwrap{overflow-x:auto; padding-bottom:4px}
+.keyboard{width:max-content; margin:0 auto; padding:14px; background:var(--panel2); border-radius:16px}
+.krow{display:flex; gap:6px; margin-bottom:6px}
+.krow.r1{margin-left:calc(var(--kw)*.35)}
+.krow.r2{margin-left:calc(var(--kw)*.62)}
+.krow.r3{margin-left:calc(var(--kw)*1.05)}
+.krow.rs{justify-content:center; margin-bottom:0}
+.key{
+  width:var(--kw); height:var(--kh); border-radius:10px; position:relative;
+  background:#fff; box-shadow:0 2px 0 #d8d5cc;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor:pointer; user-select:none; transition:transform .05s, background .15s;
+  border-top:3px solid #d8d5cc;
+}
+.key:active,.key.active{transform:translateY(2px); box-shadow:0 0 0 #d8d5cc}
+.key .kq{position:absolute; top:3px; left:6px; font-size:10px; color:#b6b3aa; font-family:Consolas,monospace}
+.key .kz{font-size:21px; font-weight:700; line-height:1.1}
+.key .kp{font-size:10px; line-height:1; margin-top:1px}
+.key.cat-i{border-top-color:var(--ci)} .key.cat-i .kp{color:var(--ci)}
+.key.cat-m{border-top-color:var(--cm)} .key.cat-m .kp{color:var(--cm)}
+.key.cat-f{border-top-color:var(--cf)} .key.cat-f .kp{color:var(--cf)}
+.key.cat-t{border-top-color:var(--ct)} .key.cat-t .kp{color:var(--ct)}
+.key.ghost{opacity:.28; pointer-events:none}
+.key.space{width:calc(var(--kw)*6.2)}
+.key.space .kz{font-size:13.5px; font-weight:500; color:#8a6d1f}
+.key.good{background:#d1fae5}
+.key.bad{background:#fee2e2; animation:shake .3s}
+.key.hintkey{outline:3px solid var(--acc); animation:pulse 1s infinite}
+.keyboard.blind .key:not(.space) .kz,
+.keyboard.blind .key:not(.space) .kp{opacity:0}
+.keyboard.blind .key.hintkey .kz,
+.keyboard.blind .key.hintkey .kp,
+.keyboard.blind .key.good .kz,
+.keyboard.blind .key.good .kp{opacity:1}
+@keyframes pulse{0%,100%{outline-color:var(--acc)}50%{outline-color:transparent}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.legend{display:flex; gap:14px; justify-content:center; font-size:12px; color:var(--mut); margin-top:10px; flex-wrap:wrap}
+.legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:4px; vertical-align:-1px}
+.legend .li{background:var(--ci)} .legend .lm{background:var(--cm)}
+.legend .lf{background:var(--cf)} .legend .lt{background:var(--ct)}
+.kbd-caption{text-align:center; font-size:12.5px; color:var(--mut); margin:10px 0 12px}
+.imewarn{
+  text-align:center; font-size:13px; color:#92400e; background:#fef3c7;
+  border:1px solid #fde68a; border-radius:10px; padding:8px 10px; margin-bottom:14px;
+}
+.imewarn.urgent{background:#fee2e2; border-color:#fca5a5; color:#b91c1c; font-weight:700}
+
+/* ========== 对照表 ========== */
+.colsec{margin-bottom:22px}
+.colhead{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:8px}
+.colhead h3{margin:0; font-size:16.5px}
+.colhead .ckeys{font-size:12.5px; color:var(--acc); font-weight:700}
+.colhead .ccat{font-size:12px; color:var(--mut)}
+.cards{display:flex; gap:10px; flex-wrap:wrap}
+.card{
+  width:150px; background:#fff; border:1px solid var(--line); border-radius:14px;
+  padding:12px 10px 10px; text-align:center; cursor:pointer; position:relative;
+  transition:transform .12s, box-shadow .12s;
+}
+.card:hover{transform:translateY(-3px); box-shadow:0 8px 18px rgba(40,40,60,.10)}
+.card.pulse{animation:cardpulse .45s}
+@keyframes cardpulse{0%{box-shadow:0 0 0 0 rgba(79,86,232,.45)}100%{box-shadow:0 0 0 14px rgba(79,86,232,0)}}
+.card .cz{font-size:34px; font-weight:900; line-height:1.15}
+.card .cp{font-size:15px; font-weight:700; margin:2px 0 6px}
+.card .ck{font-size:12px}
+.card .cex{font-size:11.5px; color:var(--mut); margin-top:7px; border-top:1px dashed var(--line); padding-top:6px}
+.card .cex:hover{color:var(--acc)}
+.card.cat-i .cp{color:var(--ci)} .card.cat-m .cp{color:var(--cm)}
+.card.cat-f .cp{color:var(--cf)} .card.cat-t .cp{color:var(--ct)}
+.card .spk{position:absolute; top:8px; right:9px; font-size:12px; opacity:.4}
+.tips{background:#f6f7ff; border:1px solid #e0e3ff; border-radius:14px; padding:16px 20px}
+.tips h3{margin:0 0 10px; font-size:16px}
+.tips ol{margin:0; padding-left:22px; font-size:14px}
+.tips li{margin-bottom:9px}
+.tips b{color:var(--acc)}
+
+/* ========== 打字练习 ========== */
+.tg{background:#f8f7f3; border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:14px; text-align:center}
+.tg.done{background:#ecfdf5; border-color:#a7f3d0}
+.tg-label{font-size:12px; color:var(--mut); letter-spacing:2px}
+.tg-word{font-size:34px; font-weight:900; letter-spacing:6px; cursor:pointer}
+.tg-word:hover{color:var(--acc)}
+.tg-syls{display:flex; justify-content:center; gap:16px; margin:8px 0 10px; flex-wrap:wrap}
+.hsyl{display:inline-flex; gap:5px; padding:6px 10px; border-radius:10px; background:#fff; border:1px solid var(--line)}
+.hsyl.ok{background:#d1fae5; border-color:#6ee7b7}
+.hz{display:inline-flex; flex-direction:column; align-items:center; gap:3px; font-size:19px; font-weight:700}
+.hz kbd{font-size:10px}
+.hz.ht{color:var(--ct)}
+.tg-btns{display:flex; gap:8px; justify-content:center; flex-wrap:wrap}
+.tg-btns button{
+  border:1px solid var(--line); background:#fff; border-radius:9px;
+  padding:6px 13px; font-family:inherit; font-size:13px; cursor:pointer;
+}
+.tg-btns button:hover{border-color:var(--acc); color:var(--acc)}
+.line{
+  min-height:86px; background:#fff; border:2px solid var(--line); border-radius:14px;
+  padding:12px; display:flex; gap:10px; align-items:center; overflow-x:auto; margin-bottom:12px;
+}
+.line.shake{animation:shake .3s}
+.line-empty{color:var(--mut); font-size:14px; padding:6px 8px}
+.syl{
+  flex:none; text-align:center; background:#f2f4ff; border:1px solid #dde2ff;
+  border-radius:10px; padding:7px 12px; animation:pop .18s;
+}
+.syl .sz{font-size:23px; font-weight:800; letter-spacing:1px}
+.syl .sp{font-size:12.5px; color:var(--acc); margin-top:2px}
+.syl.building{background:#fffbeb; border:1px dashed #f5cf6b}
+.syl.building .sp{color:#b58a1f}
+@keyframes pop{0%{transform:scale(.7); opacity:0}100%{transform:scale(1); opacity:1}}
+.line-tools{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:12px}
+.line-tools .iconbtn{font-size:13.5px}
+
+/* ========== 键位测验 ========== */
+.drill-bar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px}
+.drill-bar label{font-size:13.5px; color:#555; display:flex; align-items:center; gap:5px}
+.drill-bar select{padding:7px 10px; border:1px solid var(--line); border-radius:9px; background:#fff; font-family:inherit; font-size:13.5px}
+.drill-stats{font-size:13.5px; color:var(--mut); margin-bottom:6px}
+.drill-stats b{color:var(--ink); font-size:15px}
+.dprompt{
+  min-height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:6px; background:#f8f7f3; border:1px solid var(--line); border-radius:14px; margin-bottom:14px;
+}
+.dprompt.shake{animation:shake .3s}
+.dbig{font-size:78px; font-weight:900; line-height:1.1}
+.dsub{font-size:13px; color:var(--mut)}
+.dplay{border:none; background:var(--acc); color:#fff; font-size:34px; width:84px; height:84px; border-radius:50%; cursor:pointer; box-shadow:0 6px 16px rgba(79,86,232,.35)}
+.dplay:active{transform:scale(.95)}
+
+/* ========== 提示浮层 ========== */
+#toast{
+  position:fixed; left:50%; bottom:34px; transform:translateX(-50%) translateY(20px);
+  background:#26282f; color:#fff; font-size:14.5px; padding:11px 20px; border-radius:12px;
+  opacity:0; pointer-events:none; transition:all .25s; z-index:99; max-width:90vw; text-align:center;
+}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(--mut); text-align:center}
+
+@media (max-width:920px){ :root{--kw:46px; --kh:48px}
+  .key .kz{font-size:17px} .dbig{font-size:60px} .card{width:128px} }
+@media (max-width:660px){ :root{--kw:34px; --kh:42px}
+  .key .kz{font-size:13px} .key .kp{display:none} .key .kq{font-size:8px; top:2px; left:3px}
+  .card{width:44%} header h1{font-size:18px} .tg-word{font-size:26px} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">ㄅㄆㄇ</div>
+  <div>
+    <h1>阿吹的注音教室</h1>
+    <div class="sub">给拼音使用者的注音打字入门・点按键就会发音</div>
+  </div>
+  <div class="hcontrols">
+    <span id="voiceWarn">找不到中文语音，建议用 Edge（Windows 内建）开启</span>
+    <button class="iconbtn" id="soundBtn" title="音效开关">🔊 音效开</button>
+    <select id="voiceSel" title="选择发音语音"></select>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="chart" class="on">① 拼音对照表</button>
+  <button data-tab="type">② 打字练习</button>
+  <button data-tab="drill">③ 键位测验</button>
+</nav>
+
+<main>
+
+  <!-- ========== 分页一：对照表 ========== -->
+  <section id="tab-chart" class="show">
+    <div class="panel">
+      <h2>整个键盘长这样</h2>
+      <p class="desc">点萤幕上的键、或直接敲你的实体键盘，都会发音。注音键盘是「一直行一直行」背的：最左边 <kbd>1</kbd><kbd>Q</kbd><kbd>A</kbd><kbd>Z</kbd> 由上到下就是 ㄅㄆㄇㄈ。</p>
+      <div class="kbwrap"><div id="kb-chart"></div></div>
+      <div class="legend">
+        <span><i class="li"></i>声母（21）</span><span><i class="lm"></i>介音（3）</span>
+        <span><i class="lf"></i>韵母（13）</span><span><i class="lt"></i>声调（5）</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>拼音 ↔ 注音 对照卡</h2>
+      <p class="desc">每张卡片：注音符号、对应拼音、键盘位置、例字。点卡片听符号发音，点例字听整个字。</p>
+      <div id="chartCols"></div>
+    </div>
+
+    <div class="panel tips">
+      <h3>拼音使用者最容易卡住的 8 件事</h3>
+      <ol>
+        <li><b>ㄓㄔㄕㄖ／ㄗㄘㄙ 自带 i</b>：拼音 zhi、chi、shi、ri、zi、ci、si 的「i」不用打。「知」＝ ㄓ＋声调，两键搞定。</li>
+        <li><b>ong 其实是 ㄨㄥ</b>：中 zhōng ＝ ㄓㄨㄥ；iong ＝ ㄩㄥ（熊 xióng ＝ ㄒㄩㄥˊ）。最容易错的一条！</li>
+        <li><b>iu／ui／un 是缩写</b>：iu ＝ ㄧㄡ（六 liù ＝ ㄌㄧㄡˋ）、ui ＝ ㄨㄟ（对 duì ＝ ㄉㄨㄟˋ）、un ＝ ㄨㄣ（论 lùn ＝ ㄌㄨㄣˋ）。注音要打全。</li>
+        <li><b>ü 就是 ㄩ</b>：ju、qu、xu 其实是 ㄐㄩ、ㄑㄩ、ㄒㄩ（拼音把两点省了，注音不省）；女 nǚ ＝ ㄋㄩˇ。</li>
+        <li><b>y、w 只是拼写规则</b>：yi ＝ ㄧ、wu ＝ ㄨ、yu ＝ ㄩ、ya ＝ ㄧㄚ、wo ＝ ㄨㄛ、yue ＝ ㄩㄝ。</li>
+        <li><b>e 有两个</b>：ㄜ ＝ e（鹅）、ㄝ ＝ ê（耶的韵）。ie ＝ ㄧㄝ、üe ＝ ㄩㄝ。</li>
+        <li><b>an／en／ang／eng 是一个符号</b>：ㄢㄣㄤㄥ，不用再补 n 或 g。</li>
+        <li><b>每个字最后都要按声调键</b>：空白键＝一声、<kbd>6</kbd>＝二声、<kbd>3</kbd>＝三声、<kbd>4</kbd>＝四声、<kbd>7</kbd>＝轻声。按了声调，这个字才算打完。</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ========== 分页二：打字练习 ========== -->
+  <section id="tab-type">
+    <div class="panel">
+      <div class="imewarn" id="imeWarn">练习前请先切到<b>英文输入</b>（搜狗／QQ 输入法按 <kbd>Shift</kbd>，或按 <kbd>Win</kbd>＋<kbd>空白键</kbd> 换输入法），否则按键会被输入法拦截。</div>
+      <div id="target"></div>
+      <div id="line" class="line"></div>
+      <div class="line-tools">
+        <button class="iconbtn" id="lineSpeak">🔊 念出我打的</button>
+        <button class="iconbtn" id="lineSpeakSlow">🐢 一个字一个字念</button>
+      </div>
+      <div class="kbd-caption"><kbd>Enter</kbd> 念出打的内容・<kbd>Backspace</kbd> 删除・<kbd>Esc</kbd> 清空・打完一个字记得按声调键（空白＝一声）</div>
+      <div class="kbwrap"><div id="kb-type"></div></div>
+      <div class="legend">
+        <span><i class="li"></i>声母</span><span><i class="lm"></i>介音</span>
+        <span><i class="lf"></i>韵母</span><span><i class="lt"></i>声调</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 分页三：键位测验 ========== -->
+  <section id="tab-drill">
+    <div class="panel">
+      <div class="drill-bar">
+        <label>题型
+          <select id="dMode">
+            <option value="z2k">看注音 → 按键</option>
+            <option value="p2k">看拼音 → 按键</option>
+            <option value="listen">听发音 → 按键</option>
+          </select>
+        </label>
+        <label>范围
+          <select id="dScope">
+            <option value="all">全部</option>
+            <option value="ini">声母</option>
+            <option value="fin">介音＋韵母</option>
+            <option value="tone">声调</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="dBlind"> 盲打模式（隐藏键面）</label>
+      </div>
+      <div class="drill-stats">
+        答对 <b id="dScore">0</b> ／ <b id="dAtt">0</b>・正确率 <b id="dAcc">–</b>・连对 <b id="dStreak">0</b>・历史最佳连对 <b id="dBest">0</b>
+      </div>
+      <div id="dPrompt" class="dprompt"></div>
+      <div class="kbd-caption">按错两次会亮出正确位置・<kbd>Esc</kbd> 跳过这题</div>
+      <div class="kbwrap"><div id="kb-drill"></div></div>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast"></div>
+<footer>本页为单一 HTML 档，离线可用，不连任何境外网站。发音使用系统内建语音——建议用 Edge（Windows 内建）开启，360／QQ 浏览器也可以。</footer>
+
+<script>
+'use strict';
+/* ================================================================
+   第 1 部分：资料
+   37 个注音符号 + 5 个声调。每笔：注音 z、拼音 p、键位 key、
+   实体按键代码 code、分类 group、发音示范字 tts、例字 exW/exZ/exP
+================================================================ */
+const SYMBOLS=[
+  // 声母（唇音）
+  {z:'ㄅ',p:'b', key:'1',code:'Digit1',group:'initial',tts:'玻',exW:'爸',exZ:'ㄅㄚˋ',exP:'bà'},
+  {z:'ㄆ',p:'p', key:'Q',code:'KeyQ',group:'initial',tts:'坡',exW:'跑',exZ:'ㄆㄠˇ',exP:'pǎo'},
+  {z:'ㄇ',p:'m', key:'A',code:'KeyA',group:'initial',tts:'摸',exW:'妈',exZ:'ㄇㄚ',exP:'mā'},
+  {z:'ㄈ',p:'f', key:'Z',code:'KeyZ',group:'initial',tts:'佛',exW:'饭',exZ:'ㄈㄢˋ',exP:'fàn'},
+  // 声母（舌尖音）
+  {z:'ㄉ',p:'d', key:'2',code:'Digit2',group:'initial',tts:'德',exW:'大',exZ:'ㄉㄚˋ',exP:'dà'},
+  {z:'ㄊ',p:'t', key:'W',code:'KeyW',group:'initial',tts:'特',exW:'天',exZ:'ㄊㄧㄢ',exP:'tiān'},
+  {z:'ㄋ',p:'n', key:'S',code:'KeyS',group:'initial',tts:'讷',exW:'你',exZ:'ㄋㄧˇ',exP:'nǐ'},
+  {z:'ㄌ',p:'l', key:'X',code:'KeyX',group:'initial',tts:'勒',exW:'来',exZ:'ㄌㄞˊ',exP:'lái'},
+  // 声母（舌根音）
+  {z:'ㄍ',p:'g', key:'E',code:'KeyE',group:'initial',tts:'哥',exW:'狗',exZ:'ㄍㄡˇ',exP:'gǒu'},
+  {z:'ㄎ',p:'k', key:'D',code:'KeyD',group:'initial',tts:'科',exW:'看',exZ:'ㄎㄢˋ',exP:'kàn'},
+  {z:'ㄏ',p:'h', key:'C',code:'KeyC',group:'initial',tts:'喝',exW:'好',exZ:'ㄏㄠˇ',exP:'hǎo'},
+  // 声母（舌面音）
+  {z:'ㄐ',p:'j', key:'R',code:'KeyR',group:'initial',tts:'基',exW:'家',exZ:'ㄐㄧㄚ',exP:'jiā'},
+  {z:'ㄑ',p:'q', key:'F',code:'KeyF',group:'initial',tts:'七',exW:'钱',exZ:'ㄑㄧㄢˊ',exP:'qián'},
+  {z:'ㄒ',p:'x', key:'V',code:'KeyV',group:'initial',tts:'西',exW:'谢',exZ:'ㄒㄧㄝˋ',exP:'xiè'},
+  // 声母（翘舌音）
+  {z:'ㄓ',p:'zh',key:'5',code:'Digit5',group:'initial',tts:'知',exW:'中',exZ:'ㄓㄨㄥ',exP:'zhōng'},
+  {z:'ㄔ',p:'ch',key:'T',code:'KeyT',group:'initial',tts:'吃',exW:'茶',exZ:'ㄔㄚˊ',exP:'chá'},
+  {z:'ㄕ',p:'sh',key:'G',code:'KeyG',group:'initial',tts:'诗',exW:'是',exZ:'ㄕˋ',exP:'shì'},
+  {z:'ㄖ',p:'r', key:'B',code:'KeyB',group:'initial',tts:'日',exW:'人',exZ:'ㄖㄣˊ',exP:'rén'},
+  // 声母（平舌音）
+  {z:'ㄗ',p:'z', key:'Y',code:'KeyY',group:'initial',tts:'资',exW:'在',exZ:'ㄗㄞˋ',exP:'zài'},
+  {z:'ㄘ',p:'c', key:'H',code:'KeyH',group:'initial',tts:'疵',exW:'菜',exZ:'ㄘㄞˋ',exP:'cài'},
+  {z:'ㄙ',p:'s', key:'N',code:'KeyN',group:'initial',tts:'思',exW:'三',exZ:'ㄙㄢ',exP:'sān'},
+  // 介音
+  {z:'ㄧ',p:'i',pAlt:'yi',key:'U',code:'KeyU',group:'medial',tts:'衣',exW:'一',exZ:'ㄧ',exP:'yī'},
+  {z:'ㄨ',p:'u',pAlt:'wu',key:'J',code:'KeyJ',group:'medial',tts:'屋',exW:'我',exZ:'ㄨㄛˇ',exP:'wǒ'},
+  {z:'ㄩ',p:'ü',pAlt:'yu',key:'M',code:'KeyM',group:'medial',tts:'迂',exW:'鱼',exZ:'ㄩˊ',exP:'yú'},
+  // 韵母
+  {z:'ㄚ',p:'a', key:'8',code:'Digit8',group:'final',tts:'阿',exW:'花',exZ:'ㄏㄨㄚ',exP:'huā'},
+  {z:'ㄛ',p:'o', key:'I',code:'KeyI',group:'final',tts:'喔',exW:'婆',exZ:'ㄆㄛˊ',exP:'pó'},
+  {z:'ㄜ',p:'e', key:'K',code:'KeyK',group:'final',tts:'鹅',exW:'饿',exZ:'ㄜˋ',exP:'è'},
+  {z:'ㄝ',p:'ê', key:',',code:'Comma',group:'final',tts:'耶',exW:'些',exZ:'ㄒㄧㄝ',exP:'xiē'},
+  {z:'ㄞ',p:'ai',key:'9',code:'Digit9',group:'final',tts:'哀',exW:'爱',exZ:'ㄞˋ',exP:'ài'},
+  {z:'ㄟ',p:'ei',key:'O',code:'KeyO',group:'final',tts:'欸',exW:'妹',exZ:'ㄇㄟˋ',exP:'mèi'},
+  {z:'ㄠ',p:'ao',key:'L',code:'KeyL',group:'final',tts:'凹',exW:'高',exZ:'ㄍㄠ',exP:'gāo'},
+  {z:'ㄡ',p:'ou',key:'.',code:'Period',group:'final',tts:'欧',exW:'走',exZ:'ㄗㄡˇ',exP:'zǒu'},
+  {z:'ㄢ',p:'an',key:'0',code:'Digit0',group:'final',tts:'安',exW:'慢',exZ:'ㄇㄢˋ',exP:'màn'},
+  {z:'ㄣ',p:'en',key:'P',code:'KeyP',group:'final',tts:'恩',exW:'门',exZ:'ㄇㄣˊ',exP:'mén'},
+  {z:'ㄤ',p:'ang',key:';',code:'Semicolon',group:'final',tts:'昂',exW:'忙',exZ:'ㄇㄤˊ',exP:'máng'},
+  {z:'ㄥ',p:'eng',key:'/',code:'Slash',group:'final',tts:'鞥',exW:'冷',exZ:'ㄌㄥˇ',exP:'lěng'},
+  {z:'ㄦ',p:'er',key:'-',code:'Minus',group:'final',tts:'儿',exW:'二',exZ:'ㄦˋ',exP:'èr'},
+];
+const TONES=[
+  {t:1,mark:'', name:'一声',p:'ā',key:'空白键',code:'Space', group:'tone',tts:'妈',exW:'妈',exZ:'ㄇㄚ', exP:'mā'},
+  {t:2,mark:'ˊ',name:'二声',p:'á',key:'6',   code:'Digit6',group:'tone',tts:'麻',exW:'麻',exZ:'ㄇㄚˊ',exP:'má'},
+  {t:3,mark:'ˇ',name:'三声',p:'ǎ',key:'3',   code:'Digit3',group:'tone',tts:'马',exW:'马',exZ:'ㄇㄚˇ',exP:'mǎ'},
+  {t:4,mark:'ˋ',name:'四声',p:'à',key:'4',   code:'Digit4',group:'tone',tts:'骂',exW:'骂',exZ:'ㄇㄚˋ',exP:'mà'},
+  {t:5,mark:'˙',name:'轻声',p:'a',key:'7',   code:'Digit7',group:'tone',tts:'吗',exW:'吗',exZ:'˙ㄇㄚ',exP:'ma'},
+];
+const CODE2SYM={}; SYMBOLS.forEach(s=>CODE2SYM[s.code]=s); TONES.forEach(s=>CODE2SYM[s.code]=s);
+const Z2SYM={};    SYMBOLS.forEach(s=>Z2SYM[s.z]=s);
+const INITIALS={}; SYMBOLS.filter(s=>s.group==='initial').forEach(s=>INITIALS[s.z]=s.p);
+
+// 对照表的「直行」分组（这正是键盘的记忆逻辑）
+const COLUMNS=[
+  {t:'ㄅㄆㄇㄈ',keys:'1・Q・A・Z',cat:'声母｜唇音',zs:['ㄅ','ㄆ','ㄇ','ㄈ'],note:'键盘最左直行，由上到下'},
+  {t:'ㄉㄊㄋㄌ',keys:'2・W・S・X',cat:'声母｜舌尖音',zs:['ㄉ','ㄊ','ㄋ','ㄌ']},
+  {t:'ㄍㄎㄏ', keys:'E・D・C',  cat:'声母｜舌根音',zs:['ㄍ','ㄎ','ㄏ']},
+  {t:'ㄐㄑㄒ', keys:'R・F・V',  cat:'声母｜舌面音',zs:['ㄐ','ㄑ','ㄒ']},
+  {t:'ㄓㄔㄕㄖ',keys:'5・T・G・B',cat:'声母｜翘舌音（zh ch sh r）',zs:['ㄓ','ㄔ','ㄕ','ㄖ']},
+  {t:'ㄗㄘㄙ', keys:'Y・H・N',  cat:'声母｜平舌音（z c s）',zs:['ㄗ','ㄘ','ㄙ']},
+  {t:'ㄧㄨㄩ', keys:'U・J・M',  cat:'介音（i／u／ü）',zs:['ㄧ','ㄨ','ㄩ']},
+  {t:'ㄚㄛㄜㄝ',keys:'8・I・K・,',cat:'韵母',zs:['ㄚ','ㄛ','ㄜ','ㄝ']},
+  {t:'ㄞㄟㄠㄡ',keys:'9・O・L・.',cat:'韵母｜复韵',zs:['ㄞ','ㄟ','ㄠ','ㄡ']},
+  {t:'ㄢㄣㄤㄥ',keys:'0・P・;・/',cat:'韵母｜鼻音（an en ang eng）',zs:['ㄢ','ㄣ','ㄤ','ㄥ']},
+  {t:'ㄦ',    keys:'-（减号）', cat:'韵母｜卷舌（er）',zs:['ㄦ']},
+];
+
+// 注音 → 拼音 对照（韵母部分）：[单独成字时, 接在声母后时]
+const FINALS={
+  'ㄚ':['a','a'],'ㄛ':['o','o'],'ㄜ':['e','e'],'ㄝ':['ê','ê'],
+  'ㄞ':['ai','ai'],'ㄟ':['ei','ei'],'ㄠ':['ao','ao'],'ㄡ':['ou','ou'],
+  'ㄢ':['an','an'],'ㄣ':['en','en'],'ㄤ':['ang','ang'],'ㄥ':['eng','eng'],'ㄦ':['er','er'],
+  'ㄧ':['yi','i'],'ㄧㄚ':['ya','ia'],'ㄧㄛ':['yo','io'],'ㄧㄝ':['ye','ie'],'ㄧㄞ':['yai','iai'],
+  'ㄧㄠ':['yao','iao'],'ㄧㄡ':['you','iu'],'ㄧㄢ':['yan','ian'],'ㄧㄣ':['yin','in'],
+  'ㄧㄤ':['yang','iang'],'ㄧㄥ':['ying','ing'],
+  'ㄨ':['wu','u'],'ㄨㄚ':['wa','ua'],'ㄨㄛ':['wo','uo'],'ㄨㄞ':['wai','uai'],'ㄨㄟ':['wei','ui'],
+  'ㄨㄢ':['wan','uan'],'ㄨㄣ':['wen','un'],'ㄨㄤ':['wang','uang'],'ㄨㄥ':['weng','ong'],
+  'ㄩ':['yu','ü'],'ㄩㄝ':['yue','üe'],'ㄩㄢ':['yuan','üan'],'ㄩㄣ':['yun','ün'],'ㄩㄥ':['yong','iong'],
+};
+const TONED={a:'aāáǎà',e:'eēéěè',i:'iīíǐì',o:'oōóǒò',u:'uūúǔù','ü':'üǖǘǚǜ'};
+
+// 跟着打的目标词
+const WORDS=[
+  {w:'你好',s:[{k:['ㄋ','ㄧ'],t:3},{k:['ㄏ','ㄠ'],t:3}]},
+  {w:'谢谢',s:[{k:['ㄒ','ㄧ','ㄝ'],t:4},{k:['ㄒ','ㄧ','ㄝ'],t:5}]},
+  {w:'台湾',s:[{k:['ㄊ','ㄞ'],t:2},{k:['ㄨ','ㄢ'],t:1}]},
+  {w:'吃饭',s:[{k:['ㄔ'],t:1},{k:['ㄈ','ㄢ'],t:4}]},
+  {w:'朋友',s:[{k:['ㄆ','ㄥ'],t:2},{k:['ㄧ','ㄡ'],t:3}]},
+  {w:'加油',s:[{k:['ㄐ','ㄧ','ㄚ'],t:1},{k:['ㄧ','ㄡ'],t:2}]},
+  {w:'我们',s:[{k:['ㄨ','ㄛ'],t:3},{k:['ㄇ','ㄣ'],t:5}]},
+  {w:'中文',s:[{k:['ㄓ','ㄨ','ㄥ'],t:1},{k:['ㄨ','ㄣ'],t:2}]},
+  {w:'老师',s:[{k:['ㄌ','ㄠ'],t:3},{k:['ㄕ'],t:1}]},
+  {w:'注音',s:[{k:['ㄓ','ㄨ'],t:4},{k:['ㄧ','ㄣ'],t:1}]},
+  {w:'电脑',s:[{k:['ㄉ','ㄧ','ㄢ'],t:4},{k:['ㄋ','ㄠ'],t:3}]},
+  {w:'学习',s:[{k:['ㄒ','ㄩ','ㄝ'],t:2},{k:['ㄒ','ㄧ'],t:2}]},
+];
+
+// 「念出我打的」用：音节（不含声调的拼音）→ 五个声调的同音字（一二三四轻），○＝没有这个音
+const SYL_CHARS={
+  'a':'阿○○○啊','o':'噢○○○○','e':'○鹅○饿○','ai':'哀癌矮爱○','ei':'欸○○○○','ao':'凹熬袄傲○',
+  'ou':'欧○偶○○','an':'安○俺案○','en':'恩○○○○','ang':'肮昂○○○','er':'○儿耳二○',
+  'yi':'衣疑以意○','ya':'鸭牙哑亚○','yo':'唷○○○○','ye':'耶爷也夜○','yao':'腰摇咬要○','you':'优油有又○',
+  'yan':'烟盐眼燕○','yin':'音银引印○','yang':'央羊养样○','ying':'英迎影硬○',
+  'wu':'屋无五物○','wa':'挖娃瓦袜○','wo':'窝○我卧○','wai':'歪○○外○','wei':'威围伟位○',
+  'wan':'弯完晚万○','wen':'温文吻问○','wang':'汪王往望○','weng':'翁○○瓮○',
+  'yu':'迂鱼雨玉○','yue':'约○○月○','yuan':'冤圆远院○','yun':'晕云允运○','yong':'庸○勇用○',
+  'ba':'八拔把爸吧','bo':'玻伯跛播○','bai':'掰白百拜○','bei':'杯○北贝○','ban':'班○板半○',
+  'ben':'奔○本笨○','bang':'帮○绑棒○','beng':'崩○○蹦○','bi':'逼鼻比必○','bie':'憋别瘪别○',
+  'biao':'标○表○○','bian':'边○扁变○','bin':'宾○○鬓○','bing':'冰○饼病○','bu':'○○补布○',
+  'pa':'趴爬○怕○','po':'坡婆叵破○','pai':'拍排○派○','pei':'胚陪○配○','pan':'潘盘○盼○',
+  'pen':'喷盆○○○','pang':'乓旁○胖○','peng':'烹朋捧碰○','pi':'批皮匹屁○','pie':'瞥○撇○○',
+  'piao':'飘○○票○','pian':'篇便○骗○','pin':'拼贫品聘○','ping':'乒平○○○','pu':'扑仆普瀑○',
+  'ma':'妈麻马骂吗','mo':'摸磨抹墨○','mai':'○埋买卖○','mei':'○梅美妹○','man':'○蛮满慢○',
+  'men':'○门○闷们','mang':'○忙莽○○','meng':'○盟猛梦○','mi':'瞇迷米密○','mie':'○○○灭○',
+  'miao':'喵苗秒妙○','mian':'○棉免面○','min':'○民敏○○','ming':'○明○命○','miu':'○○○谬○','mu':'○○母木○',
+  'fa':'发罚法○○','fo':'○佛○○○','fei':'飞肥匪费○','fou':'○○否○○','fan':'翻凡反饭○',
+  'fen':'分坟粉份○','fang':'方房访放○','feng':'风逢讽凤○','fu':'夫福府父○',
+  'da':'搭答打大○','de':'○德○○的','dai':'呆○歹带○','dao':'刀○岛道○','dou':'兜○抖豆○',
+  'dan':'单○胆蛋○','dang':'当○挡荡○','deng':'灯○等凳○','di':'低敌底地○','die':'爹叠○○○',
+  'diao':'雕○○钓○','dian':'颠○点电○','ding':'丁○顶订○','diu':'丢○○○○','du':'嘟毒赌度○',
+  'duo':'多夺朵惰○','dui':'堆○○对○','duan':'端○短段○','dun':'蹲○盹顿○','dong':'东○懂动○',
+  'ta':'他○塔踏○','te':'○○○特○','tai':'胎台○太○','tao':'掏逃讨套○','tou':'偷头○透○',
+  'tan':'贪谈坦叹○','tang':'汤糖躺烫○','teng':'○疼○○○','ti':'梯提体替○','tie':'贴○铁○○',
+  'tiao':'挑条○跳○','tian':'天田舔○○','ting':'听停挺○○','tu':'突图土兔○','tuo':'拖驼妥○○',
+  'tui':'推○腿退○','tuan':'○团○○○','tun':'吞屯○○○','tong':'通同桶痛○',
+  'na':'○拿哪那○','ne':'○○○○呢','nai':'○○奶耐○','nei':'○○○内○','nan':'○南○○○',
+  'nang':'○囊○○○','nao':'○挠脑闹○','nen':'○○○嫩○','neng':'○能○○○','ni':'○泥你逆○',
+  'nie':'捏○○○○','niao':'○○鸟尿○','nian':'○年捻念○','nin':'○您○○○','niang':'○娘○酿○',
+  'ning':'○宁○○○','niu':'○牛扭○○','nu':'○○努怒○','nuo':'○挪○糯○','nuan':'○○暖○○',
+  'nong':'○农○弄○','nü':'○○女○○','nüe':'○○○虐○',
+  'la':'拉○○辣啦','le':'○○○乐了','lai':'○来○赖○','lei':'○雷垒泪○','lan':'○蓝懒烂○',
+  'lang':'○狼朗浪○','lao':'捞劳老○○','lou':'○楼○漏○','leng':'○○冷愣○','li':'○梨里力○',
+  'lie':'○○○列○','liao':'撩聊○料○','lian':'○连脸练○','lin':'○林○吝○','liang':'○凉两亮○',
+  'ling':'○零领另○','liu':'溜流柳六○','lu':'○卢鲁路○','luo':'○罗裸落○','luan':'○○卵乱○',
+  'lun':'○轮○论○','long':'○龙拢○○','lü':'○驴旅绿○','lüe':'○○○略○',
+  'ga':'嘎○○○○','ge':'哥格葛个○','gai':'该○改盖○','gei':'○○给○○','gan':'甘○感干○',
+  'gen':'跟○○○○','gang':'刚○港杠○','geng':'耕○梗更○','gao':'高○搞告○','gou':'沟○狗够○',
+  'gu':'姑○古故○','gua':'瓜○寡挂○','guo':'锅国果过○','guai':'乖○拐怪○','gui':'龟○鬼贵○',
+  'guan':'关○管惯○','gun':'○○滚棍○','guang':'光○广逛○','gong':'工○巩共○',
+  'ka':'咖○卡○○','ke':'科壳可课○','kai':'开○凯○○','kan':'刊○砍看○','ken':'○○肯○○',
+  'kang':'康○○抗○','keng':'坑○○○○','kao':'○○考靠○','kou':'抠○口扣○','ku':'哭○苦裤○',
+  'kua':'夸○垮跨○','kuo':'○○○阔○','kuai':'○○○快○','kui':'亏葵傀愧○','kuan':'宽○款○○',
+  'kun':'昆○捆困○','kuang':'筐狂○况○','kong':'空○恐控○',
+  'ha':'哈○○○○','he':'喝河○贺○','hai':'○孩海害○','hei':'黑○○○○','han':'○含喊汉○',
+  'hen':'○痕很恨○','hang':'○航○○○','heng':'哼横○○○','hao':'○毫好号○','hou':'○猴吼后○',
+  'hu':'呼胡虎户○','hua':'花华○话○','huo':'○活火货○','huai':'○怀○坏○','hui':'灰回悔会○',
+  'huan':'欢环缓换○','hun':'昏浑○混○','huang':'慌黄谎晃○','hong':'轰红○○○',
+  'ji':'机急挤记○','jia':'加夹甲架○','jie':'街杰姐借○','jiao':'交嚼脚叫○','jiu':'究○九救○',
+  'jian':'尖○剪见○','jin':'金○紧近○','jiang':'江○讲降○','jing':'京○井敬○','ju':'居局举句○',
+  'jue':'○决○○○','juan':'捐○卷倦○','jun':'军○○俊○','jiong':'○○窘○○',
+  'qi':'七奇起气○','qia':'掐○○恰○','qie':'切茄且妾○','qiao':'敲桥巧翘○','qiu':'秋求○○○',
+  'qian':'千钱浅欠○','qin':'亲琴○○○','qiang':'枪强抢呛○','qing':'清晴请庆○','qu':'区渠取去○',
+  'que':'缺○○确○','quan':'圈全犬劝○','qun':'○群○○○','qiong':'○穷○○○',
+  'xi':'西习洗细○','xia':'虾霞○下○','xie':'些鞋写谢谢','xiao':'消○小笑○','xiu':'修○朽秀○',
+  'xian':'先闲显现○','xin':'新○○信○','xiang':'香详想向○','xing':'星型醒姓○','xu':'需徐许续○',
+  'xue':'○学雪穴○','xuan':'宣玄选○○','xun':'○寻○训○','xiong':'凶雄○○○',
+  'zhi':'知直纸至○','zha':'渣闸眨炸○','zhe':'遮折者这○','zhai':'摘宅窄债○','zhan':'沾○展站○',
+  'zhen':'真○枕阵○','zhang':'张○掌帐○','zheng':'争○整正○','zhao':'招○找照○','zhou':'周轴○昼○',
+  'zhu':'猪竹主住○','zhua':'抓○爪○○','zhuo':'桌○○○○','zhui':'追○○坠○','zhuan':'专○转赚○',
+  'zhun':'谆○准○○','zhuang':'装○○壮○','zhong':'中○肿众○',
+  'chi':'吃迟尺翅○','cha':'插茶○岔○','che':'车○扯彻○','chai':'拆柴○○○','chan':'搀缠产○○',
+  'chen':'○沉○趁○','chang':'昌常厂唱○','cheng':'称成逞秤○','chao':'超朝吵○○','chou':'抽仇丑臭○',
+  'chu':'出除楚处○','chui':'吹垂○○○','chuan':'川船喘串○','chun':'春纯蠢○○','chuang':'窗床闯创○','chong':'充虫宠○○',
+  'shi':'诗十使是○','sha':'沙○傻煞○','she':'奢蛇舍射○','shai':'筛○○晒○','shan':'山○闪扇○',
+  'shen':'深神审慎○','shang':'伤○赏上○','sheng':'生绳省胜○','shao':'烧勺○绍○','shou':'收○手受○',
+  'shu':'书熟鼠树○','shua':'刷○耍○○','shuo':'说○○硕○','shuai':'摔○甩帅○','shui':'○谁水睡○',
+  'shuan':'拴○○○○','shun':'○○○顺○','shuang':'双○爽○○',
+  'ri':'○○○日○','re':'○○惹热○','ran':'○然染○○','ren':'○人忍认○','rang':'○○嚷让○',
+  'reng':'扔仍○○○','rao':'○饶扰绕○','rou':'○柔○肉○','ru':'○如乳入○','ruo':'○○○弱○',
+  'rui':'○○○锐○','ruan':'○○软○○','run':'○○○润○','rong':'○容冗○○',
+  'zi':'资○紫字子','za':'匝杂○○○','ze':'○泽○仄○','zai':'灾○宰在○','zei':'○贼○○○',
+  'zan':'○咱攒赞○','zen':'○○怎○○','zang':'脏○○葬○','zeng':'增○○赠○','zao':'遭凿早造○',
+  'zou':'邹○走奏○','zu':'租足组○○','zuo':'○昨左做○','zui':'○○嘴最○','zuan':'钻○○○○',
+  'zun':'尊○○○○','zong':'宗○总纵○',
+  'ci':'疵词此次○','ca':'擦○○○○','ce':'○○○测○','cai':'猜才采菜○','can':'参残惨灿○',
+  'cang':'仓藏○○○','ceng':'○层○○○','cao':'操曹草○○','cou':'○○○凑○','cu':'粗○○醋○',
+  'cuo':'搓○○错○','cui':'催○○脆○','cun':'村存○寸○','cong':'聪从○○○',
+  'si':'思○死四○','sa':'撒○洒○○','se':'○○○色○','sai':'塞○○赛○','san':'三○伞散○',
+  'sang':'桑○嗓丧○','seng':'僧○○○○','sao':'搔○嫂○○','sou':'搜○○○○','su':'苏俗○诉○',
+  'suo':'缩○所○○','sui':'虽随髓岁○','suan':'酸○○算○','sun':'孙○损○○','song':'松○○送○',
+};
+
+/* ================================================================
+   第 2 部分：发音（Web Speech API）与音效（WebAudio）
+================================================================ */
+let soundOn = localStorage.getItem('zk-sound')!=='0';
+let pickedVoice=null, pendingUtter=null;
+
+function loadVoices(){
+  if(!('speechSynthesis' in window)){ document.getElementById('voiceWarn').style.display='inline-block'; return; }
+  const all=speechSynthesis.getVoices();
+  const zh=all.filter(v=>v.lang && v.lang.toLowerCase().replace('_','-').startsWith('zh'));
+  const sel=document.getElementById('voiceSel');
+  sel.innerHTML = zh.map((v,i)=>`<option value="${i}">${v.name}（${v.lang}）</option>`).join('') || '<option value="-1">（无中文语音）</option>';
+  if(!zh.length){ document.getElementById('voiceWarn').style.display='inline-block'; pickedVoice=null; return; }
+  document.getElementById('voiceWarn').style.display='none';
+  const saved=localStorage.getItem('zk-voice');
+  let idx=zh.findIndex(v=>v.name===saved);
+  if(idx<0){ // 自动挑最好的：台湾语音优先
+    const score=v=>{
+      const n=v.name.toLowerCase(), l=v.lang.toLowerCase();
+      let s=0;
+      if(l.includes('tw')) s+=100;
+      if(/hsiaochen|hsiaoyu|yating|hanhan|zhiwei|xiaoxiao|xiaoyi|yunxi|yunyang|yunjian|huihui|kangkang|yaoyao/.test(n)) s+=50;
+      if(n.includes('natural')||n.includes('online')) s+=20;
+      if(n.includes('google')) s+=10;
+      return s;
+    };
+    idx=zh.reduce((b,v,i)=>score(v)>score(zh[b])?i:b,0);
+  }
+  sel.value=String(idx); pickedVoice=zh[idx];
+  sel.onchange=()=>{ pickedVoice=zh[Number(sel.value)]||null;
+    if(pickedVoice) localStorage.setItem('zk-voice',pickedVoice.name);
+    sel.blur(); speak('你好'); };
+}
+function speak(text,rate){
+  if(!soundOn || !text || !('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  if(pickedVoice) u.voice=pickedVoice;
+  u.lang=pickedVoice?pickedVoice.lang:'zh-CN';
+  u.rate=rate||0.85;
+  pendingUtter=u;
+  setTimeout(()=>{ if(pendingUtter===u) speechSynthesis.speak(u); },0);
+}
+
+let actx=null;
+function tone(freq,dur,type,vol){
+  if(!soundOn) return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(vol,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001,actx.currentTime+dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+const ding =()=>tone(880,.12,'sine',.08);
+const buzz =()=>tone(160,.15,'square',.05);
+const click=()=>tone(520,.05,'triangle',.06);
+
+/* ================================================================
+   第 3 部分：注音 → 拼音 转换
+================================================================ */
+function applyToneMark(base,t){
+  if(!t || t===5 || base.includes('ê')) return base;
+  let idx=-1;
+  for(const ch of ['a','e']){ const i=base.indexOf(ch); if(i>-1){idx=i;break;} }
+  if(idx<0){ const i=base.indexOf('o'); if(i>-1) idx=i; }
+  if(idx<0){ for(let i=base.length-1;i>=0;i--){ if('iuü'.includes(base[i])){idx=i;break;} } }
+  if(idx<0) return base;
+  const row=TONED[base[idx]];
+  return row? base.slice(0,idx)+row[t]+base.slice(idx+1) : base;
+}
+function toPinyin(syms,t){
+  let initial='', rest=syms.slice();
+  if(rest.length && INITIALS[rest[0]]) initial=rest.shift();
+  const finalStr=rest.join('');
+  let base;
+  if(!finalStr){
+    if(!initial) return '';
+    const ip=INITIALS[initial];
+    if(['zh','ch','sh','r','z','c','s'].includes(ip)) base=ip+'i';
+    else return ip; // 只有声母，还不成音节
+  }else{
+    const f=FINALS[finalStr];
+    if(!f) return '？';
+    if(!initial) base=f[0];
+    else{
+      let ff=f[1]; const ip=INITIALS[initial];
+      if(['j','q','x'].includes(ip)) ff=ff.replace('ü','u');
+      base=ip+ff;
+    }
+  }
+  return applyToneMark(base,t);
+}
+
+/* ================================================================
+   第 4 部分：虚拟键盘（画出来 + 点击）
+================================================================ */
+const ROWS=[
+  ['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'],
+  ['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP'],
+  ['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon'],
+  ['KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash'],
+];
+function qlabel(code){
+  if(code.startsWith('Digit')) return code.slice(5);
+  if(code.startsWith('Key'))   return code.slice(3);
+  return {Minus:'-',Equal:'=',Semicolon:';',Comma:',',Period:'.',Slash:'/'}[code]||'';
+}
+function keyHTML(code){
+  const s=CODE2SYM[code], q=qlabel(code);
+  if(!s) return `<div class="key ghost"><span class="kq">${q}</span></div>`;
+  const cat={initial:'i',medial:'m',final:'f',tone:'t'}[s.group];
+  const main = s.group==='tone' ? s.mark : s.z;
+  const sub  = s.group==='tone' ? s.name : s.p;
+  return `<div class="key cat-${cat}" data-code="${code}">
+    <span class="kq">${q}</span><span class="kz">${main}</span><span class="kp">${sub}</span></div>`;
+}
+function buildKeyboard(el){
+  el.classList.add('keyboard');
+  el.innerHTML =
+    ROWS.map((r,i)=>`<div class="krow r${i}">`+r.map(keyHTML).join('')+'</div>').join('') +
+    `<div class="krow rs"><div class="key space cat-t" data-code="Space"><span class="kz">空白键＝一声（完成这个字）</span></div></div>`;
+  el.addEventListener('click',ev=>{
+    const k=ev.target.closest('.key[data-code]');
+    if(k) handleCode(k.dataset.code);
+  });
+}
+function flashKey(el,code,cls,ms){
+  const k=el.querySelector(`.key[data-code="${code}"]`);
+  if(!k) return;
+  k.classList.add(cls);
+  setTimeout(()=>k.classList.remove(cls),ms||220);
+}
+
+/* ================================================================
+   第 5 部分：分页一（对照表）
+================================================================ */
+function cardHTML(s){
+  const isTone=s.group==='tone';
+  const cat={initial:'i',medial:'m',final:'f',tone:'t'}[s.group];
+  const big=isTone?(s.mark||'ˉ'):s.z;
+  const pin=s.pAlt?`${s.p}・${s.pAlt}`:s.p;
+  return `<div class="card cat-${cat}" data-tts="${s.tts}">
+    <span class="spk">🔊</span>
+    <div class="cz">${big}</div>
+    <div class="cp">${isTone? s.name+'　'+s.p : pin}</div>
+    <kbd class="ck">${s.key}</kbd>
+    <div class="cex" data-w="${s.exW}">例：${s.exW}〔${s.exZ}〕${s.exP}</div>
+  </div>`;
+}
+function buildChart(){
+  const box=document.getElementById('chartCols');
+  let html='';
+  for(const c of COLUMNS){
+    html+=`<div class="colsec">
+      <div class="colhead"><h3>${c.t}</h3><span class="ckeys">键位：${c.keys}</span><span class="ccat">${c.cat}${c.note?'・'+c.note:''}</span></div>
+      <div class="cards">${c.zs.map(z=>cardHTML(Z2SYM[z])).join('')}</div></div>`;
+  }
+  html+=`<div class="colsec">
+    <div class="colhead"><h3>声调</h3><span class="ckeys">键位：空白键・6・3・4・7</span><span class="ccat">一声不标记（用 ㄇㄚ 示范：妈麻马骂吗）</span></div>
+    <div class="cards">${TONES.map(cardHTML).join('')}</div></div>`;
+  box.innerHTML=html;
+  box.addEventListener('click',ev=>{
+    const ex=ev.target.closest('.cex');
+    if(ex){ speak(ex.dataset.w); return; }
+    const card=ev.target.closest('.card');
+    if(card){
+      speak(card.dataset.tts);
+      card.classList.remove('pulse'); void card.offsetWidth; card.classList.add('pulse');
+    }
+  });
+}
+
+/* ================================================================
+   第 6 部分：分页二（打字练习）
+================================================================ */
+const typing={buf:[],line:[],ti:0,progress:0,hint:localStorage.getItem('zk-hint')!=='0',warned:false};
+const lineEl=()=>document.getElementById('line');
+
+function sylZhuyin(syms,t){
+  const tn=TONES[t-1];
+  return (t===5?'˙':'')+syms.join('')+((t>=2&&t<=4)?tn.mark:'');
+}
+function renderLine(){
+  const chips=typing.line.map(s=>
+    `<div class="syl"><div class="sz">${sylZhuyin(s.syms,s.tone)}</div><div class="sp">${s.py||'&nbsp;'}</div></div>`).join('');
+  const cur=typing.buf.length?
+    `<div class="syl building"><div class="sz">${typing.buf.join('')}</div><div class="sp">再按声调键…</div></div>`:'';
+  const el=lineEl();
+  el.innerHTML=(chips+cur)||`<div class="line-empty">直接敲键盘打打看：<kbd>S</kbd>（ㄋ）→ <kbd>U</kbd>（ㄧ）→ <kbd>3</kbd>（ˇ）就打出「ㄋㄧˇ＝nǐ 你」</div>`;
+  el.scrollLeft=el.scrollWidth;
+}
+function sylHintHTML(s,ok){
+  const parts=s.k.map(z=>`<span class="hz">${z}${typing.hint?`<kbd>${Z2SYM[z].key}</kbd>`:''}</span>`).join('');
+  const tn=TONES[s.t-1];
+  const tmark=tn.mark||'ˉ';
+  return `<span class="hsyl${ok?' ok':''}">${parts}<span class="hz ht">${tmark}${typing.hint?`<kbd>${tn.key}</kbd>`:''}</span></span>`;
+}
+function renderTarget(done){
+  const t=WORDS[typing.ti];
+  document.getElementById('target').innerHTML=`<div class="tg${done?' done':''}">
+    <div class="tg-label">跟 着 打</div>
+    <div class="tg-word" id="tgWord" title="点我听发音">${t.w}</div>
+    <div class="tg-syls">${t.s.map((s,i)=>sylHintHTML(s,i<typing.progress)).join('')}</div>
+    <div class="tg-btns">
+      <button id="tgSpeak">🔊 念一次</button>
+      <button id="tgNext">换一个 ▸</button>
+      <button id="tgHint">${typing.hint?'隐藏':'显示'}按键提示</button>
+      <button id="tgClear">清空打字区</button>
+    </div></div>`;
+  document.getElementById('tgWord').onclick=()=>speak(t.w);
+  document.getElementById('tgSpeak').onclick=e=>{speak(t.w);e.target.blur();};
+  document.getElementById('tgNext').onclick=e=>{nextWord();e.target.blur();};
+  document.getElementById('tgHint').onclick=e=>{
+    typing.hint=!typing.hint; localStorage.setItem('zk-hint',typing.hint?'1':'0');
+    renderTarget(); e.target.blur(); };
+  document.getElementById('tgClear').onclick=e=>{
+    typing.line=[]; typing.buf=[]; typing.progress=0; renderLine(); renderTarget(); e.target.blur(); };
+}
+function nextWord(){
+  typing.ti=(typing.ti+1)%WORDS.length;
+  typing.progress=0;
+  renderTarget();
+}
+function recomputeProgress(){
+  const t=WORDS[typing.ti]; let p=0;
+  const L=typing.line;
+  for(let n=Math.min(t.s.length,L.length); n>0; n--){
+    let ok=true;
+    for(let i=0;i<n;i++){
+      const a=L[L.length-n+i], b=t.s[i];
+      if(a.syms.join('')!==b.k.join('')||a.tone!==b.t){ok=false;break;}
+    }
+    if(ok){p=n;break;}
+  }
+  typing.progress=p;
+}
+function typeSym(sym){
+  if(sym.group==='tone'){
+    if(!typing.buf.length){
+      const el=lineEl(); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+      buzz();
+      if(!typing.warned){ toast('先按注音符号，最后才按声调键（空白＝一声）'); typing.warned=true; }
+      return;
+    }
+    const syl={syms:typing.buf.slice(),tone:sym.t,
+               py:toPinyin(typing.buf,sym.t),base:toPinyin(typing.buf,0)};
+    typing.line.push(syl); typing.buf=[];
+    click(); renderLine();
+    const prev=typing.progress;
+    recomputeProgress();
+    const t=WORDS[typing.ti];
+    if(typing.progress===t.s.length){
+      renderTarget(true);
+      toast('🎉 太棒了！打出「'+t.w+'」');
+      speak(t.w);
+      setTimeout(nextWord,1600);
+    }else{
+      if(typing.progress>prev && typing.progress>0) speak(t.w[typing.progress-1]);
+      renderTarget();
+    }
+  }else{
+    if(typing.buf.length>=3){
+      const el=lineEl(); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+      buzz(); toast('这个字够长了，先按声调键完成它（空白＝一声）');
+      return;
+    }
+    typing.buf.push(sym.z);
+    speak(sym.tts);
+    renderLine();
+  }
+}
+
+// 把打字区的内容整句念出来：每个音节查 SYL_CHARS 找同音字；查不到就退回念注音原文
+function speakLine(slow){
+  if(!typing.line.length){ toast('打字区还是空的，先打几个字吧'); return; }
+  const parts=typing.line.map(s=>{
+    const entry=SYL_CHARS[s.base];
+    const ch=entry? entry[s.tone-1] : null;
+    return (ch && ch!=='○')? ch : sylZhuyin(s.syms,s.tone);
+  });
+  speak(slow? parts.join('，') : parts.join(''), slow? 0.55 : 0.8);
+}
+
+/* ================================================================
+   第 7 部分：分页三（键位测验）
+================================================================ */
+const drill={mode:'z2k',scope:'all',cur:null,last:null,score:0,att:0,streak:0,
+             best:Number(localStorage.getItem('zk-best')||0),misses:0};
+function drillPool(){
+  if(drill.scope==='ini')  return SYMBOLS.filter(s=>s.group==='initial');
+  if(drill.scope==='fin')  return SYMBOLS.filter(s=>s.group!=='initial');
+  if(drill.scope==='tone') return TONES;
+  return SYMBOLS.concat(TONES);
+}
+function drillStats(){
+  document.getElementById('dScore').textContent=drill.score;
+  document.getElementById('dAtt').textContent=drill.att;
+  document.getElementById('dAcc').textContent=drill.att?Math.round(drill.score/drill.att*100)+'%':'–';
+  document.getElementById('dStreak').textContent=drill.streak;
+  document.getElementById('dBest').textContent=drill.best;
+}
+function renderPrompt(){
+  const c=drill.cur, el=document.getElementById('dPrompt');
+  if(!c){ el.innerHTML=''; return; }
+  if(drill.mode==='listen'){
+    el.innerHTML=`<button class="dplay" id="dPlay" title="再听一次">🔊</button><div class="dsub">听发音，按出对应的键（可再点喇叭重听）</div>`;
+    document.getElementById('dPlay').onclick=e=>{speak(c.tts);e.target.blur();};
+    return;
+  }
+  if(c.group==='tone'){
+    const big=drill.mode==='p2k'?c.p:(c.mark||'一声');
+    const sub=drill.mode==='p2k'?'这是声调（用 a 示范），按出对应声调键':c.name+(c.t===1?'（注音不标记）':'');
+    el.innerHTML=`<div class="dbig">${big}</div><div class="dsub">${sub}</div>`;
+  }else{
+    const big=drill.mode==='p2k'?(c.pAlt?`${c.p}・${c.pAlt}`:c.p):c.z;
+    const sub=drill.mode==='p2k'?'这是拼音，按出对应注音的键':'按出这个注音符号的键';
+    el.innerHTML=`<div class="dbig">${big}</div><div class="dsub">${sub}</div>`;
+  }
+}
+function nextQ(){
+  const kb=document.getElementById('kb-drill');
+  kb.querySelectorAll('.hintkey,.good,.bad').forEach(k=>k.classList.remove('hintkey','good','bad'));
+  const pool=drillPool();
+  let c;
+  do{ c=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && c===drill.last);
+  drill.cur=c; drill.last=c; drill.misses=0;
+  renderPrompt();
+  if(drill.mode==='listen') speak(c.tts);
+}
+function drillAnswer(sym){
+  const c=drill.cur; if(!c) return;
+  const kb=document.getElementById('kb-drill');
+  if(sym.code===c.code){
+    drill.cur=null;
+    drill.score++; drill.att++; drill.streak++;
+    if(drill.streak>drill.best){ drill.best=drill.streak; localStorage.setItem('zk-best',String(drill.best)); }
+    flashKey(kb,sym.code,'good',400);
+    ding();
+    if(drill.mode!=='listen') speak(c.tts);
+    drillStats();
+    setTimeout(nextQ,430);
+  }else{
+    drill.att++; drill.streak=0; drill.misses++;
+    flashKey(kb,sym.code,'bad',400);
+    const p=document.getElementById('dPrompt');
+    p.classList.remove('shake'); void p.offsetWidth; p.classList.add('shake');
+    buzz();
+    if(drill.misses>=2){
+      const k=kb.querySelector(`.key[data-code="${c.code}"]`);
+      if(k) k.classList.add('hintkey');
+    }
+    drillStats();
+  }
+}
+function drillReset(){
+  drill.score=0; drill.att=0; drill.streak=0; drill.misses=0; drill.cur=null; drill.last=null;
+  drillStats(); nextQ();
+}
+
+/* ================================================================
+   第 8 部分：按键路由 + 分页切换 + 启动
+================================================================ */
+const state={tab:'chart'};
+const KB={};
+
+function handleCode(code){
+  // 特殊键
+  if(state.tab==='type'){
+    if(code==='Backspace'){
+      if(typing.buf.length) typing.buf.pop();
+      else typing.line.pop();
+      recomputeProgress(); renderLine(); renderTarget();
+      return true;
+    }
+    if(code==='Escape'){
+      typing.buf=[]; typing.line=[]; typing.progress=0;
+      renderLine(); renderTarget();
+      return true;
+    }
+    if(code==='Enter'||code==='NumpadEnter'){ speakLine(false); return true; }
+  }
+  if(state.tab==='drill' && code==='Escape'){ drill.streak=0; drillStats(); nextQ(); return true; }
+
+  const sym=CODE2SYM[code];
+  if(!sym) return false;
+  const kb=KB[state.tab];
+  if(kb) flashKey(kb,code,'active',150);
+  if(state.tab==='chart'){ speak(sym.tts); }
+  else if(state.tab==='type'){ typeSym(sym); }
+  else{ drillAnswer(sym); }
+  return true;
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.altKey||e.metaKey||e.repeat) return;
+  const t=e.target;
+  if(t && t.closest && t.closest('select,input,textarea')) return;
+  if(e.isComposing||e.keyCode===229){
+    const w=document.getElementById('imeWarn');
+    if(w){ w.classList.add('urgent'); }
+    toast('⚠ 侦测到中文输入法，请按 Shift（或 Win＋空白键）切到英文输入再练习');
+    return;
+  }
+  if(handleCode(e.code)) e.preventDefault();
+});
+
+let toastTimer=null;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2400);
+}
+
+function switchTab(name){
+  state.tab=name;
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
+  document.querySelectorAll('section[id^="tab-"]').forEach(s=>s.classList.toggle('show',s.id==='tab-'+name));
+  if(name==='drill'&&!drill.cur) nextQ();
+  if(document.activeElement&&document.activeElement.blur) document.activeElement.blur();
+}
+
+function init(){
+  buildKeyboard(document.getElementById('kb-chart'));
+  buildKeyboard(document.getElementById('kb-type'));
+  buildKeyboard(document.getElementById('kb-drill'));
+  KB.chart=document.getElementById('kb-chart');
+  KB.type=document.getElementById('kb-type');
+  KB.drill=document.getElementById('kb-drill');
+
+  buildChart();
+  renderTarget();
+  renderLine();
+  drillStats();
+
+  document.querySelectorAll('.tabs button').forEach(b=>{
+    b.addEventListener('click',()=>{switchTab(b.dataset.tab); b.blur();});
+  });
+
+  const sb=document.getElementById('soundBtn');
+  const paint=()=>{sb.textContent=soundOn?'🔊 音效开':'🔇 音效关';};
+  paint();
+  sb.addEventListener('click',()=>{
+    soundOn=!soundOn; localStorage.setItem('zk-sound',soundOn?'1':'0');
+    paint(); sb.blur();
+    if(soundOn) speak('你好');
+    else if('speechSynthesis' in window) speechSynthesis.cancel();
+  });
+
+  document.getElementById('lineSpeak').addEventListener('click',e=>{speakLine(false); e.target.blur();});
+  document.getElementById('lineSpeakSlow').addEventListener('click',e=>{speakLine(true); e.target.blur();});
+
+  document.getElementById('dMode').addEventListener('change',e=>{drill.mode=e.target.value; e.target.blur(); drillReset();});
+  document.getElementById('dScope').addEventListener('change',e=>{drill.scope=e.target.value; e.target.blur(); drillReset();});
+  document.getElementById('dBlind').addEventListener('change',e=>{
+    document.getElementById('kb-drill').classList.toggle('blind',e.target.checked);
+    e.target.blur();
+  });
+
+  if('speechSynthesis' in window){
+    loadVoices();
+    speechSynthesis.onvoiceschanged=loadVoices;
+  }else{
+    document.getElementById('voiceWarn').style.display='inline-block';
+  }
+}
+init();
+</script>
+</body>
+</html>
