@@ -335,7 +335,8 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   <div class="hcontrols">
     <span id="voiceWarn">找不到中文語音，建議用 Edge 或 Chrome 開啟</span>
     <button class="iconbtn" id="soundBtn" title="音效開關">🔊 音效開</button>
-    <select id="voiceSel" title="選擇發音語音"></select>
+    <span id="audioStatus" class="iconbtn" title="自訂按鍵錄音載入進度（有檔才播錄音，沒有則用系統語音）">錄音 0/42</span>
+    <select id="voiceSel" title="選擇發音語音（整詞朗讀用）"></select>
   </div>
 </header>
 
@@ -434,7 +435,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本頁為單一 HTML 檔，離線可用。發音使用系統內建語音（Edge／Chrome 效果最佳）。手機瀏覽器也可直接打開練習。</footer>
+<footer>本頁為單一 HTML 檔，離線可用。按鍵可改用你自己的錄音（見 audio/keys/錄音說明.txt）；整詞仍用系統語音。手機瀏覽器也可直接打開練習。</footer>
 
 <script>
 'use strict';
@@ -675,6 +676,63 @@ function speak(text,rate){
   setTimeout(()=>{ if(pendingUtter===u) speechSynthesis.speak(u); },0);
 }
 
+/* ---- 自訂按鍵錄音：有 mp3 就播，沒有就退回系統語音 ---- */
+const KEY_AUDIO_BASE='audio/keys/';
+const keyAudioCache={};
+const keyAudioOk={};
+function audioIdFor(sym){
+  if(!sym) return '';
+  if(sym.group==='tone') return 'tone'+sym.t;
+  if(sym.p==='ü') return 'yu';
+  if(sym.p==='ê') return 'eh';
+  return sym.p;
+}
+function allKeyAudioIds(){
+  const ids=SYMBOLS.map(audioIdFor).concat(TONES.map(audioIdFor));
+  return [...new Set(ids)];
+}
+function updateAudioStatus(){
+  const el=document.getElementById('audioStatus');
+  if(!el) return;
+  const ids=allKeyAudioIds();
+  const n=ids.filter(id=>keyAudioOk[id]).length;
+  el.textContent='錄音 '+n+'/'+ids.length;
+  el.title = n
+    ? ('已載入 '+n+' 個按鍵錄音；未錄的鍵仍用系統語音。整詞朗讀仍用右上角選擇的系統語音。')
+    : '尚未偵測到錄音檔。請把 mp3 放到 audio/keys/（見錄音說明.txt）';
+}
+function preloadKeyAudio(){
+  const ids=allKeyAudioIds();
+  ids.forEach(id=>{
+    const a=new Audio(KEY_AUDIO_BASE+id+'.mp3');
+    a.preload='auto';
+    keyAudioCache[id]=a;
+    keyAudioOk[id]=false;
+    a.addEventListener('canplaythrough',()=>{ keyAudioOk[id]=true; updateAudioStatus(); },{once:true});
+    a.addEventListener('error',()=>{ keyAudioOk[id]=false; updateAudioStatus(); },{once:true});
+    try{ a.load(); }catch(e){}
+  });
+  updateAudioStatus();
+}
+function playKeyFile(id){
+  const a=keyAudioCache[id];
+  if(!a || !keyAudioOk[id]) return false;
+  try{
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+    a.pause();
+    a.currentTime=0;
+    const p=a.play();
+    if(p && p.catch) p.catch(()=>{});
+    return true;
+  }catch(e){ return false; }
+}
+function speakKey(sym){
+  if(!soundOn || !sym) return;
+  const id=audioIdFor(sym);
+  if(id && playKeyFile(id)) return;
+  speak(sym.tts);
+}
+
 let actx=null;
 function tone(freq,dur,type,vol){
   if(!soundOn) return;
@@ -779,7 +837,7 @@ function cardHTML(s){
   const cat={initial:'i',medial:'m',final:'f',tone:'t'}[s.group];
   const big=isTone?(s.mark||'ˉ'):s.z;
   const pin=s.pAlt?`${s.p}・${s.pAlt}`:s.p;
-  return `<div class="card cat-${cat}" data-tts="${s.tts}">
+  return `<div class="card cat-${cat}" data-tts="${s.tts}" data-code="${s.code}">
     <span class="spk">🔊</span>
     <div class="cz">${big}</div>
     <div class="cp">${isTone? s.name+'　'+s.p : pin}</div>
@@ -804,7 +862,8 @@ function buildChart(){
     if(ex){ speak(ex.dataset.w); return; }
     const card=ev.target.closest('.card');
     if(card){
-      speak(card.dataset.tts);
+      const sym=CODE2SYM[card.dataset.code];
+      if(sym) speakKey(sym); else speak(card.dataset.tts);
       card.classList.remove('pulse'); void card.offsetWidth; card.classList.add('pulse');
     }
   });
@@ -905,7 +964,7 @@ function typeSym(sym){
       return;
     }
     typing.buf.push(sym.z);
-    speak(sym.tts);
+    speakKey(sym);
     renderLine();
   }
 }
@@ -944,7 +1003,7 @@ function renderPrompt(){
   if(!c){ el.innerHTML=''; return; }
   if(drill.mode==='listen'){
     el.innerHTML=`<button class="dplay" id="dPlay" title="再聽一次">🔊</button><div class="dsub">聽發音，按出對應的鍵（可再點喇叭重聽）</div>`;
-    document.getElementById('dPlay').onclick=e=>{speak(c.tts);e.target.blur();};
+    document.getElementById('dPlay').onclick=e=>{speakKey(c);e.target.blur();};
     return;
   }
   if(c.group==='tone'){
@@ -965,7 +1024,7 @@ function nextQ(){
   do{ c=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && c===drill.last);
   drill.cur=c; drill.last=c; drill.misses=0;
   renderPrompt();
-  if(drill.mode==='listen') speak(c.tts);
+  if(drill.mode==='listen') speakKey(c);
 }
 function drillAnswer(sym){
   const c=drill.cur; if(!c) return;
@@ -976,7 +1035,7 @@ function drillAnswer(sym){
     if(drill.streak>drill.best){ drill.best=drill.streak; localStorage.setItem('zk-best',String(drill.best)); }
     flashKey(kb,sym.code,'good',400);
     ding();
-    if(drill.mode!=='listen') speak(c.tts);
+    if(drill.mode!=='listen') speakKey(c);
     drillStats();
     setTimeout(nextQ,430);
   }else{
@@ -1025,7 +1084,7 @@ function handleCode(code){
   if(!sym) return false;
   const kb=KB[state.tab];
   if(kb) flashKey(kb,code,'active',150);
-  if(state.tab==='chart'){ speak(sym.tts); }
+  if(state.tab==='chart'){ speakKey(sym); }
   else if(state.tab==='type'){ typeSym(sym); }
   else{ drillAnswer(sym); }
   return true;
@@ -1069,6 +1128,7 @@ function init(){
   KB.drill=document.getElementById('kb-drill');
 
   buildChart();
+  preloadKeyAudio();
   renderTarget();
   renderLine();
   drillStats();
