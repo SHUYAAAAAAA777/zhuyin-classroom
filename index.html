@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
 <meta charset="utf-8">
@@ -752,7 +752,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='20260726a'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='20260726b'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -847,7 +847,7 @@ function speakWord(text,rate){
 }
 
 /* ---- 背诵示范（ㄅ～ㄦ 一整段录音） ---- */
-const RECITE_AUDIO_URL='audio/recite/背诵示范.mp3';
+const RECITE_AUDIO_URL='audio/recite/recite.mp3';
 let reciteAudio=null, reciteAudioOk=false;
 function preloadReciteAudio(){
   const a=new Audio(audioUrl(RECITE_AUDIO_URL));
@@ -872,7 +872,7 @@ function paintReciteBtn(playing){
 function toggleReciteDemo(){
   if(!soundOn){ toast('请先打开右上角音效'); return; }
   if(!reciteAudioOk || !reciteAudio){
-    toast('还没有背诵示范录音，请把「背诵示范.mp3」放到 audio/recite/');
+    toast('还没有背诵示范录音，请把「recite.mp3」放到 audio/recite/');
     return;
   }
   try{
