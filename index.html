@@ -752,8 +752,10 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
+const AUDIO_VER='20260726a'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
+function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
 function audioIdFor(sym){
   if(!sym) return '';
   if(sym.group==='tone') return 'tone'+sym.t;
@@ -779,7 +781,7 @@ function updateAudioStatus(){
 function preloadKeyAudio(){
   const ids=allKeyAudioIds();
   ids.forEach(id=>{
-    const a=new Audio(KEY_AUDIO_BASE+id+'.mp3');
+    const a=new Audio(audioUrl(KEY_AUDIO_BASE+id+'.mp3'));
     a.preload='auto';
     keyAudioCache[id]=a;
     keyAudioOk[id]=false;
@@ -815,7 +817,7 @@ const wordAudioCache={};
 const wordAudioOk={};
 function preloadWordAudio(){
   WORDS.forEach(({w})=>{
-    const a=new Audio(WORD_AUDIO_BASE+w+'.mp3');
+    const a=new Audio(audioUrl(WORD_AUDIO_BASE+w+'.mp3'));
     a.preload='auto';
     wordAudioCache[w]=a;
     wordAudioOk[w]=false;
@@ -848,7 +850,7 @@ function speakWord(text,rate){
 const RECITE_AUDIO_URL='audio/recite/背诵示范.mp3';
 let reciteAudio=null, reciteAudioOk=false;
 function preloadReciteAudio(){
-  const a=new Audio(RECITE_AUDIO_URL);
+  const a=new Audio(audioUrl(RECITE_AUDIO_URL));
   a.preload='auto';
   reciteAudio=a;
   reciteAudioOk=false;
