@@ -341,7 +341,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   <div class="hcontrols">
     <span id="voiceWarn">找不到中文语音，建议用 Edge（Windows 内建）开启</span>
     <button class="iconbtn" id="soundBtn" title="音效开关">🔊 音效开</button>
-    <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键单音 + 打字练习整词">键 0/42 · 词 0/45</span>
+    <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键单音 + 打字练习整词">键 0/42 · 词 0/50</span>
     <select id="voiceSel" title="选择发音语音（整词朗读用）"></select>
   </div>
 </header>
@@ -592,6 +592,11 @@ const WORDS=[
   {w:'惩罚',s:[{k:['ㄔ','ㄥ'],t:2},{k:['ㄈ','ㄚ'],t:2}]},
   {w:'尤物',s:[{k:['ㄧ','ㄡ'],t:2},{k:['ㄨ'],t:4}]},
   {w:'浪人的',s:[{k:['ㄌ','ㄤ'],t:4},{k:['ㄖ','ㄣ'],t:2},{k:['ㄉ','ㄜ'],t:5}]},
+  {w:'英雄',s:[{k:['ㄧ','ㄥ'],t:1},{k:['ㄒ','ㄩ','ㄥ'],t:2}]},
+  {w:'拥有',s:[{k:['ㄩ','ㄥ'],t:1},{k:['ㄧ','ㄡ'],t:3}]},
+  {w:'永远',s:[{k:['ㄩ','ㄥ'],t:3},{k:['ㄩ','ㄢ'],t:3}]},
+  {w:'富翁',s:[{k:['ㄈ','ㄨ'],t:4},{k:['ㄨ','ㄥ'],t:1}]},
+  {w:'方大同',s:[{k:['ㄈ','ㄤ'],t:1},{k:['ㄉ','ㄚ'],t:4},{k:['ㄊ','ㄨ','ㄥ'],t:2}]},
 ];
 
 // 「念出我打的」用：音节（不含声调的拼音）→ 五个声调的同音字（一二三四轻），○＝没有这个音
