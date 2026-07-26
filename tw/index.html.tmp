@@ -1,23 +1,23 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>注音鍵盤教室｜給拼音使用者的注音打字入門</title>
-<meta name="description" content="拼音對照注音、鍵盤鍵位記憶、按鍵發音的注音學習網頁">
+<title>瘜券?萇?恕嚚策?潮雿輻??瘜券???仿?</title>
+<meta name="description" content="?潮撠瘜券??日雿??嗚??萇?喟?瘜券摮貊?蝬脤?">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234f56e8'/%3E%3Ctext x='50' y='72' font-size='58' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E3%84%85%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-/* ========== 設計變數 ========== */
+/* ========== 閮剛?霈 ========== */
 :root{
   --bg:#f5f3ee; --panel:#ffffff; --panel2:#edebe4;
   --ink:#26282f; --mut:#8b8fa0; --line:#e6e3da;
-  --ci:#2f6df6;  /* 聲母 藍 */
-  --cm:#8b5cf6;  /* 介音 紫 */
-  --cf:#0ea373;  /* 韻母 綠 */
-  --ct:#e08a00;  /* 聲調 橘 */
+  --ci:#2f6df6;  /* ?脫? ??*/
+  --cm:#8b5cf6;  /* 隞 蝝?*/
+  --cf:#0ea373;  /* ?餅? 蝬?*/
+  --ct:#e08a00;  /* ?脰矽 璈?*/
   --acc:#4f56e8;
   --kw:58px; --kh:56px;
 }
@@ -30,7 +30,7 @@ body{
 }
 main{width:min(1080px,96vw); margin:0 auto 60px}
 
-/* ========== 頁首 ========== */
+/* ========== ?? ========== */
 header{
   width:min(1080px,96vw); margin:22px auto 10px;
   display:flex; align-items:center; gap:14px; flex-wrap:wrap;
@@ -56,7 +56,7 @@ header .sub{font-size:13px; color:var(--mut); margin-top:2px}
 .iconbtn:hover{border-color:#c9c6bb}
 #voiceWarn{display:none; font-size:12px; color:#b45309; background:#fef3c7; border:1px solid #fde68a; border-radius:8px; padding:4px 8px}
 
-/* ========== 分頁 ========== */
+/* ========== ?? ========== */
 .tabs{
   width:min(1080px,96vw); margin:8px auto 18px;
   display:flex; gap:6px; background:var(--panel2); padding:6px; border-radius:14px;
@@ -81,7 +81,7 @@ kbd{
   font-family:Consolas,ui-monospace,monospace; color:#555;
 }
 
-/* ========== 虛擬鍵盤 ========== */
+/* ========== ??萇 ========== */
 .kbwrap{overflow-x:auto; padding-bottom:4px}
 .keyboard{width:max-content; margin:0 auto; padding:14px; background:var(--panel2); border-radius:16px}
 .krow{display:flex; gap:6px; margin-bottom:6px}
@@ -129,7 +129,7 @@ kbd{
 }
 .imewarn.urgent{background:#fee2e2; border-color:#fca5a5; color:#b91c1c; font-weight:700}
 
-/* ========== 對照表 ========== */
+/* ========== 撠銵?========== */
 .colsec{margin-bottom:22px}
 .colhead{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:8px}
 .colhead h3{margin:0; font-size:16.5px}
@@ -158,7 +158,7 @@ kbd{
 .tips li{margin-bottom:9px}
 .tips b{color:var(--acc)}
 
-/* ========== 打字練習 ========== */
+/* ========== ??蝺渡? ========== */
 .tg{background:#f8f7f3; border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:14px; text-align:center}
 .tg.done{background:#ecfdf5; border-color:#a7f3d0}
 .tg-label{font-size:12px; color:var(--mut); letter-spacing:2px}
@@ -194,7 +194,7 @@ kbd{
 .line-tools{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:12px}
 .line-tools .iconbtn{font-size:13.5px}
 
-/* ========== 鍵位測驗 ========== */
+/* ========== ?萎?皜祇? ========== */
 .drill-bar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px}
 .drill-bar label{font-size:13.5px; color:#555; display:flex; align-items:center; gap:5px}
 .drill-bar select{padding:7px 10px; border:1px solid var(--line); border-radius:9px; background:#fff; font-family:inherit; font-size:13.5px}
@@ -210,7 +210,7 @@ kbd{
 .dplay{border:none; background:var(--acc); color:#fff; font-size:34px; width:84px; height:84px; border-radius:50%; cursor:pointer; box-shadow:0 6px 16px rgba(79,86,232,.35)}
 .dplay:active{transform:scale(.95)}
 
-/* ========== 提示浮層 ========== */
+/* ========== ?內瘚桀惜 ========== */
 #toast{
   position:fixed; left:50%; bottom:34px; transform:translateX(-50%) translateY(20px);
   background:#26282f; color:#fff; font-size:14.5px; padding:11px 20px; border-radius:12px;
@@ -221,7 +221,7 @@ kbd{
 footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(--mut); text-align:center}
 .mobile-only{display:none}
 
-/* ========== 平板 ========== */
+/* ========== 撟單 ========== */
 @media (max-width:920px){
   :root{--kw:46px; --kh:48px}
   .key .kz{font-size:17px}
@@ -229,12 +229,12 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   .card{width:128px}
 }
 
-/* ========== 手機：整頁自適配，鍵盤不超出螢幕 ========== */
+/* ========== ??嚗??拚?嚗?支?頞?Ｗ? ========== */
 @media (max-width:720px){
   :root{
     --kb-gap:3px;
     --kb-pad:6px;
-    /* 最上排 12 顆鍵，依螢幕寬度自動縮放，避免左右按不到 */
+    /* ?銝? 12 憿嚗??Ｗ?撖砍漲?芸?蝮格嚗?椰?單?銝 */
     --kw:calc((100vw - 28px - 2 * var(--kb-pad) - 11 * var(--kb-gap)) / 12);
     --kh:max(44px, calc(var(--kw) * 1.25));
   }
@@ -259,7 +259,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   .mobile-only{display:block}
   .desktop-only{display:none !important}
 
-  /* 鍵盤：取消桌面版錯落縮排，改置中鋪滿 */
+  /* ?萇嚗?瘨??Ｙ??航蝮格?嚗蝵桐葉?芣遛 */
   .kbwrap{overflow:visible; padding:0; width:100%}
   .keyboard{
     width:100%; max-width:100%; margin:0;
@@ -327,106 +327,106 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 <body>
 
 <header>
-  <div class="logo">ㄅㄆㄇ</div>
+  <div class="logo">????/div>
   <div>
-    <h1>注音鍵盤教室</h1>
-    <div class="sub">給拼音使用者的注音打字入門・點按鍵就會發音</div>
+    <h1>瘜券?萇?恕</h1>
+    <div class="sub">蝯行?喃蝙?刻?瘜券???仿??駁??撠望??潮</div>
   </div>
   <div class="hcontrols">
-    <span id="voiceWarn">找不到中文語音，建議用 Edge 或 Chrome 開啟</span>
-    <button class="iconbtn" id="soundBtn" title="音效開關">🔊 音效開</button>
-    <select id="voiceSel" title="選擇發音語音"></select>
+    <span id="voiceWarn">?曆??唬葉???喉?撱箄降??Edge ??Chrome ??</span>
+    <button class="iconbtn" id="soundBtn" title="?單???">?? ?單???/button>
+    <select id="voiceSel" title="?豢??潮隤"></select>
   </div>
 </header>
 
 <nav class="tabs">
-  <button data-tab="chart" class="on">① 拼音對照表</button>
-  <button data-tab="type">② 打字練習</button>
-  <button data-tab="drill">③ 鍵位測驗</button>
+  <button data-tab="chart" class="on">???潮撠銵?/button>
+  <button data-tab="type">????蝺渡?</button>
+  <button data-tab="drill">???萎?皜祇?</button>
 </nav>
 
 <main>
 
-  <!-- ========== 分頁一：對照表 ========== -->
+  <!-- ========== ??銝嚗??扯” ========== -->
   <section id="tab-chart" class="show">
     <div class="panel">
-      <h2>整個鍵盤長這樣</h2>
-      <p class="desc">點螢幕上的鍵、或直接敲你的實體鍵盤，都會發音。注音鍵盤是「一直行一直行」背的：最左邊 <kbd>1</kbd><kbd>Q</kbd><kbd>A</kbd><kbd>Z</kbd> 由上到下就是 ㄅㄆㄇㄈ。</p>
-      <p class="desc mobile-only">手機上請左右看齊點按；鍵位會隨螢幕自動縮小，不必左右狂滑。</p>
+      <h2>?游?日?見</h2>
+      <p class="desc">暺撟?????湔?脖??祕擃?歹??賣??潮?釣?喲?斗???渲?銝?渲??????撌阡? <kbd>1</kbd><kbd>Q</kbd><kbd>A</kbd><kbd>Z</kbd> ?曹??唬?撠望 ??????/p>
+      <p class="desc mobile-only">??銝?撌血??暺?嚗雿??刻撟?葬撠?銝?撌血????/p>
       <div class="kbwrap"><div id="kb-chart"></div></div>
       <div class="legend">
-        <span><i class="li"></i>聲母（21）</span><span><i class="lm"></i>介音（3）</span>
-        <span><i class="lf"></i>韻母（13）</span><span><i class="lt"></i>聲調（5）</span>
+        <span><i class="li"></i>?脫?嚗?1嚗?/span><span><i class="lm"></i>隞嚗?嚗?/span>
+        <span><i class="lf"></i>?餅?嚗?3嚗?/span><span><i class="lt"></i>?脰矽嚗?嚗?/span>
       </div>
     </div>
 
     <div class="panel">
-      <h2>拼音 ↔ 注音 對照卡</h2>
-      <p class="desc">每張卡片：注音符號、對應拼音、鍵盤位置、例字。點卡片聽符號發音，點例字聽整個字。</p>
+      <h2>?潮 ??瘜券 撠??/h2>
+      <p class="desc">瘥撐?∠?嚗釣?喟泵????喋?支?蝵柴?摮??∠??賜泵??喉?暺?摮?游???/p>
       <div id="chartCols"></div>
     </div>
 
     <div class="panel tips">
-      <h3>拼音使用者最容易卡住的 8 件事</h3>
+      <h3>?潮雿輻??摰寞??∩???8 隞嗡?</h3>
       <ol>
-        <li><b>ㄓㄔㄕㄖ／ㄗㄘㄙ 自帶 i</b>：拼音 zhi、chi、shi、ri、zi、ci、si 的「i」不用打。「知」＝ ㄓ＋聲調，兩鍵搞定。</li>
-        <li><b>ong 其實是 ㄨㄥ</b>：中 zhōng ＝ ㄓㄨㄥ；iong ＝ ㄩㄥ（熊 xióng ＝ ㄒㄩㄥˊ）。最容易錯的一條！</li>
-        <li><b>iu／ui／un 是縮寫</b>：iu ＝ ㄧㄡ（六 liù ＝ ㄌㄧㄡˋ）、ui ＝ ㄨㄟ（對 duì ＝ ㄉㄨㄟˋ）、un ＝ ㄨㄣ（論 lùn ＝ ㄌㄨㄣˋ）。注音要打全。</li>
-        <li><b>ü 就是 ㄩ</b>：ju、qu、xu 其實是 ㄐㄩ、ㄑㄩ、ㄒㄩ（拼音把兩點省了，注音不省）；女 nǚ ＝ ㄋㄩˇ。</li>
-        <li><b>y、w 只是拼寫規則</b>：yi ＝ ㄧ、wu ＝ ㄨ、yu ＝ ㄩ、ya ＝ ㄧㄚ、wo ＝ ㄨㄛ、yue ＝ ㄩㄝ。</li>
-        <li><b>e 有兩個</b>：ㄜ ＝ e（鵝）、ㄝ ＝ ê（耶的韻）。ie ＝ ㄧㄝ、üe ＝ ㄩㄝ。</li>
-        <li><b>an／en／ang／eng 是一個符號</b>：ㄢㄣㄤㄥ，不用再補 n 或 g。</li>
-        <li><b>每個字最後都要按聲調鍵</b>：空白鍵＝一聲、<kbd>6</kbd>＝二聲、<kbd>3</kbd>＝三聲、<kbd>4</kbd>＝四聲、<kbd>7</kbd>＝輕聲。按了聲調，這個字才算打完。</li>
+        <li><b>????嚗??? ?芸葆 i</b>嚗??zhi?hi?hi?i?i?i?i ????冽???? ???脰矽嚗?菜?摰?/li>
+        <li><b>ong ?嗅祕???具</b>嚗葉 zh?ng 嚗???伐?iong 嚗??押嚗? xi籀ng 嚗???瓦???摰寞??舐?銝璇?</li>
+        <li><b>iu嚗i嚗n ?舐葬撖?/b>嚗u 嚗??扼嚗 li羅 嚗???﹌??i 嚗??具?嚗? du穫 嚗?????n 嚗??具嚗? l羅n 嚗??????釣?唾????/li>
+        <li><b>羹 撠望 ??/b>嚗u?u?u ?嗅祕??????押??抬??潮?暺?鈭?瘜券銝?嚗?憟?n? 嚗?????/li>
+        <li><b>y? ?芣?澆神閬?</b>嚗i 嚗??扼u 嚗??具u 嚗??押a 嚗??扼??o 嚗??具??ue 嚗??押???/li>
+        <li><b>e ???/b>嚗? 嚗?e嚗?嚗? 嚗?礙嚗嗥??鳴??e 嚗??扼??寬 嚗??押???/li>
+        <li><b>an嚗n嚗ng嚗ng ?臭??泵??/b>嚗???伐?銝?? n ??g??/li>
+        <li><b>瘥??敺閬??脰矽??/b>嚗征?賡嚗??脯?kbd>6</kbd>嚗??脯?kbd>3</kbd>嚗??脯?kbd>4</kbd>嚗??脯?kbd>7</kbd>嚗??脯?鈭隤選?????????/li>
       </ol>
     </div>
   </section>
 
-  <!-- ========== 分頁二：打字練習 ========== -->
+  <!-- ========== ??鈭???蝺渡? ========== -->
   <section id="tab-type">
     <div class="panel">
-      <div class="imewarn desktop-only" id="imeWarn">練習前請先把電腦切到<b>英文輸入法</b>（Windows 按 <kbd>Win</kbd>＋<kbd>空白鍵</kbd> 切換），否則按鍵會被輸入法攔截。</div>
-      <div class="imewarn mobile-only">手機請直接點下方虛擬鍵盤練習；空白鍵＝一聲。若要聽發音，請把手機音量打開。</div>
+      <div class="imewarn desktop-only" id="imeWarn">蝺渡??????餉?<b>?望?頛詨瘜?/b>嚗indows ??<kbd>Win</kbd>嚗?kbd>蝛箇??/kbd> ??嚗??血???◤頛詨瘜??芥?/div>
+      <div class="imewarn mobile-only">??隢?仿?銝??萇蝺渡?嚗征?賡嚗??脯閬?潮嚗???璈????/div>
       <div id="target"></div>
       <div id="line" class="line"></div>
       <div class="line-tools">
-        <button class="iconbtn" id="lineSpeak">🔊 唸出我打的</button>
-        <button class="iconbtn" id="lineSpeakSlow">🐢 一個字一個字唸</button>
+        <button class="iconbtn" id="lineSpeak">?? ?詨????/button>
+        <button class="iconbtn" id="lineSpeakSlow">? 銝??銝????/button>
       </div>
-      <div class="kbd-caption"><kbd>Enter</kbd> 唸出打的內容・<kbd>Backspace</kbd> 刪除・<kbd>Esc</kbd> 清空・打完一個字記得按聲調鍵（空白＝一聲）</div>
+      <div class="kbd-caption"><kbd>Enter</kbd> ?詨???批捆??kbd>Backspace</kbd> ?芷??kbd>Esc</kbd> 皜征?餅?摰???閮??隤輸嚗征?踝?銝?莎?</div>
       <div class="kbwrap"><div id="kb-type"></div></div>
       <div class="legend">
-        <span><i class="li"></i>聲母</span><span><i class="lm"></i>介音</span>
-        <span><i class="lf"></i>韻母</span><span><i class="lt"></i>聲調</span>
+        <span><i class="li"></i>?脫?</span><span><i class="lm"></i>隞</span>
+        <span><i class="lf"></i>?餅?</span><span><i class="lt"></i>?脰矽</span>
       </div>
     </div>
   </section>
 
-  <!-- ========== 分頁三：鍵位測驗 ========== -->
+  <!-- ========== ??銝??萎?皜祇? ========== -->
   <section id="tab-drill">
     <div class="panel">
       <div class="drill-bar">
-        <label>題型
+        <label>憿?
           <select id="dMode">
-            <option value="z2k">看注音 → 按鍵</option>
-            <option value="p2k">看拼音 → 按鍵</option>
-            <option value="listen">聽發音 → 按鍵</option>
+            <option value="z2k">?釣?????</option>
+            <option value="p2k">??????</option>
+            <option value="listen">?賜?????</option>
           </select>
         </label>
-        <label>範圍
+        <label>蝭?
           <select id="dScope">
-            <option value="all">全部</option>
-            <option value="ini">聲母</option>
-            <option value="fin">介音＋韻母</option>
-            <option value="tone">聲調</option>
+            <option value="all">?券</option>
+            <option value="ini">?脫?</option>
+            <option value="fin">隞嚗瘥?/option>
+            <option value="tone">?脰矽</option>
           </select>
         </label>
-        <label><input type="checkbox" id="dBlind"> 盲打模式（隱藏鍵面）</label>
+        <label><input type="checkbox" id="dBlind"> ?脫?璅∪?嚗??ｇ?</label>
       </div>
       <div class="drill-stats">
-        答對 <b id="dScore">0</b> ／ <b id="dAtt">0</b>・正確率 <b id="dAcc">–</b>・連對 <b id="dStreak">0</b>・歷史最佳連對 <b id="dBest">0</b>
+        蝑? <b id="dScore">0</b> 嚗?<b id="dAtt">0</b>?餅迤蝣箇? <b id="dAcc">??/b>?駁?? <b id="dStreak">0</b>?餅風?脫?雿喲?? <b id="dBest">0</b>
       </div>
       <div id="dPrompt" class="dprompt"></div>
-      <div class="kbd-caption">按錯兩次會亮出正確位置・<kbd>Esc</kbd> 跳過這題</div>
+      <div class="kbd-caption">??拇活?漁?箸迤蝣箔?蝵柴<kbd>Esc</kbd> 頝喲???</div>
       <div class="kbwrap"><div id="kb-drill"></div></div>
     </div>
   </section>
@@ -434,206 +434,196 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本頁為單一 HTML 檔，離線可用。發音使用系統內建語音（Edge／Chrome 效果最佳）。手機瀏覽器也可直接打開練習。</footer>
+<footer>?祇??箏銝 HTML 瑼??Ｙ??舐??喃蝙?函頂蝯勗撱箄??喉?Edge嚗hrome ???雿喉???璈汗?其??舐?交??毀蝧?/footer>
 
 <script>
 'use strict';
 /* ================================================================
-   第 1 部分：資料
-   37 個注音符號 + 5 個聲調。每筆：注音 z、拼音 p、鍵位 key、
-   實體按鍵代碼 code、分類 group、發音示範字 tts、例字 exW/exZ/exP
+   蝚?1 ?典?嚗???   37 ?釣?喟泵??+ 5 ?隤踴?蝑?瘜券 z???p?雿?key??   撖阡??隞?Ⅳ code??憿?group??喟內蝭? tts??摮?exW/exZ/exP
 ================================================================ */
 const SYMBOLS=[
-  // 聲母（唇音）
-  {z:'ㄅ',p:'b', key:'1',code:'Digit1',group:'initial',tts:'玻',exW:'爸',exZ:'ㄅㄚˋ',exP:'bà'},
-  {z:'ㄆ',p:'p', key:'Q',code:'KeyQ',group:'initial',tts:'坡',exW:'跑',exZ:'ㄆㄠˇ',exP:'pǎo'},
-  {z:'ㄇ',p:'m', key:'A',code:'KeyA',group:'initial',tts:'摸',exW:'媽',exZ:'ㄇㄚ',exP:'mā'},
-  {z:'ㄈ',p:'f', key:'Z',code:'KeyZ',group:'initial',tts:'佛',exW:'飯',exZ:'ㄈㄢˋ',exP:'fàn'},
-  // 聲母（舌尖音）
-  {z:'ㄉ',p:'d', key:'2',code:'Digit2',group:'initial',tts:'德',exW:'大',exZ:'ㄉㄚˋ',exP:'dà'},
-  {z:'ㄊ',p:'t', key:'W',code:'KeyW',group:'initial',tts:'特',exW:'天',exZ:'ㄊㄧㄢ',exP:'tiān'},
-  {z:'ㄋ',p:'n', key:'S',code:'KeyS',group:'initial',tts:'訥',exW:'你',exZ:'ㄋㄧˇ',exP:'nǐ'},
-  {z:'ㄌ',p:'l', key:'X',code:'KeyX',group:'initial',tts:'勒',exW:'來',exZ:'ㄌㄞˊ',exP:'lái'},
-  // 聲母（舌根音）
-  {z:'ㄍ',p:'g', key:'E',code:'KeyE',group:'initial',tts:'哥',exW:'狗',exZ:'ㄍㄡˇ',exP:'gǒu'},
-  {z:'ㄎ',p:'k', key:'D',code:'KeyD',group:'initial',tts:'科',exW:'看',exZ:'ㄎㄢˋ',exP:'kàn'},
-  {z:'ㄏ',p:'h', key:'C',code:'KeyC',group:'initial',tts:'喝',exW:'好',exZ:'ㄏㄠˇ',exP:'hǎo'},
-  // 聲母（舌面音）
-  {z:'ㄐ',p:'j', key:'R',code:'KeyR',group:'initial',tts:'基',exW:'家',exZ:'ㄐㄧㄚ',exP:'jiā'},
-  {z:'ㄑ',p:'q', key:'F',code:'KeyF',group:'initial',tts:'七',exW:'錢',exZ:'ㄑㄧㄢˊ',exP:'qián'},
-  {z:'ㄒ',p:'x', key:'V',code:'KeyV',group:'initial',tts:'西',exW:'謝',exZ:'ㄒㄧㄝˋ',exP:'xiè'},
-  // 聲母（翹舌音）
-  {z:'ㄓ',p:'zh',key:'5',code:'Digit5',group:'initial',tts:'知',exW:'中',exZ:'ㄓㄨㄥ',exP:'zhōng'},
-  {z:'ㄔ',p:'ch',key:'T',code:'KeyT',group:'initial',tts:'吃',exW:'茶',exZ:'ㄔㄚˊ',exP:'chá'},
-  {z:'ㄕ',p:'sh',key:'G',code:'KeyG',group:'initial',tts:'詩',exW:'是',exZ:'ㄕˋ',exP:'shì'},
-  {z:'ㄖ',p:'r', key:'B',code:'KeyB',group:'initial',tts:'日',exW:'人',exZ:'ㄖㄣˊ',exP:'rén'},
-  // 聲母（平舌音）
-  {z:'ㄗ',p:'z', key:'Y',code:'KeyY',group:'initial',tts:'資',exW:'在',exZ:'ㄗㄞˋ',exP:'zài'},
-  {z:'ㄘ',p:'c', key:'H',code:'KeyH',group:'initial',tts:'疵',exW:'菜',exZ:'ㄘㄞˋ',exP:'cài'},
-  {z:'ㄙ',p:'s', key:'N',code:'KeyN',group:'initial',tts:'思',exW:'三',exZ:'ㄙㄢ',exP:'sān'},
-  // 介音
-  {z:'ㄧ',p:'i',pAlt:'yi',key:'U',code:'KeyU',group:'medial',tts:'衣',exW:'一',exZ:'ㄧ',exP:'yī'},
-  {z:'ㄨ',p:'u',pAlt:'wu',key:'J',code:'KeyJ',group:'medial',tts:'屋',exW:'我',exZ:'ㄨㄛˇ',exP:'wǒ'},
-  {z:'ㄩ',p:'ü',pAlt:'yu',key:'M',code:'KeyM',group:'medial',tts:'迂',exW:'魚',exZ:'ㄩˊ',exP:'yú'},
-  // 韻母
-  {z:'ㄚ',p:'a', key:'8',code:'Digit8',group:'final',tts:'阿',exW:'花',exZ:'ㄏㄨㄚ',exP:'huā'},
-  {z:'ㄛ',p:'o', key:'I',code:'KeyI',group:'final',tts:'喔',exW:'婆',exZ:'ㄆㄛˊ',exP:'pó'},
-  {z:'ㄜ',p:'e', key:'K',code:'KeyK',group:'final',tts:'鵝',exW:'餓',exZ:'ㄜˋ',exP:'è'},
-  {z:'ㄝ',p:'ê', key:',',code:'Comma',group:'final',tts:'耶',exW:'些',exZ:'ㄒㄧㄝ',exP:'xiē'},
-  {z:'ㄞ',p:'ai',key:'9',code:'Digit9',group:'final',tts:'哀',exW:'愛',exZ:'ㄞˋ',exP:'ài'},
-  {z:'ㄟ',p:'ei',key:'O',code:'KeyO',group:'final',tts:'欸',exW:'妹',exZ:'ㄇㄟˋ',exP:'mèi'},
-  {z:'ㄠ',p:'ao',key:'L',code:'KeyL',group:'final',tts:'凹',exW:'高',exZ:'ㄍㄠ',exP:'gāo'},
-  {z:'ㄡ',p:'ou',key:'.',code:'Period',group:'final',tts:'歐',exW:'走',exZ:'ㄗㄡˇ',exP:'zǒu'},
-  {z:'ㄢ',p:'an',key:'0',code:'Digit0',group:'final',tts:'安',exW:'慢',exZ:'ㄇㄢˋ',exP:'màn'},
-  {z:'ㄣ',p:'en',key:'P',code:'KeyP',group:'final',tts:'恩',exW:'門',exZ:'ㄇㄣˊ',exP:'mén'},
-  {z:'ㄤ',p:'ang',key:';',code:'Semicolon',group:'final',tts:'昂',exW:'忙',exZ:'ㄇㄤˊ',exP:'máng'},
-  {z:'ㄥ',p:'eng',key:'/',code:'Slash',group:'final',tts:'鞥',exW:'冷',exZ:'ㄌㄥˇ',exP:'lěng'},
-  {z:'ㄦ',p:'er',key:'-',code:'Minus',group:'final',tts:'兒',exW:'二',exZ:'ㄦˋ',exP:'èr'},
+  // ?脫?嚗??喉?
+  {z:'??,p:'b', key:'1',code:'Digit1',group:'initial',tts:'??,exW:'??,exZ:'???',exP:'b?'},
+  {z:'??,p:'p', key:'Q',code:'KeyQ',group:'initial',tts:'??,exW:'頝?,exZ:'???',exP:'p?o'},
+  {z:'??,p:'m', key:'A',code:'KeyA',group:'initial',tts:'??,exW:'慦?,exZ:'??',exP:'m?'},
+  {z:'??,p:'f', key:'Z',code:'KeyZ',group:'initial',tts:'雿?,exW:'憌?,exZ:'??',exP:'f?n'},
+  // ?脫?嚗?撠嚗?  {z:'??,p:'d', key:'2',code:'Digit2',group:'initial',tts:'敺?,exW:'憭?,exZ:'???',exP:'d?'},
+  {z:'??,p:'t', key:'W',code:'KeyW',group:'initial',tts:'??,exW:'憭?,exZ:'???,exP:'ti?n'},
+  {z:'??,p:'n', key:'S',code:'KeyS',group:'initial',tts:'閮?,exW:'雿?,exZ:'??',exP:'n?'},
+  {z:'??,p:'l', key:'X',code:'KeyX',group:'initial',tts:'??,exW:'靘?,exZ:'???',exP:'l獺i'},
+  // ?脫?嚗??寥嚗?  {z:'??,p:'g', key:'E',code:'KeyE',group:'initial',tts:'??,exW:'??,exZ:'??',exP:'g?u'},
+  {z:'??,p:'k', key:'D',code:'KeyD',group:'initial',tts:'蝘?,exW:'??,exZ:'??',exP:'k?n'},
+  {z:'??,p:'h', key:'C',code:'KeyC',group:'initial',tts:'??,exW:'憟?,exZ:'???',exP:'h?o'},
+  // ?脫?嚗??ａ嚗?  {z:'??,p:'j', key:'R',code:'KeyR',group:'initial',tts:'??,exW:'摰?,exZ:'???,exP:'ji?'},
+  {z:'??,p:'q', key:'F',code:'KeyF',group:'initial',tts:'銝?,exW:'??,exZ:'??〩?,exP:'qi獺n'},
+  {z:'??,p:'x', key:'V',code:'KeyV',group:'initial',tts:'镼?,exW:'雓?,exZ:'???,exP:'xi癡'},
+  // ?脫?嚗蕨?嚗?  {z:'??,p:'zh',key:'5',code:'Digit5',group:'initial',tts:'??,exW:'銝?,exZ:'???,exP:'zh?ng'},
+  {z:'??,p:'ch',key:'T',code:'KeyT',group:'initial',tts:'??,exW:'??,exZ:'???',exP:'ch獺'},
+  {z:'??,p:'sh',key:'G',code:'KeyG',group:'initial',tts:'閰?,exW:'??,exZ:'??,exP:'sh穫'},
+  {z:'??,p:'r', key:'B',code:'KeyB',group:'initial',tts:'??,exW:'鈭?,exZ:'??',exP:'r矇n'},
+  // ?脫?嚗像?嚗?  {z:'??,p:'z', key:'Y',code:'KeyY',group:'initial',tts:'鞈?,exW:'??,exZ:'???',exP:'z?i'},
+  {z:'??,p:'c', key:'H',code:'KeyH',group:'initial',tts:'??,exW:'??,exZ:'???',exP:'c?i'},
+  {z:'??,p:'s', key:'N',code:'KeyN',group:'initial',tts:'??,exW:'銝?,exZ:'?',exP:'s?n'},
+  // 隞
+  {z:'??,p:'i',pAlt:'yi',key:'U',code:'KeyU',group:'medial',tts:'銵?,exW:'銝',exZ:'??,exP:'y蘋'},
+  {z:'??,p:'u',pAlt:'wu',key:'J',code:'KeyJ',group:'medial',tts:'撅?,exW:'??,exZ:'?具??',exP:'w?'},
+  {z:'??,p:'羹',pAlt:'yu',key:'M',code:'KeyM',group:'medial',tts:'餈?,exW:'擳?,exZ:'?怩?,exP:'y繳'},
+  // ?餅?
+  {z:'??,p:'a', key:'8',code:'Digit8',group:'final',tts:'??,exW:'??,exZ:'???,exP:'hu?'},
+  {z:'??,p:'o', key:'I',code:'KeyI',group:'final',tts:'??,exW:'憍?,exZ:'???',exP:'p籀'},
+  {z:'??,p:'e', key:'K',code:'KeyK',group:'final',tts:'曀?,exW:'擗?,exZ:'??,exP:'癡'},
+  {z:'??,p:'礙', key:',',code:'Comma',group:'final',tts:'??,exW:'鈭?,exZ:'???,exP:'xi?'},
+  {z:'??,p:'ai',key:'9',code:'Digit9',group:'final',tts:'?',exW:'??,exZ:'??,exP:'?i'},
+  {z:'??,p:'ei',key:'O',code:'KeyO',group:'final',tts:'甈?,exW:'憒?,exZ:'???',exP:'m癡i'},
+  {z:'??,p:'ao',key:'L',code:'KeyL',group:'final',tts:'??,exW:'擃?,exZ:'??',exP:'g?o'},
+  {z:'??,p:'ou',key:'.',code:'Period',group:'final',tts:'甇?,exW:'韏?,exZ:'??',exP:'z?u'},
+  {z:'??,p:'an',key:'0',code:'Digit0',group:'final',tts:'摰?,exW:'??,exZ:'??',exP:'m?n'},
+  {z:'??,p:'en',key:'P',code:'KeyP',group:'final',tts:'??,exW:'?',exZ:'??',exP:'m矇n'},
+  {z:'??,p:'ang',key:';',code:'Semicolon',group:'final',tts:'??,exW:'敹?,exZ:'??',exP:'m獺ng'},
+  {z:'??,p:'eng',key:'/',code:'Slash',group:'final',tts:'??,exW:'??,exZ:'??',exP:'l?ng'},
+  {z:'??,p:'er',key:'-',code:'Minus',group:'final',tts:'??,exW:'鈭?,exZ:'?竹?,exP:'癡r'},
 ];
 const TONES=[
-  {t:1,mark:'', name:'一聲',p:'ā',key:'空白鍵',code:'Space', group:'tone',tts:'媽',exW:'媽',exZ:'ㄇㄚ', exP:'mā'},
-  {t:2,mark:'ˊ',name:'二聲',p:'á',key:'6',   code:'Digit6',group:'tone',tts:'麻',exW:'麻',exZ:'ㄇㄚˊ',exP:'má'},
-  {t:3,mark:'ˇ',name:'三聲',p:'ǎ',key:'3',   code:'Digit3',group:'tone',tts:'馬',exW:'馬',exZ:'ㄇㄚˇ',exP:'mǎ'},
-  {t:4,mark:'ˋ',name:'四聲',p:'à',key:'4',   code:'Digit4',group:'tone',tts:'罵',exW:'罵',exZ:'ㄇㄚˋ',exP:'mà'},
-  {t:5,mark:'˙',name:'輕聲',p:'a',key:'7',   code:'Digit7',group:'tone',tts:'嗎',exW:'嗎',exZ:'˙ㄇㄚ',exP:'ma'},
+  {t:1,mark:'', name:'銝??,p:'?',key:'蝛箇??,code:'Space', group:'tone',tts:'慦?,exW:'慦?,exZ:'??', exP:'m?'},
+  {t:2,mark:'?',name:'鈭',p:'獺',key:'6',   code:'Digit6',group:'tone',tts:'暻?,exW:'暻?,exZ:'???',exP:'m獺'},
+  {t:3,mark:'?',name:'銝',p:'?',key:'3',   code:'Digit3',group:'tone',tts:'擐?,exW:'擐?,exZ:'???',exP:'m?'},
+  {t:4,mark:'?',name:'?',p:'?',key:'4',   code:'Digit4',group:'tone',tts:'蝵?,exW:'蝵?,exZ:'???',exP:'m?'},
+  {t:5,mark:'?',name:'頛',p:'a',key:'7',   code:'Digit7',group:'tone',tts:'??,exW:'??,exZ:'???',exP:'ma'},
 ];
 const CODE2SYM={}; SYMBOLS.forEach(s=>CODE2SYM[s.code]=s); TONES.forEach(s=>CODE2SYM[s.code]=s);
 const Z2SYM={};    SYMBOLS.forEach(s=>Z2SYM[s.z]=s);
 const INITIALS={}; SYMBOLS.filter(s=>s.group==='initial').forEach(s=>INITIALS[s.z]=s.p);
 
-// 對照表的「直行」分組（這正是鍵盤的記憶邏輯）
-const COLUMNS=[
-  {t:'ㄅㄆㄇㄈ',keys:'1・Q・A・Z',cat:'聲母｜唇音',zs:['ㄅ','ㄆ','ㄇ','ㄈ'],note:'鍵盤最左直行，由上到下'},
-  {t:'ㄉㄊㄋㄌ',keys:'2・W・S・X',cat:'聲母｜舌尖音',zs:['ㄉ','ㄊ','ㄋ','ㄌ']},
-  {t:'ㄍㄎㄏ', keys:'E・D・C',  cat:'聲母｜舌根音',zs:['ㄍ','ㄎ','ㄏ']},
-  {t:'ㄐㄑㄒ', keys:'R・F・V',  cat:'聲母｜舌面音',zs:['ㄐ','ㄑ','ㄒ']},
-  {t:'ㄓㄔㄕㄖ',keys:'5・T・G・B',cat:'聲母｜翹舌音（zh ch sh r）',zs:['ㄓ','ㄔ','ㄕ','ㄖ']},
-  {t:'ㄗㄘㄙ', keys:'Y・H・N',  cat:'聲母｜平舌音（z c s）',zs:['ㄗ','ㄘ','ㄙ']},
-  {t:'ㄧㄨㄩ', keys:'U・J・M',  cat:'介音（i／u／ü）',zs:['ㄧ','ㄨ','ㄩ']},
-  {t:'ㄚㄛㄜㄝ',keys:'8・I・K・,',cat:'韻母',zs:['ㄚ','ㄛ','ㄜ','ㄝ']},
-  {t:'ㄞㄟㄠㄡ',keys:'9・O・L・.',cat:'韻母｜複韻',zs:['ㄞ','ㄟ','ㄠ','ㄡ']},
-  {t:'ㄢㄣㄤㄥ',keys:'0・P・;・/',cat:'韻母｜鼻音（an en ang eng）',zs:['ㄢ','ㄣ','ㄤ','ㄥ']},
-  {t:'ㄦ',    keys:'-（減號）', cat:'韻母｜捲舌（er）',zs:['ㄦ']},
+// 撠銵函??銵?蝯??迤?舫?斤?閮?摩嚗?const COLUMNS=[
+  {t:'????',keys:'1?舔?翠?蒲',cat:'?脫?嚚???,zs:['??,'??,'??,'??],note:'?萇?撌衣銵??曹??唬?'},
+  {t:'????',keys:'2?蓄?艋?蒙',cat:'?脫?嚚?撠',zs:['??,'??,'??,'??]},
+  {t:'????, keys:'E?聞?翟',  cat:'?脫?嚚??寥',zs:['??,'??,'??]},
+  {t:'????, keys:'R?肇?蓆',  cat:'?脫?嚚??ａ',zs:['??,'??,'??]},
+  {t:'????',keys:'5?蓉?腐?翡',cat:'?脫?嚚蕨?嚗h ch sh r嚗?,zs:['??,'??,'??,'??]},
+  {t:'????, keys:'Y?膀?臧',  cat:'?脫?嚚像?嚗 c s嚗?,zs:['??,'??,'??]},
+  {t:'?扼??, keys:'U?膈?膂',  cat:'隞嚗嚗嚗潘?',zs:['??,'??,'??]},
+  {t:'????',keys:'8?膏?膊??',cat:'?餅?',zs:['??,'??,'??,'??]},
+  {t:'???',keys:'9?臺?腿??',cat:'?餅?嚚???,zs:['??,'??,'??,'??]},
+  {t:'?Ｕ?扎',keys:'0?與????',cat:'?餅?嚚撒?喉?an en ang eng嚗?,zs:['??,'??,'??,'??]},
+  {t:'??,    keys:'-嚗???', cat:'?餅?嚚??er嚗?,zs:['??]},
 ];
 
-// 注音 → 拼音 對照（韻母部分）：[單獨成字時, 接在聲母後時]
+// 瘜券 ???潮 撠嚗瘥??嚗?桃???? ?亙?脫?敺?]
 const FINALS={
-  'ㄚ':['a','a'],'ㄛ':['o','o'],'ㄜ':['e','e'],'ㄝ':['ê','ê'],
-  'ㄞ':['ai','ai'],'ㄟ':['ei','ei'],'ㄠ':['ao','ao'],'ㄡ':['ou','ou'],
-  'ㄢ':['an','an'],'ㄣ':['en','en'],'ㄤ':['ang','ang'],'ㄥ':['eng','eng'],'ㄦ':['er','er'],
-  'ㄧ':['yi','i'],'ㄧㄚ':['ya','ia'],'ㄧㄛ':['yo','io'],'ㄧㄝ':['ye','ie'],'ㄧㄞ':['yai','iai'],
-  'ㄧㄠ':['yao','iao'],'ㄧㄡ':['you','iu'],'ㄧㄢ':['yan','ian'],'ㄧㄣ':['yin','in'],
-  'ㄧㄤ':['yang','iang'],'ㄧㄥ':['ying','ing'],
-  'ㄨ':['wu','u'],'ㄨㄚ':['wa','ua'],'ㄨㄛ':['wo','uo'],'ㄨㄞ':['wai','uai'],'ㄨㄟ':['wei','ui'],
-  'ㄨㄢ':['wan','uan'],'ㄨㄣ':['wen','un'],'ㄨㄤ':['wang','uang'],'ㄨㄥ':['weng','ong'],
-  'ㄩ':['yu','ü'],'ㄩㄝ':['yue','üe'],'ㄩㄢ':['yuan','üan'],'ㄩㄣ':['yun','ün'],'ㄩㄥ':['yong','iong'],
+  '??:['a','a'],'??:['o','o'],'??:['e','e'],'??:['礙','礙'],
+  '??:['ai','ai'],'??:['ei','ei'],'??:['ao','ao'],'??:['ou','ou'],
+  '??:['an','an'],'??:['en','en'],'??:['ang','ang'],'??:['eng','eng'],'??:['er','er'],
+  '??:['yi','i'],'?扼?':['ya','ia'],'?扼?':['yo','io'],'?扼?':['ye','ie'],'?扼?':['yai','iai'],
+  '?扼?':['yao','iao'],'?扼':['you','iu'],'?扼':['yan','ian'],'?扼':['yin','in'],
+  '?扼':['yang','iang'],'?扼':['ying','ing'],
+  '??:['wu','u'],'?具?':['wa','ua'],'?具?':['wo','uo'],'?具?':['wai','uai'],'?具?':['wei','ui'],
+  '?具':['wan','uan'],'?具':['wen','un'],'?具':['wang','uang'],'?具':['weng','ong'],
+  '??:['yu','羹'],'?押?':['yue','羹e'],'?押':['yuan','羹an'],'?押':['yun','羹n'],'?押':['yong','iong'],
 };
-const TONED={a:'aāáǎà',e:'eēéěè',i:'iīíǐì',o:'oōóǒò',u:'uūúǔù','ü':'üǖǘǚǜ'};
+const TONED={a:'a?獺??',e:'e?矇?癡',i:'i蘋穩?穫',o:'o?籀?簷',u:'u贖繳?羅','羹':'羹????'};
 
-// 跟著打的目標詞
-const WORDS=[
-  {w:'你好',s:[{k:['ㄋ','ㄧ'],t:3},{k:['ㄏ','ㄠ'],t:3}]},
-  {w:'謝謝',s:[{k:['ㄒ','ㄧ','ㄝ'],t:4},{k:['ㄒ','ㄧ','ㄝ'],t:5}]},
-  {w:'台灣',s:[{k:['ㄊ','ㄞ'],t:2},{k:['ㄨ','ㄢ'],t:1}]},
-  {w:'吃飯',s:[{k:['ㄔ'],t:1},{k:['ㄈ','ㄢ'],t:4}]},
-  {w:'朋友',s:[{k:['ㄆ','ㄥ'],t:2},{k:['ㄧ','ㄡ'],t:3}]},
-  {w:'加油',s:[{k:['ㄐ','ㄧ','ㄚ'],t:1},{k:['ㄧ','ㄡ'],t:2}]},
-  {w:'我們',s:[{k:['ㄨ','ㄛ'],t:3},{k:['ㄇ','ㄣ'],t:5}]},
-  {w:'中文',s:[{k:['ㄓ','ㄨ','ㄥ'],t:1},{k:['ㄨ','ㄣ'],t:2}]},
-  {w:'老師',s:[{k:['ㄌ','ㄠ'],t:3},{k:['ㄕ'],t:1}]},
-  {w:'注音',s:[{k:['ㄓ','ㄨ'],t:4},{k:['ㄧ','ㄣ'],t:1}]},
-  {w:'電腦',s:[{k:['ㄉ','ㄧ','ㄢ'],t:4},{k:['ㄋ','ㄠ'],t:3}]},
-  {w:'學習',s:[{k:['ㄒ','ㄩ','ㄝ'],t:2},{k:['ㄒ','ㄧ'],t:2}]},
+// 頝????格?閰?const WORDS=[
+  {w:'雿末',s:[{k:['??,'??],t:3},{k:['??,'??],t:3}]},
+  {w:'雓?',s:[{k:['??,'??,'??],t:4},{k:['??,'??,'??],t:5}]},
+  {w:'?啁',s:[{k:['??,'??],t:2},{k:['??,'??],t:1}]},
+  {w:'?ㄞ',s:[{k:['??],t:1},{k:['??,'??],t:4}]},
+  {w:'??',s:[{k:['??,'??],t:2},{k:['??,'??],t:3}]},
+  {w:'?硃',s:[{k:['??,'??,'??],t:1},{k:['??,'??],t:2}]},
+  {w:'??,s:[{k:['??,'??],t:3},{k:['??,'??],t:5}]},
+  {w:'銝剜?',s:[{k:['??,'??,'??],t:1},{k:['??,'??],t:2}]},
+  {w:'?葦',s:[{k:['??,'??],t:3},{k:['??],t:1}]},
+  {w:'瘜券',s:[{k:['??,'??],t:4},{k:['??,'??],t:1}]},
+  {w:'?餉',s:[{k:['??,'??,'??],t:4},{k:['??,'??],t:3}]},
+  {w:'摮貊?',s:[{k:['??,'??,'??],t:2},{k:['??,'??],t:2}]},
 ];
 
-// 「唸出我打的」用：音節（不含聲調的拼音）→ 五個聲調的同音字（一二三四輕），○＝沒有這個音
+// ??箸????嚗蝭嚗??怨隤輻??潮嚗? 鈭隤輻??摮?銝鈭???嚗???瘝??
 const SYL_CHARS={
-  'a':'阿○○○啊','o':'噢○○○○','e':'○鵝○餓○','ai':'哀癌矮愛○','ei':'欸○○○○','ao':'凹熬襖傲○',
-  'ou':'歐○偶○○','an':'安○俺案○','en':'恩○○○○','ang':'骯昂○○○','er':'○兒耳二○',
-  'yi':'衣疑以意○','ya':'鴨牙啞亞○','yo':'唷○○○○','ye':'耶爺也夜○','yao':'腰搖咬要○','you':'優油有又○',
-  'yan':'煙鹽眼燕○','yin':'音銀引印○','yang':'央羊養樣○','ying':'英迎影硬○',
-  'wu':'屋無五物○','wa':'挖娃瓦襪○','wo':'窩○我臥○','wai':'歪○○外○','wei':'威圍偉位○',
-  'wan':'彎完晚萬○','wen':'溫文吻問○','wang':'汪王往望○','weng':'翁○○甕○',
-  'yu':'迂魚雨玉○','yue':'約○○月○','yuan':'冤圓遠院○','yun':'暈雲允運○','yong':'庸○勇用○',
-  'ba':'八拔把爸吧','bo':'玻伯跛播○','bai':'掰白百拜○','bei':'杯○北貝○','ban':'班○板半○',
-  'ben':'奔○本笨○','bang':'幫○綁棒○','beng':'崩○○蹦○','bi':'逼鼻比必○','bie':'憋別癟彆○',
-  'biao':'標○表○○','bian':'邊○扁變○','bin':'賓○○鬢○','bing':'冰○餅病○','bu':'○○補布○',
-  'pa':'趴爬○怕○','po':'坡婆叵破○','pai':'拍排○派○','pei':'胚陪○配○','pan':'潘盤○盼○',
-  'pen':'噴盆○○○','pang':'乓旁○胖○','peng':'烹朋捧碰○','pi':'批皮匹屁○','pie':'瞥○撇○○',
-  'piao':'飄○○票○','pian':'篇便○騙○','pin':'拼貧品聘○','ping':'乒平○○○','pu':'撲僕普瀑○',
-  'ma':'媽麻馬罵嗎','mo':'摸磨抹墨○','mai':'○埋買賣○','mei':'○梅美妹○','man':'○蠻滿慢○',
-  'men':'○門○悶們','mang':'○忙莽○○','meng':'○盟猛夢○','mi':'瞇迷米密○','mie':'○○○滅○',
-  'miao':'喵苗秒妙○','mian':'○棉免面○','min':'○民敏○○','ming':'○明○命○','miu':'○○○謬○','mu':'○○母木○',
-  'fa':'發罰法○○','fo':'○佛○○○','fei':'飛肥匪費○','fou':'○○否○○','fan':'翻凡反飯○',
-  'fen':'分墳粉份○','fang':'方房訪放○','feng':'風逢諷鳳○','fu':'夫福府父○',
-  'da':'搭答打大○','de':'○德○○的','dai':'呆○歹帶○','dao':'刀○島道○','dou':'兜○抖豆○',
-  'dan':'單○膽蛋○','dang':'當○擋盪○','deng':'燈○等凳○','di':'低敵底地○','die':'爹疊○○○',
-  'diao':'雕○○釣○','dian':'顛○點電○','ding':'丁○頂訂○','diu':'丟○○○○','du':'嘟毒賭度○',
-  'duo':'多奪朵惰○','dui':'堆○○對○','duan':'端○短段○','dun':'蹲○盹頓○','dong':'東○懂動○',
-  'ta':'他○塔踏○','te':'○○○特○','tai':'胎台○太○','tao':'掏逃討套○','tou':'偷頭○透○',
-  'tan':'貪談坦嘆○','tang':'湯糖躺燙○','teng':'○疼○○○','ti':'梯提體替○','tie':'貼○鐵○○',
-  'tiao':'挑條○跳○','tian':'天田舔○○','ting':'聽停挺○○','tu':'突圖土兔○','tuo':'拖駝妥○○',
-  'tui':'推○腿退○','tuan':'○團○○○','tun':'吞屯○○○','tong':'通同桶痛○',
-  'na':'○拿哪那○','ne':'○○○○呢','nai':'○○奶耐○','nei':'○○○內○','nan':'○南○○○',
-  'nang':'○囊○○○','nao':'○撓腦鬧○','nen':'○○○嫩○','neng':'○能○○○','ni':'○泥你逆○',
-  'nie':'捏○○○○','niao':'○○鳥尿○','nian':'○年捻唸○','nin':'○您○○○','niang':'○娘○釀○',
-  'ning':'○寧○○○','niu':'○牛扭○○','nu':'○○努怒○','nuo':'○挪○糯○','nuan':'○○暖○○',
-  'nong':'○農○弄○','nü':'○○女○○','nüe':'○○○虐○',
-  'la':'拉○○辣啦','le':'○○○樂了','lai':'○來○賴○','lei':'○雷壘淚○','lan':'○藍懶爛○',
-  'lang':'○狼朗浪○','lao':'撈勞老○○','lou':'○樓○漏○','leng':'○○冷愣○','li':'○梨里力○',
-  'lie':'○○○列○','liao':'撩聊○料○','lian':'○連臉練○','lin':'○林○吝○','liang':'○涼兩亮○',
-  'ling':'○零領另○','liu':'溜流柳六○','lu':'○盧魯路○','luo':'○羅裸落○','luan':'○○卵亂○',
-  'lun':'○輪○論○','long':'○龍攏○○','lü':'○驢旅綠○','lüe':'○○○略○',
-  'ga':'嘎○○○○','ge':'哥格葛個○','gai':'該○改蓋○','gei':'○○給○○','gan':'甘○感幹○',
-  'gen':'跟○○○○','gang':'剛○港槓○','geng':'耕○梗更○','gao':'高○搞告○','gou':'溝○狗夠○',
-  'gu':'姑○古故○','gua':'瓜○寡掛○','guo':'鍋國果過○','guai':'乖○拐怪○','gui':'龜○鬼貴○',
-  'guan':'關○管慣○','gun':'○○滾棍○','guang':'光○廣逛○','gong':'工○鞏共○',
-  'ka':'咖○卡○○','ke':'科殼可課○','kai':'開○凱○○','kan':'刊○砍看○','ken':'○○肯○○',
-  'kang':'康○○抗○','keng':'坑○○○○','kao':'○○考靠○','kou':'摳○口扣○','ku':'哭○苦褲○',
-  'kua':'誇○垮跨○','kuo':'○○○闊○','kuai':'○○○快○','kui':'虧葵傀愧○','kuan':'寬○款○○',
-  'kun':'昆○捆困○','kuang':'筐狂○況○','kong':'空○恐控○',
-  'ha':'哈○○○○','he':'喝河○賀○','hai':'○孩海害○','hei':'黑○○○○','han':'○含喊漢○',
-  'hen':'○痕很恨○','hang':'○航○○○','heng':'哼橫○○○','hao':'○毫好號○','hou':'○猴吼後○',
-  'hu':'呼胡虎戶○','hua':'花華○話○','huo':'○活火貨○','huai':'○懷○壞○','hui':'灰回悔會○',
-  'huan':'歡環緩換○','hun':'昏渾○混○','huang':'慌黃謊晃○','hong':'轟紅○○○',
-  'ji':'機急擠記○','jia':'加夾甲架○','jie':'街傑姐借○','jiao':'交嚼腳叫○','jiu':'究○九救○',
-  'jian':'尖○剪見○','jin':'金○緊近○','jiang':'江○講降○','jing':'京○井敬○','ju':'居局舉句○',
-  'jue':'○決○○○','juan':'捐○捲倦○','jun':'軍○○俊○','jiong':'○○窘○○',
-  'qi':'七奇起氣○','qia':'掐○○恰○','qie':'切茄且妾○','qiao':'敲橋巧翹○','qiu':'秋求○○○',
-  'qian':'千錢淺欠○','qin':'親琴○○○','qiang':'槍強搶嗆○','qing':'清晴請慶○','qu':'區渠取去○',
-  'que':'缺○○確○','quan':'圈全犬勸○','qun':'○群○○○','qiong':'○窮○○○',
-  'xi':'西習洗細○','xia':'蝦霞○下○','xie':'些鞋寫謝謝','xiao':'消○小笑○','xiu':'修○朽秀○',
-  'xian':'先閒顯現○','xin':'新○○信○','xiang':'香詳想向○','xing':'星型醒姓○','xu':'需徐許續○',
-  'xue':'○學雪穴○','xuan':'宣玄選○○','xun':'○尋○訓○','xiong':'兇雄○○○',
-  'zhi':'知直紙至○','zha':'渣閘眨炸○','zhe':'遮折者這○','zhai':'摘宅窄債○','zhan':'沾○展站○',
-  'zhen':'真○枕陣○','zhang':'張○掌帳○','zheng':'爭○整正○','zhao':'招○找照○','zhou':'週軸○晝○',
-  'zhu':'豬竹主住○','zhua':'抓○爪○○','zhuo':'桌○○○○','zhui':'追○○墜○','zhuan':'專○轉賺○',
-  'zhun':'諄○準○○','zhuang':'裝○○壯○','zhong':'中○腫眾○',
-  'chi':'吃遲尺翅○','cha':'插茶○岔○','che':'車○扯徹○','chai':'拆柴○○○','chan':'攙纏產○○',
-  'chen':'○沉○趁○','chang':'昌常廠唱○','cheng':'稱成逞秤○','chao':'超朝吵○○','chou':'抽仇醜臭○',
-  'chu':'出除楚處○','chui':'吹垂○○○','chuan':'川船喘串○','chun':'春純蠢○○','chuang':'窗床闖創○','chong':'充蟲寵○○',
-  'shi':'詩十使是○','sha':'沙○傻煞○','she':'奢蛇捨射○','shai':'篩○○曬○','shan':'山○閃扇○',
-  'shen':'深神審慎○','shang':'傷○賞上○','sheng':'生繩省勝○','shao':'燒勺○紹○','shou':'收○手受○',
-  'shu':'書熟鼠樹○','shua':'刷○耍○○','shuo':'說○○碩○','shuai':'摔○甩帥○','shui':'○誰水睡○',
-  'shuan':'拴○○○○','shun':'○○○順○','shuang':'雙○爽○○',
-  'ri':'○○○日○','re':'○○惹熱○','ran':'○然染○○','ren':'○人忍認○','rang':'○○嚷讓○',
-  'reng':'扔仍○○○','rao':'○饒擾繞○','rou':'○柔○肉○','ru':'○如乳入○','ruo':'○○○弱○',
-  'rui':'○○○銳○','ruan':'○○軟○○','run':'○○○潤○','rong':'○容冗○○',
-  'zi':'資○紫字子','za':'匝雜○○○','ze':'○澤○仄○','zai':'災○宰在○','zei':'○賊○○○',
-  'zan':'○咱攢讚○','zen':'○○怎○○','zang':'髒○○葬○','zeng':'增○○贈○','zao':'遭鑿早造○',
-  'zou':'鄒○走奏○','zu':'租足組○○','zuo':'○昨左做○','zui':'○○嘴最○','zuan':'鑽○○○○',
-  'zun':'尊○○○○','zong':'宗○總縱○',
-  'ci':'疵詞此次○','ca':'擦○○○○','ce':'○○○測○','cai':'猜才採菜○','can':'參殘慘燦○',
-  'cang':'倉藏○○○','ceng':'○層○○○','cao':'操曹草○○','cou':'○○○湊○','cu':'粗○○醋○',
-  'cuo':'搓○○錯○','cui':'催○○脆○','cun':'村存○寸○','cong':'聰從○○○',
-  'si':'思○死四○','sa':'撒○灑○○','se':'○○○色○','sai':'塞○○賽○','san':'三○傘散○',
-  'sang':'桑○嗓喪○','seng':'僧○○○○','sao':'搔○嫂○○','sou':'搜○○○○','su':'蘇俗○訴○',
-  'suo':'縮○所○○','sui':'雖隨髓歲○','suan':'酸○○算○','sun':'孫○損○○','song':'鬆○○送○',
+  'a':'?踱?????,'o':'?Ｔ?????,'e':'??????,'ai':'????','ei':'甈詹?????,'ao':'?寧镼??,
+  'ou':'甇??嗯???,'an':'摰?靽箸???,'en':'?抽?????,'ang':'撉舀?????,'er':'???喃???,
+  'yi':'銵??隞交???,'ya':'暾函?????,'yo':'?猾?????,'ye':'?嗥銋???,'yao':'?唳??祈???,'you':'?芣硃????,
+  'yan':'?厭?潛???,'yin':'?喲?撘??,'yang':'憭桃?擗見??,'ying':'?梯?敶梁′??,
+  'wu':'撅鈭??,'wa':'???西左??,'wo':'蝒抽????,'wai':'甇芬?????,'wei':'憡?????,
+  'wan':'敶????,'wen':'皞急??餃???,'wang':'瘙芰?敺??','weng':'蝧?????,
+  'yu':'餈??函???,'yue':'蝝?????,'yuan':'?文????,'yun':'?????,'yong':'摨詹????,
+  'ba':'?急????,'bo':'?颱摩頝??,'bai':'?啁?暹???,'bei':'?胼?????,'ban':'?凌??踹???,
+  'ben':'憟??祉洧??,'bang':'撟徉?蝬???,'beng':'撏抽??髡??,'bi':'?潮撒瘥???,'bie':'?????,
+  'biao':'璅?銵兩???,'bian':'??????,'bin':'鞈??洽??,'bing':'?售?擗???,'bu':'??鋆???,
+  'pa':'頞渡??','po':'?∪??萇??,'pai':'???晷??,'pei':'?????,'pan':'瞏???,
+  'pen':'?渡?????,'pang':'銋?????,'peng':'?寞??抒１??,'pi':'?寧?孵???,'pie':'?乒?????,
+  'piao':'憌??巨??,'pian':'蝭噶????,'pin':'?潸異????,'ping':'銋像????,'pu':'?脣??桃?',
+  'ma':'慦賡獄擐祉蔥??,'mo':'?貊ㄗ?孵◢??,'mai':'??鞎瑁都??,'mei':'??蝢此??,'man':'?皛踵??,
+  'men':'?????,'mang':'???賤???,'meng':'???丐??,'mi':'?蕙蝐喳???,'mie':'??????,
+  'miao':'?菔?蝘???,'mian':'?????,'min':'??????,'ming':'?????,'miu':'???洵??,'mu':'??瘥??,
+  'fa':'?潛蔑瘜???,'fo':'??????,'fei':'憌?芾祥??,'fou':'???色???,'fan':'蝧餃?ㄞ??,
+  'fen':'?４蝎遢??,'fang':'?寞閮芣??,'feng':'憸券Ｚ奐曈喇?','fu':'憭怎?摨??,
+  'da':'?剔??之??,'de':'?噸????,'dai':'??甇孵葆??,'dao':'??雀??','dou':'??????,
+  'dan':'?栽??質???,'dang':'?嗯????,'deng':'??蝑??,'di':'雿摨??,'die':'?寧?????,
+  'diao':'?????,'dian':'憿?暺??,'ding':'銝?????,'diu':'銝?????,'du':'??鞈剖漲??,
+  'duo':'憭左?菜??,'dui':'??????,'duan':'蝡胼??剜挾??,'dun':'頩聆??寥???,'dong':'?晦?????,
+  'ta':'隞?憛???,'te':'?????,'tai':'??云??,'tao':'??憟?','tou':'?琿??',
+  'tan':'鞎芾??血???,'tang':'皝舐?頨箇???,'teng':'?????,'ti':'璇舀?擃??,'tie':'鞎潑??菊???,
+  'tiao':'???歲??,'tian':'憭拍????,'ting':'?賢??算???,'tu':'蝒?????,'tuo':'??憒乒???,
+  'tui':'?兩??輸??,'tuan':'??????,'tun':'?扈????,'tong':'??獢嗥???,
+  'na':'??芷??,'ne':'??????,'nai':'??憟嗉?','nei':'?????,'nan':'??????,
+  'nang':'??????,'nao':'???阡洹??,'nen':'???咿??,'neng':'?????,'ni':'?野雿?',
+  'nie':'??????,'niao':'??曈亙倏??,'nian':'?僑?餃??,'nin':'?????,'niang':'??????,
+  'ning':'?祐????,'niu':'???凌???,'nu':'???芣?','nuo':'??陳??,'nuan':'??????,
+  'nong':'?噙????,'n羹':'??憟喇???,'n羹e':'??????,
+  'la':'???麾??,'le':'????鈭?,'lai':'???陷??,'lei':'?憯???,'lan':'???嗥???,
+  'lang':'??答??,'lao':'??????,'lou':'??????,'leng':'???瑟??,'li':'?◢????,
+  'lie':'??????,'liao':'?抵?????,'lian':'???蝺氯?','lin':'??????,'liang':'?飲?拐漁??,
+  'ling':'????,'liu':'皞??喳??,'lu':'?擳航楝??,'luo':'??鋆貉??,'luan':'???萎???,
+  'lun':'?憚????,'long':'??????,'l羹':'?岷????,'l羹e':'?????,
+  'ga':'??????,'ge':'?交??','gai':'閰聆??寡???,'gei':'??蝯色???,'gan':'???凳??,
+  'gen':'頝?????,'gang':'??皜舀???,'geng':'??璇??,'gao':'擃?????,'gou':'皞?????,
+  'gu':'憪??斗???,'gua':'??撖⊥???,'guo':'??????,'guai':'銋??芬?','gui':'樴?擛潸眼??,
+  'guan':'??蝞⊥??,'gun':'??皛暹???,'guang':'??撱??','gong':'撌乒????,
+  'ka':'???﹦???,'ke':'蝘挺?航玨??,'kai':'???晦???,'kan':'??????,'ken':'???胼???,
+  'kang':'摨猾?????,'keng':'??????,'kao':'??????,'kou':'?喇?????,'ku':'?凌??西仆??,
+  'kua':'隤??株楊??,'kuo':'??????,'kuai':'???翰??,'kui':'?扯??把?','kuan':'撖砂?甈撾???,
+  'kun':'?????,'kuang':'蝑?????,'kong':'蝛算????,
+  'ha':'??????,'he':'?眾????,'hai':'?酋瘚瑕拿??,'hei':'暺?????,'han':'??慰??,
+  'hen':'??敺??,'hang':'?????,'heng':'?潭帖????,'hao':'?神憟質???,'hou':'??澆???,
+  'hu':'?潸???,'hua':'?梯?店??,'huo':'?暑?怨疏??,'huai':'?????,'hui':'?啣?????,
+  'huan':'甇∠蝺拇???,'hun':'?蜀?毽??,'huang':'??雓???,'hong':'頧?????,
+  'ji':'璈交?閮?','jia':'?冗?脫??,'jie':'銵?憪?','jiao':'鈭文?喳??,'jiu':'蝛嗯?銋???,
+  'jian':'撠??芾???,'jin':'??蝺???,'jiang':'瘙?雓???,'jing':'鈭砂?鈭??,'ju':'撅????,
+  'jue':'?捱????,'juan':'???脣色?','jun':'頠?????,'jiong':'??蝒???,
+  'qi':'銝?韏瑟除??,'qia':'?????,'qie':'??銝汙??,'qiao':'?脫?撌抒蕨??,'qiu':'蝘?????,
+  'qian':'?瘛箸???,'qin':'閬芰????,'qiang':'瑽撥?嗅???,'qing':'皜隢??,'qu':'?皜??領?',
+  'que':'蝻算??Ⅱ??,'quan':'??砍??,'qun':'?黎????,'qiong':'?狙????,
+  'xi':'镼輻?瘣敦??,'xia':'?阡?????,'xie':'鈭?撖怨?雓?,'xiao':'瘨?撠???,'xiu':'靽栽??賜???,
+  'xian':'??憿舐??,'xin':'?售??縑??,'xiang':'擐底?喳???,'xing':'??????,'xu':'?敺迂蝥?',
+  'xue':'?飛?芰庖??,'xuan':'摰???詹???,'xun':'??????,'xiong':'??????,
+  'zhi':'?亦蝝??,'zha':'皜???函??,'zhe':'?格???','zhai':'??蝒??,'zhan':'瘝撾?撅???,
+  'zhen':'?????,'zhang':'撘菊??董??,'zheng':'?凌??湔迤??,'zhao':'???曄??,'zhou':'?梯遘????,
+  'zhu':'鞊祉姘銝颱???,'zhua':'???芬???,'zhuo':'獢?????,'zhui':'餈賤?????,'zhuan':'撠?頧竟??,
+  'zhun':'隢?皞???,'zhuang':'鋆??ㄞ??,'zhong':'銝凌??怎??,
+  'chi':'?撠箇???,'cha':'?????,'che':'頠??臬器??,'chai':'?????,'chan':'???Ｔ???,
+  'chen':'??????,'chang':'?虜撱??,'cheng':'蝔望??坐??,'chao':'頞??菊???,'chou':'?賭????,
+  'chu':'?粹璆???,'chui':'?孵?????,'chuan':'撌?葡??,'chun':'?亦??Ｔ???,'chuang':'蝒????,'chong':'?撖菊???,
+  'shi':'閰拙?雿踵??,'sha':'瘝??餌???,'she':'憟Ｚ??典???,'shai':'蝭抽????,'shan':'撅晦?????,
+  'shen':'瘛梁?撖拇???,'shang':'?猾?鞈???,'sheng':'?鼎????,'shao':'??晶??,'shou':'?嗯?????,
+  'shu':'?貊?曌邦??,'shua':'?猾?????,'shuo':'隤芬??◣??,'shuai':'???拙艇??,'shui':'?狐瘞渡??,
+  'shuan':'?氯?????,'shun':'??????,'shuang':'???賤???,
+  'ri':'?????,'re':'???寧??,'ran':'?????,'ren':'?犖敹???,'rang':'???瑁???,
+  'reng':'??????,'rao':'???曄???,'rou':'??????,'ru':'??銋喳??,'ruo':'???摹??,
+  'rui':'?????,'ruan':'??頠???,'run':'???膜??,'rong':'?捆????,
+  'zi':'鞈?蝝怠?摮?,'za':'??????,'ze':'?黎????,'zai':'?賤?摰啣??,'zei':'??????,
+  'zan':'??Ｚ???,'zen':'??????,'zang':'擃????,'zeng':'憓?????,'zao':'?剝?拚?',
+  'zou':'??韏啣???,'zu':'蝘雲蝯???,'zuo':'?撌血???,'zui':'???湔???,'zuan':'?賤?????,
+  'zun':'撠?????,'zong':'摰?蝮賜萵??,
+  'ci':'?菔?甇斗活??,'ca':'?色?????,'ce':'???葫??,'cai':'???∟???,'can':'?????,
+  'cang':'??????,'ceng':'?惜????,'cao':'?????,'cou':'??????,'cu':'蝎?????,
+  'cuo':'?????,'cui':'?砂?????,'cun':'???站??,'cong':'?啣?????,
+  'si':'??甇餃???,'sa':'??????,'se':'?????,'sai':'憛??魚??,'san':'銝????,
+  'sang':'獢????,'seng':'?把?????,'sao':'??憳???,'sou':'??????,'su':'???迄??,
+  'suo':'蝮栽????','sui':'?擃革??,'suan':'?詹?????,'sun':'摮徉?????,'song':'擛???',
 };
 
 /* ================================================================
-   第 2 部分：發音（Web Speech API）與音效（WebAudio）
-================================================================ */
+   蝚?2 ?典?嚗?喉?Web Speech API嚗??單?嚗ebAudio嚗?================================================================ */
 let soundOn = localStorage.getItem('zk-sound')!=='0';
 let pickedVoice=null, pendingUtter=null;
 
@@ -642,13 +632,12 @@ function loadVoices(){
   const all=speechSynthesis.getVoices();
   const zh=all.filter(v=>v.lang && v.lang.toLowerCase().replace('_','-').startsWith('zh'));
   const sel=document.getElementById('voiceSel');
-  sel.innerHTML = zh.map((v,i)=>`<option value="${i}">${v.name}（${v.lang}）</option>`).join('') || '<option value="-1">（無中文語音）</option>';
+  sel.innerHTML = zh.map((v,i)=>`<option value="${i}">${v.name}嚗?{v.lang}嚗?/option>`).join('') || '<option value="-1">嚗銝剜?隤嚗?/option>';
   if(!zh.length){ document.getElementById('voiceWarn').style.display='inline-block'; pickedVoice=null; return; }
   document.getElementById('voiceWarn').style.display='none';
   const saved=localStorage.getItem('zk-voice');
   let idx=zh.findIndex(v=>v.name===saved);
-  if(idx<0){ // 自動挑最好的：台灣語音優先
-    const score=v=>{
+  if(idx<0){ // ?芸???憟賜?嚗????喳??    const score=v=>{
       const n=v.name.toLowerCase(), l=v.lang.toLowerCase();
       let s=0;
       if(l.includes('tw')) s+=100;
@@ -662,7 +651,7 @@ function loadVoices(){
   sel.value=String(idx); pickedVoice=zh[idx];
   sel.onchange=()=>{ pickedVoice=zh[Number(sel.value)]||null;
     if(pickedVoice) localStorage.setItem('zk-voice',pickedVoice.name);
-    sel.blur(); speak('你好'); };
+    sel.blur(); speak('雿末'); };
 }
 function speak(text,rate){
   if(!soundOn || !text || !('speechSynthesis' in window)) return;
@@ -693,14 +682,14 @@ const buzz =()=>tone(160,.15,'square',.05);
 const click=()=>tone(520,.05,'triangle',.06);
 
 /* ================================================================
-   第 3 部分：注音 → 拼音 轉換
+   蝚?3 ?典?嚗釣?????潮 頧?
 ================================================================ */
 function applyToneMark(base,t){
-  if(!t || t===5 || base.includes('ê')) return base;
+  if(!t || t===5 || base.includes('礙')) return base;
   let idx=-1;
   for(const ch of ['a','e']){ const i=base.indexOf(ch); if(i>-1){idx=i;break;} }
   if(idx<0){ const i=base.indexOf('o'); if(i>-1) idx=i; }
-  if(idx<0){ for(let i=base.length-1;i>=0;i--){ if('iuü'.includes(base[i])){idx=i;break;} } }
+  if(idx<0){ for(let i=base.length-1;i>=0;i--){ if('iu羹'.includes(base[i])){idx=i;break;} } }
   if(idx<0) return base;
   const row=TONED[base[idx]];
   return row? base.slice(0,idx)+row[t]+base.slice(idx+1) : base;
@@ -714,14 +703,14 @@ function toPinyin(syms,t){
     if(!initial) return '';
     const ip=INITIALS[initial];
     if(['zh','ch','sh','r','z','c','s'].includes(ip)) base=ip+'i';
-    else return ip; // 只有聲母，還不成音節
+    else return ip; // ?芣??脫?嚗?銝??喟?
   }else{
     const f=FINALS[finalStr];
-    if(!f) return '？';
+    if(!f) return '嚗?;
     if(!initial) base=f[0];
     else{
       let ff=f[1]; const ip=INITIALS[initial];
-      if(['j','q','x'].includes(ip)) ff=ff.replace('ü','u');
+      if(['j','q','x'].includes(ip)) ff=ff.replace('羹','u');
       base=ip+ff;
     }
   }
@@ -729,8 +718,7 @@ function toPinyin(syms,t){
 }
 
 /* ================================================================
-   第 4 部分：虛擬鍵盤（畫出來 + 點擊）
-================================================================ */
+   蝚?4 ?典?嚗??祇?歹??怠靘?+ 暺?嚗?================================================================ */
 const ROWS=[
   ['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'],
   ['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP'],
@@ -754,8 +742,8 @@ function keyHTML(code){
 function buildKeyboard(el){
   el.classList.add('keyboard');
   const spaceLabel = window.matchMedia('(max-width:720px)').matches
-    ? '空白鍵＝一聲'
-    : '空白鍵＝一聲（完成這個字）';
+    ? '蝛箇?蛛?銝??
+    : '蝛箇?蛛?銝?莎?摰???嚗?;
   el.innerHTML =
     ROWS.map((r,i)=>`<div class="krow r${i}">`+r.map(keyHTML).join('')+'</div>').join('') +
     `<div class="krow rs"><div class="key space cat-t" data-code="Space"><span class="kz">${spaceLabel}</span></div></div>`;
@@ -772,19 +760,18 @@ function flashKey(el,code,cls,ms){
 }
 
 /* ================================================================
-   第 5 部分：分頁一（對照表）
-================================================================ */
+   蝚?5 ?典?嚗???嚗??扯”嚗?================================================================ */
 function cardHTML(s){
   const isTone=s.group==='tone';
   const cat={initial:'i',medial:'m',final:'f',tone:'t'}[s.group];
-  const big=isTone?(s.mark||'ˉ'):s.z;
-  const pin=s.pAlt?`${s.p}・${s.pAlt}`:s.p;
+  const big=isTone?(s.mark||'?'):s.z;
+  const pin=s.pAlt?`${s.p}??{s.pAlt}`:s.p;
   return `<div class="card cat-${cat}" data-tts="${s.tts}">
-    <span class="spk">🔊</span>
+    <span class="spk">??</span>
     <div class="cz">${big}</div>
-    <div class="cp">${isTone? s.name+'　'+s.p : pin}</div>
+    <div class="cp">${isTone? s.name+'?'+s.p : pin}</div>
     <kbd class="ck">${s.key}</kbd>
-    <div class="cex" data-w="${s.exW}">例：${s.exW}〔${s.exZ}〕${s.exP}</div>
+    <div class="cex" data-w="${s.exW}">靘?${s.exW}??{s.exZ}??{s.exP}</div>
   </div>`;
 }
 function buildChart(){
@@ -792,11 +779,11 @@ function buildChart(){
   let html='';
   for(const c of COLUMNS){
     html+=`<div class="colsec">
-      <div class="colhead"><h3>${c.t}</h3><span class="ckeys">鍵位：${c.keys}</span><span class="ccat">${c.cat}${c.note?'・'+c.note:''}</span></div>
+      <div class="colhead"><h3>${c.t}</h3><span class="ckeys">?萎?嚗?{c.keys}</span><span class="ccat">${c.cat}${c.note?'??+c.note:''}</span></div>
       <div class="cards">${c.zs.map(z=>cardHTML(Z2SYM[z])).join('')}</div></div>`;
   }
   html+=`<div class="colsec">
-    <div class="colhead"><h3>聲調</h3><span class="ckeys">鍵位：空白鍵・6・3・4・7</span><span class="ccat">一聲不標記（用 ㄇㄚ 示範：媽麻馬罵嗎）</span></div>
+    <div class="colhead"><h3>?脰矽</h3><span class="ckeys">?萎?嚗征?賡????????</span><span class="ccat">銝?脖?璅?嚗 ?? 蝷箇?嚗直暻駁收蝵萄?嚗?/span></div>
     <div class="cards">${TONES.map(cardHTML).join('')}</div></div>`;
   box.innerHTML=html;
   box.addEventListener('click',ev=>{
@@ -811,41 +798,41 @@ function buildChart(){
 }
 
 /* ================================================================
-   第 6 部分：分頁二（打字練習）
+   蝚?6 ?典?嚗???嚗?摮毀蝧?
 ================================================================ */
 const typing={buf:[],line:[],ti:0,progress:0,hint:localStorage.getItem('zk-hint')!=='0',warned:false};
 const lineEl=()=>document.getElementById('line');
 
 function sylZhuyin(syms,t){
   const tn=TONES[t-1];
-  return (t===5?'˙':'')+syms.join('')+((t>=2&&t<=4)?tn.mark:'');
+  return (t===5?'?':'')+syms.join('')+((t>=2&&t<=4)?tn.mark:'');
 }
 function renderLine(){
   const chips=typing.line.map(s=>
     `<div class="syl"><div class="sz">${sylZhuyin(s.syms,s.tone)}</div><div class="sp">${s.py||'&nbsp;'}</div></div>`).join('');
   const cur=typing.buf.length?
-    `<div class="syl building"><div class="sz">${typing.buf.join('')}</div><div class="sp">再按聲調鍵…</div></div>`:'';
+    `<div class="syl building"><div class="sz">${typing.buf.join('')}</div><div class="sp">???脰矽?菊?/div></div>`:'';
   const el=lineEl();
-  el.innerHTML=(chips+cur)||`<div class="line-empty">直接敲鍵盤打打看：<kbd>S</kbd>（ㄋ）→ <kbd>U</kbd>（ㄧ）→ <kbd>3</kbd>（ˇ）就打出「ㄋㄧˇ＝nǐ 你」</div>`;
+  el.innerHTML=(chips+cur)||`<div class="line-empty">?湔?脤?斗???嚗?kbd>S</kbd>嚗?嚗? <kbd>U</kbd>嚗嚗? <kbd>3</kbd>嚗?撠望??箝??弄?n? 雿?/div>`;
   el.scrollLeft=el.scrollWidth;
 }
 function sylHintHTML(s,ok){
   const parts=s.k.map(z=>`<span class="hz">${z}${typing.hint?`<kbd>${Z2SYM[z].key}</kbd>`:''}</span>`).join('');
   const tn=TONES[s.t-1];
-  const tmark=tn.mark||'ˉ';
+  const tmark=tn.mark||'?';
   return `<span class="hsyl${ok?' ok':''}">${parts}<span class="hz ht">${tmark}${typing.hint?`<kbd>${tn.key}</kbd>`:''}</span></span>`;
 }
 function renderTarget(done){
   const t=WORDS[typing.ti];
   document.getElementById('target').innerHTML=`<div class="tg${done?' done':''}">
-    <div class="tg-label">跟 著 打</div>
-    <div class="tg-word" id="tgWord" title="點我聽發音">${t.w}</div>
+    <div class="tg-label">頝?????/div>
+    <div class="tg-word" id="tgWord" title="暺??賜??>${t.w}</div>
     <div class="tg-syls">${t.s.map((s,i)=>sylHintHTML(s,i<typing.progress)).join('')}</div>
     <div class="tg-btns">
-      <button id="tgSpeak">🔊 唸一次</button>
-      <button id="tgNext">換一個 ▸</button>
-      <button id="tgHint">${typing.hint?'隱藏':'顯示'}按鍵提示</button>
-      <button id="tgClear">清空打字區</button>
+      <button id="tgSpeak">?? ?訾?甈?/button>
+      <button id="tgNext">??????/button>
+      <button id="tgHint">${typing.hint?'?梯?':'憿舐內'}??內</button>
+      <button id="tgClear">皜征???</button>
     </div></div>`;
   document.getElementById('tgWord').onclick=()=>speak(t.w);
   document.getElementById('tgSpeak').onclick=e=>{speak(t.w);e.target.blur();};
@@ -879,7 +866,7 @@ function typeSym(sym){
     if(!typing.buf.length){
       const el=lineEl(); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
       buzz();
-      if(!typing.warned){ toast('先按注音符號，最後才按聲調鍵（空白＝一聲）'); typing.warned=true; }
+      if(!typing.warned){ toast('??瘜券蝚西?嚗?敺??隤輸嚗征?踝?銝?莎?'); typing.warned=true; }
       return;
     }
     const syl={syms:typing.buf.slice(),tone:sym.t,
@@ -891,7 +878,7 @@ function typeSym(sym){
     const t=WORDS[typing.ti];
     if(typing.progress===t.s.length){
       renderTarget(true);
-      toast('🎉 太棒了！打出「'+t.w+'」');
+      toast('?? 憭芣?鈭????+t.w+'??);
       speak(t.w);
       setTimeout(nextWord,1600);
     }else{
@@ -901,7 +888,7 @@ function typeSym(sym){
   }else{
     if(typing.buf.length>=3){
       const el=lineEl(); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
-      buzz(); toast('這個字夠長了，先按聲調鍵完成它（空白＝一聲）');
+      buzz(); toast('??憭鈭????脰矽?萄???嚗征?踝?銝?莎?');
       return;
     }
     typing.buf.push(sym.z);
@@ -910,19 +897,19 @@ function typeSym(sym){
   }
 }
 
-// 把打字區的內容整句唸出來：每個音節查 SYL_CHARS 找同音字；查不到就退回唸注音原文
+// ??摮??摰寞?亙?箔?嚗??蝭??SYL_CHARS ?曉??喳?嚗銝撠梢?瘜券??
 function speakLine(slow){
-  if(!typing.line.length){ toast('打字區還是空的，先打幾個字吧'); return; }
+  if(!typing.line.length){ toast('????蝛箇?嚗??嗾????); return; }
   const parts=typing.line.map(s=>{
     const entry=SYL_CHARS[s.base];
     const ch=entry? entry[s.tone-1] : null;
-    return (ch && ch!=='○')? ch : sylZhuyin(s.syms,s.tone);
+    return (ch && ch!=='??)? ch : sylZhuyin(s.syms,s.tone);
   });
-  speak(slow? parts.join('，') : parts.join(''), slow? 0.55 : 0.8);
+  speak(slow? parts.join('嚗?) : parts.join(''), slow? 0.55 : 0.8);
 }
 
 /* ================================================================
-   第 7 部分：分頁三（鍵位測驗）
+   蝚?7 ?典?嚗???嚗雿葫撽?
 ================================================================ */
 const drill={mode:'z2k',scope:'all',cur:null,last:null,score:0,att:0,streak:0,
              best:Number(localStorage.getItem('zk-best')||0),misses:0};
@@ -935,7 +922,7 @@ function drillPool(){
 function drillStats(){
   document.getElementById('dScore').textContent=drill.score;
   document.getElementById('dAtt').textContent=drill.att;
-  document.getElementById('dAcc').textContent=drill.att?Math.round(drill.score/drill.att*100)+'%':'–';
+  document.getElementById('dAcc').textContent=drill.att?Math.round(drill.score/drill.att*100)+'%':'??;
   document.getElementById('dStreak').textContent=drill.streak;
   document.getElementById('dBest').textContent=drill.best;
 }
@@ -943,17 +930,17 @@ function renderPrompt(){
   const c=drill.cur, el=document.getElementById('dPrompt');
   if(!c){ el.innerHTML=''; return; }
   if(drill.mode==='listen'){
-    el.innerHTML=`<button class="dplay" id="dPlay" title="再聽一次">🔊</button><div class="dsub">聽發音，按出對應的鍵（可再點喇叭重聽）</div>`;
+    el.innerHTML=`<button class="dplay" id="dPlay" title="?銝甈?>??</button><div class="dsub">?賜?喉??撠??嚗????嚗?/div>`;
     document.getElementById('dPlay').onclick=e=>{speak(c.tts);e.target.blur();};
     return;
   }
   if(c.group==='tone'){
-    const big=drill.mode==='p2k'?c.p:(c.mark||'一聲');
-    const sub=drill.mode==='p2k'?'這是聲調（用 a 示範），按出對應聲調鍵':c.name+(c.t===1?'（注音不標記）':'');
+    const big=drill.mode==='p2k'?c.p:(c.mark||'銝??);
+    const sub=drill.mode==='p2k'?'??脰矽嚗 a 蝷箇?嚗??撠??脰矽??:c.name+(c.t===1?'嚗釣?喃?璅?嚗?:'');
     el.innerHTML=`<div class="dbig">${big}</div><div class="dsub">${sub}</div>`;
   }else{
-    const big=drill.mode==='p2k'?(c.pAlt?`${c.p}・${c.pAlt}`:c.p):c.z;
-    const sub=drill.mode==='p2k'?'這是拼音，按出對應注音的鍵':'按出這個注音符號的鍵';
+    const big=drill.mode==='p2k'?(c.pAlt?`${c.p}??{c.pAlt}`:c.p):c.z;
+    const sub=drill.mode==='p2k'?'??潮嚗??箏??釣?喟???:'??釣?喟泵????;
     el.innerHTML=`<div class="dbig">${big}</div><div class="dsub">${sub}</div>`;
   }
 }
@@ -998,14 +985,13 @@ function drillReset(){
 }
 
 /* ================================================================
-   第 8 部分：按鍵路由 + 分頁切換 + 啟動
+   蝚?8 ?典?嚗??菔楝??+ ???? + ??
 ================================================================ */
 const state={tab:'chart'};
 const KB={};
 
 function handleCode(code){
-  // 特殊鍵
-  if(state.tab==='type'){
+  // ?寞???  if(state.tab==='type'){
     if(code==='Backspace'){
       if(typing.buf.length) typing.buf.pop();
       else typing.line.pop();
@@ -1038,7 +1024,7 @@ document.addEventListener('keydown',e=>{
   if(e.isComposing||e.keyCode===229){
     const w=document.getElementById('imeWarn');
     if(w){ w.classList.add('urgent'); }
-    toast('⚠ 偵測到中文輸入法，請按 Win＋空白鍵 切到英文輸入法再練習');
+    toast('???菜葫?唬葉?撓?交?嚗???Win嚗征?賡 ??望?頛詨瘜?蝺渡?');
     return;
   }
   if(handleCode(e.code)) e.preventDefault();
@@ -1078,12 +1064,12 @@ function init(){
   });
 
   const sb=document.getElementById('soundBtn');
-  const paint=()=>{sb.textContent=soundOn?'🔊 音效開':'🔇 音效關';};
+  const paint=()=>{sb.textContent=soundOn?'?? ?單???:'?? ?單???;};
   paint();
   sb.addEventListener('click',()=>{
     soundOn=!soundOn; localStorage.setItem('zk-sound',soundOn?'1':'0');
     paint(); sb.blur();
-    if(soundOn) speak('你好');
+    if(soundOn) speak('雿末');
     else if('speechSynthesis' in window) speechSynthesis.cancel();
   });
 

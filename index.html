@@ -341,7 +341,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   <div class="hcontrols">
     <span id="voiceWarn">找不到中文语音，建议用 Edge（Windows 内建）开启</span>
     <button class="iconbtn" id="soundBtn" title="音效开关">🔊 音效开</button>
-    <span id="audioStatus" class="iconbtn" title="自定义按键录音载入进度（有档才播录音，没有则用系统语音）">录音 0/42</span>
+    <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键单音 + 打字练习整词">键 0/42 · 词 0/45</span>
     <select id="voiceSel" title="选择发音语音（整词朗读用）"></select>
   </div>
 </header>
@@ -449,7 +449,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。按键可改用你自己的录音（见 audio/keys/录音说明.txt）；整词仍用系统语音。手机浏览器也可直接打开练习。</footer>
+<footer>本页为单一 HTML 档，离线可用。按键录音见 audio/keys/；练习整词录音见 audio/words/。缺档则用系统语音。手机也可打开练习。</footer>
 
 <script>
 'use strict';
@@ -741,12 +741,12 @@ function allKeyAudioIds(){
 function updateAudioStatus(){
   const el=document.getElementById('audioStatus');
   if(!el) return;
-  const ids=allKeyAudioIds();
-  const n=ids.filter(id=>keyAudioOk[id]).length;
-  el.textContent='录音 '+n+'/'+ids.length;
-  el.title = n
-    ? ('已载入 '+n+' 个按键录音；未录的键仍用系统语音。整词朗读仍用右上角选择的系统语音。')
-    : '尚未侦测到录音档。请把 mp3 放到 audio/keys/（见录音说明.txt）';
+  const kids=allKeyAudioIds();
+  const kn=kids.filter(id=>keyAudioOk[id]).length;
+  const words=WORDS.map(x=>x.w);
+  const wn=words.filter(w=>wordAudioOk[w]).length;
+  el.textContent='键 '+kn+'/'+kids.length+' · 词 '+wn+'/'+words.length;
+  el.title='按键单音 '+kn+'/'+kids.length+'（audio/keys/）；练习整词 '+wn+'/'+words.length+'（audio/words/）。缺档则用系统语音。';
 }
 function preloadKeyAudio(){
   const ids=allKeyAudioIds();
@@ -757,7 +757,6 @@ function preloadKeyAudio(){
     keyAudioOk[id]=false;
     a.addEventListener('canplaythrough',()=>{ keyAudioOk[id]=true; updateAudioStatus(); },{once:true});
     a.addEventListener('error',()=>{ keyAudioOk[id]=false; updateAudioStatus(); },{once:true});
-    // 触发载入
     try{ a.load(); }catch(e){}
   });
   updateAudioStatus();
@@ -780,6 +779,41 @@ function speakKey(sym){
   const id=audioIdFor(sym);
   if(id && playKeyFile(id)) return;
   speak(sym.tts);
+}
+
+/* ---- 打字练习整词录音 ---- */
+const WORD_AUDIO_BASE='audio/words/';
+const wordAudioCache={};
+const wordAudioOk={};
+function preloadWordAudio(){
+  WORDS.forEach(({w})=>{
+    const a=new Audio(WORD_AUDIO_BASE+w+'.mp3');
+    a.preload='auto';
+    wordAudioCache[w]=a;
+    wordAudioOk[w]=false;
+    a.addEventListener('canplaythrough',()=>{ wordAudioOk[w]=true; updateAudioStatus(); },{once:true});
+    a.addEventListener('error',()=>{ wordAudioOk[w]=false; updateAudioStatus(); },{once:true});
+    try{ a.load(); }catch(e){}
+  });
+  updateAudioStatus();
+}
+function playWordFile(w){
+  const a=wordAudioCache[w];
+  if(!a || !wordAudioOk[w]) return false;
+  try{
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+    a.pause();
+    a.currentTime=0;
+    const p=a.play();
+    if(p && p.catch) p.catch(()=>{});
+    return true;
+  }catch(e){ return false; }
+}
+/** 整词发音：若该词在练习清单且已录音则播录音，否则系统 TTS */
+function speakWord(text,rate){
+  if(!soundOn || !text) return;
+  if(wordAudioOk[text] && playWordFile(text)) return;
+  speak(text, rate);
 }
 
 let actx=null;
@@ -999,8 +1033,8 @@ function renderTarget(done, praise){
       <button id="tgHint">${typing.hint?'隐藏':'显示'}按键提示</button>
       <button id="tgClear">清空打字区</button>
     </div></div>`;
-  document.getElementById('tgWord').onclick=()=>speak(t.w);
-  document.getElementById('tgSpeak').onclick=e=>{speak(t.w);e.target.blur();};
+  document.getElementById('tgWord').onclick=()=>speakWord(t.w);
+  document.getElementById('tgSpeak').onclick=e=>{speakWord(t.w);e.target.blur();};
   document.getElementById('tgNext').onclick=e=>{nextWord();e.target.blur();};
   document.getElementById('tgHint').onclick=e=>{
     typing.hint=!typing.hint; localStorage.setItem('zk-hint',typing.hint?'1':'0');
@@ -1049,7 +1083,7 @@ function typeSym(sym){
       renderTarget(true, praise);
       toast(praise);
       ding();
-      speak(t.w);
+      speakWord(t.w);
       setTimeout(()=>{ clearTyping(); renderLine(); nextWord(); }, 2200);
     }else{
       if(typing.progress>prev && typing.progress>0) speak(t.w[typing.progress-1]);
@@ -1228,6 +1262,7 @@ function init(){
 
   buildChart();
   preloadKeyAudio();
+  preloadWordAudio();
   rebuildQueue(false);
   const tOrder=document.getElementById('tOrder');
   tOrder.value=typing.order;
