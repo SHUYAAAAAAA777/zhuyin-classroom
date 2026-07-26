@@ -219,12 +219,109 @@ kbd{
 #toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
 
 footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(--mut); text-align:center}
+.mobile-only{display:none}
 
-@media (max-width:920px){ :root{--kw:46px; --kh:48px}
-  .key .kz{font-size:17px} .dbig{font-size:60px} .card{width:128px} }
-@media (max-width:660px){ :root{--kw:34px; --kh:42px}
-  .key .kz{font-size:13px} .key .kp{display:none} .key .kq{font-size:8px; top:2px; left:3px}
-  .card{width:44%} header h1{font-size:18px} .tg-word{font-size:26px} }
+/* ========== 平板 ========== */
+@media (max-width:920px){
+  :root{--kw:46px; --kh:48px}
+  .key .kz{font-size:17px}
+  .dbig{font-size:60px}
+  .card{width:128px}
+}
+
+/* ========== 手機：整頁自適配，鍵盤不超出螢幕 ========== */
+@media (max-width:720px){
+  :root{
+    --kb-gap:3px;
+    --kb-pad:6px;
+    /* 最上排 12 顆鍵，依螢幕寬度自動縮放，避免左右按不到 */
+    --kw:calc((100vw - 28px - 2 * var(--kb-pad) - 11 * var(--kb-gap)) / 12);
+    --kh:max(44px, calc(var(--kw) * 1.25));
+  }
+  body{padding-bottom:24px; overflow-x:hidden}
+  main,header,.tabs,footer{
+    width:100%;
+    max-width:100%;
+    padding-left:10px;
+    padding-right:10px;
+    box-sizing:border-box;
+  }
+  header{margin:10px auto 6px; gap:10px}
+  header h1{font-size:18px}
+  header .sub{font-size:12px}
+  .logo{width:46px; height:46px; border-radius:12px}
+  .hcontrols{width:100%; margin-left:0}
+  .hcontrols select{max-width:none; flex:1; min-width:0}
+  .tabs{margin:6px auto 12px; gap:4px; padding:4px}
+  .tabs button{font-size:12.5px; padding:10px 2px; line-height:1.2}
+  .panel{padding:12px; border-radius:14px; margin-bottom:12px}
+  .desc,.kbd-caption{font-size:12px}
+  .mobile-only{display:block}
+  .desktop-only{display:none !important}
+
+  /* 鍵盤：取消桌面版錯落縮排，改置中鋪滿 */
+  .kbwrap{overflow:visible; padding:0; width:100%}
+  .keyboard{
+    width:100%; max-width:100%; margin:0;
+    padding:var(--kb-pad); border-radius:12px;
+    box-sizing:border-box;
+  }
+  .krow{
+    gap:var(--kb-gap);
+    margin-bottom:var(--kb-gap);
+    margin-left:0 !important;
+    justify-content:center;
+  }
+  .key{
+    border-radius:8px;
+    touch-action:manipulation;
+    min-width:0;
+  }
+  .key .kq{font-size:7px; top:1px; left:2px}
+  .key .kz{font-size:clamp(12px, 3.6vw, 16px); font-weight:800}
+  .key .kp{display:none}
+  .key.space{width:min(calc(100% - 8px), calc(var(--kw) * 9)); max-width:100%}
+  .key.space .kz{font-size:12px; white-space:nowrap}
+
+  .card{width:calc(50% - 6px); padding:10px 6px}
+  .card .cz{font-size:28px}
+  .card .cp{font-size:13px}
+  .card .cex{font-size:10.5px}
+  .colhead h3{font-size:15px}
+  .tips{padding:12px 14px}
+  .tips ol{font-size:13px; padding-left:18px}
+
+  .tg{padding:12px}
+  .tg-word{font-size:26px; letter-spacing:3px}
+  .tg-syls{gap:8px}
+  .hsyl{padding:5px 7px}
+  .hz{font-size:16px}
+  .tg-btns button,.line-tools .iconbtn,.iconbtn{
+    min-height:40px; padding:8px 12px; font-size:13px;
+    touch-action:manipulation;
+  }
+  .tg-praise{font-size:15px; padding:8px 10px}
+  .line{min-height:70px; padding:8px; margin-bottom:10px}
+  .syl .sz{font-size:18px}
+  .drill-bar{gap:8px}
+  .drill-bar label{width:100%; justify-content:space-between}
+  .drill-bar select{flex:1; min-height:40px}
+  .dbig{font-size:52px}
+  .dprompt{min-height:120px}
+  .dplay{width:72px; height:72px; font-size:28px}
+  #toast{bottom:18px; font-size:14px; padding:12px 16px}
+  footer{font-size:11.5px; margin-bottom:24px}
+}
+
+@media (max-width:380px){
+  :root{
+    --kb-gap:2px;
+    --kw:calc((100vw - 20px - 2 * var(--kb-pad) - 11 * var(--kb-gap)) / 12);
+    --kh:max(40px, calc(var(--kw) * 1.2));
+  }
+  .tabs button{font-size:11.5px}
+  .key .kz{font-size:clamp(11px, 3.4vw, 14px)}
+}
 </style>
 </head>
 <body>
@@ -255,6 +352,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
     <div class="panel">
       <h2>整個鍵盤長這樣</h2>
       <p class="desc">點螢幕上的鍵、或直接敲你的實體鍵盤，都會發音。注音鍵盤是「一直行一直行」背的：最左邊 <kbd>1</kbd><kbd>Q</kbd><kbd>A</kbd><kbd>Z</kbd> 由上到下就是 ㄅㄆㄇㄈ。</p>
+      <p class="desc mobile-only">手機上請左右看齊點按；鍵位會隨螢幕自動縮小，不必左右狂滑。</p>
       <div class="kbwrap"><div id="kb-chart"></div></div>
       <div class="legend">
         <span><i class="li"></i>聲母（21）</span><span><i class="lm"></i>介音（3）</span>
@@ -286,7 +384,8 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   <!-- ========== 分頁二：打字練習 ========== -->
   <section id="tab-type">
     <div class="panel">
-      <div class="imewarn" id="imeWarn">練習前請先把電腦切到<b>英文輸入法</b>（Windows 按 <kbd>Win</kbd>＋<kbd>空白鍵</kbd> 切換），否則按鍵會被輸入法攔截。</div>
+      <div class="imewarn desktop-only" id="imeWarn">練習前請先把電腦切到<b>英文輸入法</b>（Windows 按 <kbd>Win</kbd>＋<kbd>空白鍵</kbd> 切換），否則按鍵會被輸入法攔截。</div>
+      <div class="imewarn mobile-only">手機請直接點下方虛擬鍵盤練習；空白鍵＝一聲。若要聽發音，請把手機音量打開。</div>
       <div id="target"></div>
       <div id="line" class="line"></div>
       <div class="line-tools">
@@ -335,7 +434,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本頁為單一 HTML 檔，離線可用。發音使用系統內建語音（Edge／Chrome 效果最佳）。</footer>
+<footer>本頁為單一 HTML 檔，離線可用。發音使用系統內建語音（Edge／Chrome 效果最佳）。手機瀏覽器也可直接打開練習。</footer>
 
 <script>
 'use strict';
@@ -654,9 +753,12 @@ function keyHTML(code){
 }
 function buildKeyboard(el){
   el.classList.add('keyboard');
+  const spaceLabel = window.matchMedia('(max-width:720px)').matches
+    ? '空白鍵＝一聲'
+    : '空白鍵＝一聲（完成這個字）';
   el.innerHTML =
     ROWS.map((r,i)=>`<div class="krow r${i}">`+r.map(keyHTML).join('')+'</div>').join('') +
-    `<div class="krow rs"><div class="key space cat-t" data-code="Space"><span class="kz">空白鍵＝一聲（完成這個字）</span></div></div>`;
+    `<div class="krow rs"><div class="key space cat-t" data-code="Space"><span class="kz">${spaceLabel}</span></div></div>`;
   el.addEventListener('click',ev=>{
     const k=ev.target.closest('.key[data-code]');
     if(k) handleCode(k.dataset.code);
