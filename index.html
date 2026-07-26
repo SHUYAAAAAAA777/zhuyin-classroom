@@ -287,6 +287,14 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   <section id="tab-type">
     <div class="panel">
       <div class="imewarn" id="imeWarn">练习前请先切到<b>英文输入</b>（搜狗／QQ 输入法按 <kbd>Shift</kbd>，或按 <kbd>Win</kbd>＋<kbd>空白键</kbd> 换输入法），否则按键会被输入法拦截。</div>
+      <div class="drill-bar" style="margin-bottom:12px">
+        <label>题目顺序
+          <select id="tOrder">
+            <option value="len">按字数（短 → 长）</option>
+            <option value="random">随机排序</option>
+          </select>
+        </label>
+      </div>
       <div id="target"></div>
       <div id="line" class="line"></div>
       <div class="line-tools">
@@ -477,6 +485,7 @@ const WORDS=[
   {w:'陪伴是最长情的告白',s:[{k:['ㄆ','ㄟ'],t:2},{k:['ㄅ','ㄢ'],t:4},{k:['ㄕ'],t:4},{k:['ㄗ','ㄨ','ㄟ'],t:4},{k:['ㄔ','ㄤ'],t:2},{k:['ㄑ','ㄧ','ㄥ'],t:2},{k:['ㄉ','ㄜ'],t:5},{k:['ㄍ','ㄠ'],t:4},{k:['ㄅ','ㄞ'],t:2}]},
   {w:'惩罚',s:[{k:['ㄔ','ㄥ'],t:2},{k:['ㄈ','ㄚ'],t:2}]},
   {w:'尤物',s:[{k:['ㄧ','ㄡ'],t:2},{k:['ㄨ'],t:4}]},
+  {w:'浪人的',s:[{k:['ㄌ','ㄤ'],t:4},{k:['ㄖ','ㄣ'],t:2},{k:['ㄉ','ㄜ'],t:5}]},
 ];
 
 // 「念出我打的」用：音节（不含声调的拼音）→ 五个声调的同音字（一二三四轻），○＝没有这个音
@@ -743,8 +752,33 @@ function buildChart(){
 /* ================================================================
    第 6 部分：分页二（打字练习）
 ================================================================ */
-const typing={buf:[],line:[],ti:0,progress:0,hint:localStorage.getItem('zk-hint')!=='0',warned:false};
+const typing={
+  buf:[],line:[],qi:0,progress:0,queue:[],
+  order:localStorage.getItem('zk-order')||'len',
+  hint:localStorage.getItem('zk-hint')!=='0',warned:false
+};
 const lineEl=()=>document.getElementById('line');
+
+function rebuildQueue(keepWord){
+  const prev = keepWord && typing.queue.length ? WORDS[typing.queue[typing.qi]] : null;
+  const items = WORDS.map((w,i)=>({i,len:w.w.length}));
+  if(typing.order==='random'){
+    for(let i=items.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [items[i],items[j]]=[items[j],items[i]];
+    }
+  }else{
+    items.sort((a,b)=>a.len-b.len || a.i-b.i);
+  }
+  typing.queue = items.map(x=>x.i);
+  typing.qi = 0;
+  if(prev){
+    const found = typing.queue.indexOf(WORDS.indexOf(prev));
+    if(found>=0) typing.qi = found;
+  }
+  typing.progress = 0;
+}
+function currentWord(){ return WORDS[typing.queue[typing.qi]]; }
 
 function sylZhuyin(syms,t){
   const tn=TONES[t-1];
@@ -766,9 +800,9 @@ function sylHintHTML(s,ok){
   return `<span class="hsyl${ok?' ok':''}">${parts}<span class="hz ht">${tmark}${typing.hint?`<kbd>${tn.key}</kbd>`:''}</span></span>`;
 }
 function renderTarget(done){
-  const t=WORDS[typing.ti];
+  const t=currentWord();
   document.getElementById('target').innerHTML=`<div class="tg${done?' done':''}">
-    <div class="tg-label">跟 着 打</div>
+    <div class="tg-label">跟 着 打 · 第 ${typing.qi+1}／${typing.queue.length} 题</div>
     <div class="tg-word" id="tgWord" title="点我听发音">${t.w}</div>
     <div class="tg-syls">${t.s.map((s,i)=>sylHintHTML(s,i<typing.progress)).join('')}</div>
     <div class="tg-btns">
@@ -787,12 +821,15 @@ function renderTarget(done){
     typing.line=[]; typing.buf=[]; typing.progress=0; renderLine(); renderTarget(); e.target.blur(); };
 }
 function nextWord(){
-  typing.ti=(typing.ti+1)%WORDS.length;
+  typing.qi++;
+  if(typing.qi>=typing.queue.length){
+    rebuildQueue(false);
+  }
   typing.progress=0;
   renderTarget();
 }
 function recomputeProgress(){
-  const t=WORDS[typing.ti]; let p=0;
+  const t=currentWord(); let p=0;
   const L=typing.line;
   for(let n=Math.min(t.s.length,L.length); n>0; n--){
     let ok=true;
@@ -818,7 +855,7 @@ function typeSym(sym){
     click(); renderLine();
     const prev=typing.progress;
     recomputeProgress();
-    const t=WORDS[typing.ti];
+    const t=currentWord();
     if(typing.progress===t.s.length){
       renderTarget(true);
       const praises=[
@@ -1008,6 +1045,17 @@ function init(){
   KB.drill=document.getElementById('kb-drill');
 
   buildChart();
+  rebuildQueue(false);
+  const tOrder=document.getElementById('tOrder');
+  tOrder.value=typing.order;
+  tOrder.addEventListener('change',e=>{
+    typing.order=e.target.value;
+    localStorage.setItem('zk-order',typing.order);
+    rebuildQueue(false);
+    typing.line=[]; typing.buf=[];
+    renderLine(); renderTarget();
+    e.target.blur();
+  });
   renderTarget();
   renderLine();
   drillStats();
