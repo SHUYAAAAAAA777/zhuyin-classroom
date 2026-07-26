@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
 <meta charset="utf-8">
@@ -355,7 +355,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   <div class="hcontrols">
     <span id="voiceWarn">找不到中文语音，建议用 Edge（Windows 内建）开启</span>
     <button class="iconbtn" id="soundBtn" title="音效开关">🔊 音效开</button>
-    <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键 + 整词 + 背诵示范">键 0/42 · 词 0/54 · 诵 0/1</span>
+    <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键 + 整词 + 背诵示范">键 0/42 · 词 0/55 · 诵 0/1</span>
     <select id="voiceSel" title="选择发音语音（整词朗读用）"></select>
   </div>
 </header>
@@ -619,6 +619,7 @@ const WORDS=[
   {w:'好吧',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄅ','ㄚ'],t:5}]},
   {w:'快乐',s:[{k:['ㄎ','ㄨ','ㄞ'],t:4},{k:['ㄌ','ㄜ'],t:4}]},
   {w:'好热',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄖ','ㄜ'],t:4}]},
+  {w:'无所屌谓',s:[{k:['ㄨ'],t:2},{k:['ㄙ','ㄨ','ㄛ'],t:3},{k:['ㄉ','ㄧ','ㄠ'],t:3},{k:['ㄨ','ㄟ'],t:4}]},
 ];
 
 // 「念出我打的」用：音节（不含声调的拼音）→ 五个声调的同音字（一二三四轻），○＝没有这个音
@@ -752,7 +753,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='20260726b'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='20260726c'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
