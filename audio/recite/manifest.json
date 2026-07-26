@@ -1,0 +1,11 @@
+{
+  "format": "mp3",
+  "base": "audio/recite/",
+  "files": [
+    {
+      "file": "背诵示范.mp3",
+      "title": "背诵示范",
+      "desc": "从ㄅ到ㄦ的完整背诵节奏与分段示范"
+    }
+  ]
+}

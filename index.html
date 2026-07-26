@@ -128,6 +128,20 @@ kbd{
   border:1px solid #fde68a; border-radius:10px; padding:8px 10px; margin-bottom:14px;
 }
 .imewarn.urgent{background:#fee2e2; border-color:#fca5a5; color:#b91c1c; font-weight:700}
+.recite-bar{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  margin:0 0 14px; padding:12px 14px;
+  background:#f6f7ff; border:1px solid #e0e3ff; border-radius:12px;
+}
+.recite-btn{
+  border:none; background:var(--acc); color:#fff;
+  font-family:inherit; font-size:15px; font-weight:800;
+  padding:10px 18px; border-radius:10px; cursor:pointer;
+  touch-action:manipulation; box-shadow:0 4px 12px rgba(79,86,232,.28);
+}
+.recite-btn:active{transform:scale(.97)}
+.recite-btn.playing{background:#0ea373}
+.recite-hint{font-size:13px; color:var(--mut)}
 
 /* ========== 对照表 ========== */
 .colsec{margin-bottom:22px}
@@ -341,7 +355,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   <div class="hcontrols">
     <span id="voiceWarn">找不到中文语音，建议用 Edge（Windows 内建）开启</span>
     <button class="iconbtn" id="soundBtn" title="音效开关">🔊 音效开</button>
-    <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键单音 + 打字练习整词">键 0/42 · 词 0/54</span>
+    <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键 + 整词 + 背诵示范">键 0/42 · 词 0/54 · 诵 0/1</span>
     <select id="voiceSel" title="选择发音语音（整词朗读用）"></select>
   </div>
 </header>
@@ -360,6 +374,10 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
       <h2>整个键盘长这样</h2>
       <p class="desc">点萤幕上的键、或直接敲你的实体键盘，都会发音。注音键盘是「一直行一直行」背的：最左边 <kbd>1</kbd><kbd>Q</kbd><kbd>A</kbd><kbd>Z</kbd> 由上到下就是 ㄅㄆㄇㄈ。</p>
       <p class="desc mobile-only">手机上请左右看齐点按；键位会随萤幕自动缩小，不必左右狂滑。</p>
+      <div class="recite-bar">
+        <button type="button" class="recite-btn" id="reciteBtn" title="播放从ㄅ到ㄦ的完整背诵节奏示范">▶ 背诵示范</button>
+        <span class="recite-hint">听阿吹把 ㄅ～ㄦ 一次念完（节奏与分段示范）</span>
+      </div>
       <div class="kbwrap"><div id="kb-chart"></div></div>
       <div class="legend">
         <span><i class="li"></i>声母（21）</span><span><i class="lm"></i>介音（3）</span>
@@ -449,7 +467,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。按键录音见 audio/keys/；练习整词录音见 audio/words/。缺档则用系统语音。手机也可打开练习。</footer>
+<footer>本页为单一 HTML 档，离线可用。按键录音见 audio/keys/；整词见 audio/words/；背诵示范见 audio/recite/。缺档则按键／整词用系统语音。</footer>
 
 <script>
 'use strict';
@@ -754,8 +772,9 @@ function updateAudioStatus(){
   const kn=kids.filter(id=>keyAudioOk[id]).length;
   const words=WORDS.map(x=>x.w);
   const wn=words.filter(w=>wordAudioOk[w]).length;
-  el.textContent='键 '+kn+'/'+kids.length+' · 词 '+wn+'/'+words.length;
-  el.title='按键单音 '+kn+'/'+kids.length+'（audio/keys/）；练习整词 '+wn+'/'+words.length+'（audio/words/）。缺档则用系统语音。';
+  const rn=reciteAudioOk?1:0;
+  el.textContent='键 '+kn+'/'+kids.length+' · 词 '+wn+'/'+words.length+' · 诵 '+rn+'/1';
+  el.title='按键 '+kn+'/'+kids.length+'（audio/keys/）；整词 '+wn+'/'+words.length+'（audio/words/）；背诵示范 '+rn+'/1（audio/recite/）。缺档则按键／整词用系统语音，背诵需先录音。';
 }
 function preloadKeyAudio(){
   const ids=allKeyAudioIds();
@@ -823,6 +842,55 @@ function speakWord(text,rate){
   if(!soundOn || !text) return;
   if(wordAudioOk[text] && playWordFile(text)) return;
   speak(text, rate);
+}
+
+/* ---- 背诵示范（ㄅ～ㄦ 一整段录音） ---- */
+const RECITE_AUDIO_URL='audio/recite/背诵示范.mp3';
+let reciteAudio=null, reciteAudioOk=false;
+function preloadReciteAudio(){
+  const a=new Audio(RECITE_AUDIO_URL);
+  a.preload='auto';
+  reciteAudio=a;
+  reciteAudioOk=false;
+  a.addEventListener('canplaythrough',()=>{ reciteAudioOk=true; updateAudioStatus(); paintReciteBtn(); },{once:true});
+  a.addEventListener('error',()=>{ reciteAudioOk=false; updateAudioStatus(); paintReciteBtn(); },{once:true});
+  a.addEventListener('ended',()=>{ paintReciteBtn(false); });
+  try{ a.load(); }catch(e){}
+  updateAudioStatus();
+  paintReciteBtn();
+}
+function paintReciteBtn(playing){
+  const btn=document.getElementById('reciteBtn');
+  if(!btn) return;
+  const isPlaying = playing===true || (reciteAudio && !reciteAudio.paused && !reciteAudio.ended);
+  btn.classList.toggle('playing', !!isPlaying);
+  if(isPlaying) btn.textContent='■ 停止播放';
+  else btn.textContent='▶ 背诵示范';
+}
+function toggleReciteDemo(){
+  if(!soundOn){ toast('请先打开右上角音效'); return; }
+  if(!reciteAudioOk || !reciteAudio){
+    toast('还没有背诵示范录音，请把「背诵示范.mp3」放到 audio/recite/');
+    return;
+  }
+  try{
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+    if(!reciteAudio.paused && !reciteAudio.ended){
+      reciteAudio.pause();
+      reciteAudio.currentTime=0;
+      paintReciteBtn(false);
+      return;
+    }
+    // 停掉其他自定义音档
+    Object.values(keyAudioCache).forEach(a=>{ try{a.pause();}catch(e){} });
+    Object.values(wordAudioCache).forEach(a=>{ try{a.pause();}catch(e){} });
+    reciteAudio.currentTime=0;
+    const p=reciteAudio.play();
+    if(p && p.catch) p.catch(()=>toast('无法播放背诵示范，请检查音档'));
+    paintReciteBtn(true);
+  }catch(e){
+    toast('无法播放背诵示范');
+  }
 }
 
 let actx=null;
@@ -1272,6 +1340,9 @@ function init(){
   buildChart();
   preloadKeyAudio();
   preloadWordAudio();
+  preloadReciteAudio();
+  const reciteBtn=document.getElementById('reciteBtn');
+  if(reciteBtn) reciteBtn.addEventListener('click',e=>{ toggleReciteDemo(); e.target.blur(); });
   rebuildQueue(false);
   const tOrder=document.getElementById('tOrder');
   tOrder.value=typing.order;
