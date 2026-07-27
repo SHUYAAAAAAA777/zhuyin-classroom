@@ -237,6 +237,11 @@ kbd{
   background:#4f56e8; color:#fff; font-size:18px; font-weight:800;
   animation:pop .2s;
 }
+.tg-praise.special{
+  background:linear-gradient(135deg,#e11d48,#f97316);
+  font-size:17px; line-height:1.45; padding:14px 16px;
+  box-shadow:0 6px 18px rgba(225,29,72,.35);
+}
 
 footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(--mut); text-align:center}
 .mobile-only{display:none}
@@ -756,7 +761,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='20260728a'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='20260728b'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1075,10 +1080,15 @@ const PRAISES=[
   '不要再对了！要爱了要爱了！',
   '可恶呀！你实在是踏棒惹！比心～'
 ];
+// 特定词打对时的指定称赞（其他词仍随机）
+const SPECIAL_PRAISE={
+  '无所屌谓':'遇见你，我再也不是什么都无所屌谓的人了！'
+};
 function pickPraise(word){
-  if(word==='无所屌谓') return '遇见你，我再也不是什么都无所屌谓的人。';
+  if(word && SPECIAL_PRAISE[word]) return SPECIAL_PRAISE[word];
   return PRAISES[Math.floor(Math.random()*PRAISES.length)];
 }
+function isSpecialWord(word){ return !!(word && SPECIAL_PRAISE[word]); }
 
 function sylZhuyin(syms,t){
   const tn=TONES[t-1];
@@ -1112,7 +1122,7 @@ function renderTarget(done, praise){
     <div class="tg-label">跟 着 打 · 第 ${typing.qi+1}／${typing.queue.length} 题</div>
     <div class="tg-word" id="tgWord" title="点我听发音">${t.w}</div>
     <div class="tg-syls">${t.s.map((s,i)=>sylHintHTML(s,i<typing.progress)).join('')}</div>
-    ${done && praise ? `<div class="tg-praise">${praise}</div>` : ''}
+    ${done && praise ? `<div class="tg-praise${isSpecialWord(t.w)?' special':''}">${praise}</div>` : ''}
     <div class="tg-btns">
       <button id="tgSpeak">🔊 念一次</button>
       <button id="tgNext">换一个 ▸</button>
@@ -1166,11 +1176,13 @@ function typeSym(sym){
     const t=currentWord();
     if(t && typing.progress===t.s.length){
       const praise=pickPraise(t.w);
+      const special=isSpecialWord(t.w);
       renderTarget(true, praise);
       toast(praise);
       ding();
       speakWord(t.w);
-      setTimeout(()=>{ clearTyping(); renderLine(); nextWord(); }, 2200);
+      // 指定称赞多留一会儿，避免一闪就换题
+      setTimeout(()=>{ clearTyping(); renderLine(); nextWord(); }, special? 5600 : 2200);
     }else{
       if(typing.progress>prev && typing.progress>0) speak(t.w[typing.progress-1]);
       renderTarget();
@@ -1327,7 +1339,8 @@ function toast(msg){
   if(!el) return;
   el.textContent=msg; el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove('show'), 2800);
+  const hold = (msg && msg.indexOf('无所屌谓的人')>=0) ? 5200 : 2800;
+  toastTimer=setTimeout(()=>el.classList.remove('show'), hold);
 }
 
 function switchTab(name){
