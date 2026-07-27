@@ -19,11 +19,12 @@
   --ink:#3a2f28;
   --mut:#9a8878;
   --line:#e2d5c6;
-  --ci:#8b6548;  /* 声母 深茶 */
-  --cm:#b08968;  /* 介音 焦糖 */
-  --cf:#6a4f3d;  /* 韵母 焙茶 */
-  --ct:#c49a6c;  /* 声调 蜜茶 */
-  --acc:#8a6245; /* 主色 暖茶 */
+  /* 分类色保持原配色，键盘上要一眼分清 */
+  --ci:#2f6df6;  /* 声母 蓝 */
+  --cm:#8b5cf6;  /* 介音 紫 */
+  --cf:#0ea373;  /* 韵母 绿 */
+  --ct:#e08a00;  /* 声调 橙 */
+  --acc:#8a6245; /* 主色 暖茶（界面） */
   --acc-soft:#c4a484;
   --glow:rgba(138,98,69,.28);
   --kw:58px; --kh:56px;
@@ -106,9 +107,9 @@ kbd{
   font-family:Consolas,ui-monospace,monospace; color:#6b5a4a;
 }
 
-/* ========== 虚拟键盘 ========== */
+/* ========== 虚拟键盘（分类色用原配色，白底键面更清楚） ========== */
 .kbwrap{overflow-x:auto; padding-bottom:4px}
-.keyboard{width:max-content; margin:0 auto; padding:14px; background:rgba(233,223,211,.75); border-radius:16px; border:1px solid rgba(138,98,69,.06)}
+.keyboard{width:max-content; margin:0 auto; padding:14px; background:#edebe4; border-radius:16px}
 .krow{display:flex; gap:6px; margin-bottom:6px}
 .krow.r1{margin-left:calc(var(--kw)*.35)}
 .krow.r2{margin-left:calc(var(--kw)*.62)}
@@ -116,15 +117,14 @@ kbd{
 .krow.rs{justify-content:center; margin-bottom:0}
 .key{
   width:var(--kw); height:var(--kh); border-radius:10px; position:relative;
-  background:linear-gradient(180deg,#fffefb,#f7f0e8);
-  box-shadow:0 2px 0 #d4c4b2;
+  background:#fff; box-shadow:0 2px 0 #d8d5cc;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   cursor:pointer; user-select:none; transition:transform .05s, background .15s;
-  border-top:3px solid #d4c4b2;
+  border-top:3px solid #d8d5cc;
 }
-.key:active,.key.active{transform:translateY(2px); box-shadow:0 0 0 #d4c4b2}
-.key .kq{position:absolute; top:3px; left:6px; font-size:10px; color:#b8a794; font-family:Consolas,monospace}
-.key .kz{font-size:21px; font-weight:700; line-height:1.1; color:#3a2f28}
+.key:active,.key.active{transform:translateY(2px); box-shadow:0 0 0 #d8d5cc}
+.key .kq{position:absolute; top:3px; left:6px; font-size:10px; color:#b6b3aa; font-family:Consolas,monospace}
+.key .kz{font-size:21px; font-weight:700; line-height:1.1; color:#26282f}
 .key .kp{font-size:10px; line-height:1; margin-top:1px}
 .key.cat-i{border-top-color:var(--ci)} .key.cat-i .kp{color:var(--ci)}
 .key.cat-m{border-top-color:var(--cm)} .key.cat-m .kp{color:var(--cm)}
@@ -132,17 +132,17 @@ kbd{
 .key.cat-t{border-top-color:var(--ct)} .key.cat-t .kp{color:var(--ct)}
 .key.ghost{opacity:.28; pointer-events:none}
 .key.space{width:calc(var(--kw)*6.2)}
-.key.space .kz{font-size:13.5px; font-weight:500; color:#8a6d4a}
-.key.good{background:#e8f0e4}
-.key.bad{background:#f5e4e0; animation:shake .3s}
-.key.hintkey{outline:3px solid var(--acc); animation:pulse 1s infinite}
+.key.space .kz{font-size:13.5px; font-weight:500; color:#8a6d1f}
+.key.good{background:#d1fae5}
+.key.bad{background:#fee2e2; animation:shake .3s}
+.key.hintkey{outline:3px solid var(--ci); animation:pulse 1s infinite}
 .keyboard.blind .key:not(.space) .kz,
 .keyboard.blind .key:not(.space) .kp{opacity:0}
 .keyboard.blind .key.hintkey .kz,
 .keyboard.blind .key.hintkey .kp,
 .keyboard.blind .key.good .kz,
 .keyboard.blind .key.good .kp{opacity:1}
-@keyframes pulse{0%,100%{outline-color:var(--acc)}50%{outline-color:transparent}}
+@keyframes pulse{0%,100%{outline-color:var(--ci)}50%{outline-color:transparent}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .legend{display:flex; gap:14px; justify-content:center; font-size:12px; color:var(--mut); margin-top:10px; flex-wrap:wrap}
 .legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:4px; vertical-align:-1px}
@@ -499,7 +499,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。按键／整词／背诵录音见 audio/ 资料夹。缺档则用系统语音。<br>版本 build-20260728f　若仍看到旧内容请强制刷新（Ctrl+F5）</footer>
+<footer>本页为单一 HTML 档，离线可用。按键／整词／背诵录音见 audio/ 资料夹。缺档则用系统语音。<br>版本 build-20260728g　若仍看到旧内容请强制刷新（Ctrl+F5）</footer>
 
 <script>
 'use strict';
@@ -789,7 +789,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='20260728f'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='20260728g'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
