@@ -355,7 +355,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   <div class="hcontrols">
     <span id="voiceWarn">找不到中文语音，建议用 Edge（Windows 内建）开启</span>
     <button class="iconbtn" id="soundBtn" title="音效开关">🔊 音效开</button>
-    <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键 + 整词 + 背诵示范">键 0/42 · 词 0/55 · 诵 0/1</span>
+    <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键 + 整词 + 背诵示范">键 0/42 · 词 0/58 · 诵 0/1</span>
     <select id="voiceSel" title="选择发音语音（整词朗读用）"></select>
   </div>
 </header>
@@ -580,7 +580,6 @@ const WORDS=[
   {w:'吃鸡',s:[{k:['ㄔ'],t:1},{k:['ㄐ','ㄧ'],t:1}]},
   {w:'趴踢',s:[{k:['ㄆ','ㄚ'],t:1},{k:['ㄊ','ㄧ'],t:1}]},
   {w:'桃桃',s:[{k:['ㄊ','ㄠ'],t:2},{k:['ㄊ','ㄠ'],t:2}]},
-  {w:'舔狗',s:[{k:['ㄊ','ㄧ','ㄢ'],t:3},{k:['ㄍ','ㄡ'],t:3}]},
   {w:'可恶',s:[{k:['ㄎ','ㄜ'],t:3},{k:['ㄨ'],t:4}]},
   {w:'四爱',s:[{k:['ㄙ'],t:4},{k:['ㄞ'],t:4}]},
   {w:'泡茶',s:[{k:['ㄆ','ㄠ'],t:4},{k:['ㄔ','ㄚ'],t:2}]},
@@ -620,6 +619,10 @@ const WORDS=[
   {w:'快乐',s:[{k:['ㄎ','ㄨ','ㄞ'],t:4},{k:['ㄌ','ㄜ'],t:4}]},
   {w:'好热',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄖ','ㄜ'],t:4}]},
   {w:'无所屌谓',s:[{k:['ㄨ'],t:2},{k:['ㄙ','ㄨ','ㄛ'],t:3},{k:['ㄉ','ㄧ','ㄠ'],t:3},{k:['ㄨ','ㄟ'],t:4}]},
+  {w:'好喜欢你',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄒ','ㄧ'],t:3},{k:['ㄏ','ㄨ','ㄢ'],t:1},{k:['ㄋ','ㄧ'],t:3}]},
+  {w:'想你了',s:[{k:['ㄒ','ㄧ','ㄤ'],t:3},{k:['ㄋ','ㄧ'],t:3},{k:['ㄌ','ㄜ'],t:5}]},
+  {w:'比心',s:[{k:['ㄅ','ㄧ'],t:3},{k:['ㄒ','ㄧ','ㄣ'],t:1}]},
+  {w:'灵魂羁绊',s:[{k:['ㄌ','ㄧ','ㄥ'],t:2},{k:['ㄏ','ㄨ','ㄣ'],t:2},{k:['ㄐ','ㄧ'],t:1},{k:['ㄅ','ㄢ'],t:4}]},
 ];
 
 // 「念出我打的」用：音节（不含声调的拼音）→ 五个声调的同音字（一二三四轻），○＝没有这个音
@@ -753,7 +756,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='20260726c'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='20260728a'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1072,7 +1075,10 @@ const PRAISES=[
   '不要再对了！要爱了要爱了！',
   '可恶呀！你实在是踏棒惹！比心～'
 ];
-function pickPraise(){ return PRAISES[Math.floor(Math.random()*PRAISES.length)]; }
+function pickPraise(word){
+  if(word==='无所屌谓') return '遇见你，我再也不是什么都无所屌谓的人。';
+  return PRAISES[Math.floor(Math.random()*PRAISES.length)];
+}
 
 function sylZhuyin(syms,t){
   const tn=TONES[t-1];
@@ -1159,7 +1165,7 @@ function typeSym(sym){
     recomputeProgress();
     const t=currentWord();
     if(t && typing.progress===t.s.length){
-      const praise=pickPraise();
+      const praise=pickPraise(t.w);
       renderTarget(true, praise);
       toast(praise);
       ding();
