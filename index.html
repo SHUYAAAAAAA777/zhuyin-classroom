@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>阿吹的注音教室｜给拼音使用者的注音打字入门</title>
 <meta name="description" content="拼音对照注音、键盘键位记忆、按键发音的注音学习网页">
 <link rel="icon" href="DF.png" type="image/png">
@@ -472,7 +475,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。按键录音见 audio/keys/；整词见 audio/words/；背诵示范见 audio/recite/。缺档则按键／整词用系统语音。</footer>
+<footer>本页为单一 HTML 档，离线可用。按键／整词／背诵录音见 audio/ 资料夹。缺档则用系统语音。<br>版本 build-20260728d　若仍看到旧内容请强制刷新（Ctrl+F5）</footer>
 
 <script>
 'use strict';
@@ -623,12 +626,13 @@ const WORDS=[
   {w:'好吧',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄅ','ㄚ'],t:5}]},
   {w:'快乐',s:[{k:['ㄎ','ㄨ','ㄞ'],t:4},{k:['ㄌ','ㄜ'],t:4}]},
   {w:'好热',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄖ','ㄜ'],t:4}]},
-  {w:'无所屌谓',s:[{k:['ㄨ'],t:2},{k:['ㄙ','ㄨ','ㄛ'],t:3},{k:['ㄉ','ㄧ','ㄠ'],t:3},{k:['ㄨ','ㄟ'],t:4}]},
+  {w:'无所屌谓',praise:'遇见你，我再也不是什么都无所屌谓的人了！',s:[{k:['ㄨ'],t:2},{k:['ㄙ','ㄨ','ㄛ'],t:3},{k:['ㄉ','ㄧ','ㄠ'],t:3},{k:['ㄨ','ㄟ'],t:4}]},
   {w:'好喜欢你',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄒ','ㄧ'],t:3},{k:['ㄏ','ㄨ','ㄢ'],t:1},{k:['ㄋ','ㄧ'],t:3}]},
   {w:'想你了',s:[{k:['ㄒ','ㄧ','ㄤ'],t:3},{k:['ㄋ','ㄧ'],t:3},{k:['ㄌ','ㄜ'],t:5}]},
   {w:'比心',s:[{k:['ㄅ','ㄧ'],t:3},{k:['ㄒ','ㄧ','ㄣ'],t:1}]},
   {w:'灵魂羁绊',s:[{k:['ㄌ','ㄧ','ㄥ'],t:2},{k:['ㄏ','ㄨ','ㄣ'],t:2},{k:['ㄐ','ㄧ'],t:1},{k:['ㄅ','ㄢ'],t:4}]},
 ];
+const BANNED_WORDS=new Set(['舔狗']); // 绝对不进入练习题
 
 // 「念出我打的」用：音节（不含声调的拼音）→ 五个声调的同音字（一二三四轻），○＝没有这个音
 const SYL_CHARS={
@@ -761,7 +765,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='20260728b'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='20260728d'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1052,7 +1056,9 @@ const lineEl=()=>document.getElementById('line');
 
 function rebuildQueue(keepWord){
   const prev = keepWord && typing.queue.length ? WORDS[typing.queue[typing.qi]] : null;
-  const items = WORDS.map((w,i)=>({i,len:w.w.length}));
+  const items = WORDS
+    .map((w,i)=>({i,len:w.w.length,w:w.w}))
+    .filter(x=>!BANNED_WORDS.has(x.w));
   if(typing.order==='random'){
     for(let i=items.length-1;i>0;i--){
       const j=Math.floor(Math.random()*(i+1));
@@ -1080,15 +1086,20 @@ const PRAISES=[
   '不要再对了！要爱了要爱了！',
   '可恶呀！你实在是踏棒惹！比心～'
 ];
-// 特定词打对时的指定称赞（其他词仍随机）
-const SPECIAL_PRAISE={
-  '无所屌谓':'遇见你，我再也不是什么都无所屌谓的人了！'
-};
-function pickPraise(word){
-  if(word && SPECIAL_PRAISE[word]) return SPECIAL_PRAISE[word];
+function pickPraise(wordObj){
+  // 词条自带 praise 字段时，固定用它（无所屌谓）
+  if(wordObj && wordObj.praise) return wordObj.praise;
+  const w = typeof wordObj==='string' ? wordObj : (wordObj && wordObj.w);
+  if(w && w.indexOf('无所')>=0 && w.indexOf('屌')>=0){
+    return '遇见你，我再也不是什么都无所屌谓的人了！';
+  }
   return PRAISES[Math.floor(Math.random()*PRAISES.length)];
 }
-function isSpecialWord(word){ return !!(word && SPECIAL_PRAISE[word]); }
+function isSpecialWord(wordObj){
+  if(wordObj && wordObj.praise) return true;
+  const w = typeof wordObj==='string' ? wordObj : (wordObj && wordObj.w);
+  return !!(w && w.indexOf('无所')>=0 && w.indexOf('屌')>=0);
+}
 
 function sylZhuyin(syms,t){
   const tn=TONES[t-1];
@@ -1122,7 +1133,7 @@ function renderTarget(done, praise){
     <div class="tg-label">跟 着 打 · 第 ${typing.qi+1}／${typing.queue.length} 题</div>
     <div class="tg-word" id="tgWord" title="点我听发音">${t.w}</div>
     <div class="tg-syls">${t.s.map((s,i)=>sylHintHTML(s,i<typing.progress)).join('')}</div>
-    ${done && praise ? `<div class="tg-praise${isSpecialWord(t.w)?' special':''}">${praise}</div>` : ''}
+    ${done && praise ? `<div class="tg-praise${isSpecialWord(t)?' special':''}">${praise}</div>` : ''}
     <div class="tg-btns">
       <button id="tgSpeak">🔊 念一次</button>
       <button id="tgNext">换一个 ▸</button>
@@ -1175,14 +1186,18 @@ function typeSym(sym){
     recomputeProgress();
     const t=currentWord();
     if(t && typing.progress===t.s.length){
-      const praise=pickPraise(t.w);
-      const special=isSpecialWord(t.w);
+      // 直接依词条决定称赞，避免字串比对失败
+      const praise = t.praise
+        ? t.praise
+        : ((t.w && t.w.indexOf('无所')>=0 && t.w.indexOf('屌')>=0)
+            ? '遇见你，我再也不是什么都无所屌谓的人了！'
+            : PRAISES[Math.floor(Math.random()*PRAISES.length)]);
+      const special = !!(t.praise || (t.w && t.w.indexOf('屌')>=0));
       renderTarget(true, praise);
       toast(praise);
       ding();
       speakWord(t.w);
-      // 指定称赞多留一会儿，避免一闪就换题
-      setTimeout(()=>{ clearTyping(); renderLine(); nextWord(); }, special? 5600 : 2200);
+      setTimeout(()=>{ clearTyping(); renderLine(); nextWord(); }, special? 8000 : 2200);
     }else{
       if(typing.progress>prev && typing.progress>0) speak(t.w[typing.progress-1]);
       renderTarget();
