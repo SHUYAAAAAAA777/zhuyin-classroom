@@ -499,7 +499,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。按键／整词／背诵录音见 audio/ 资料夹。缺档则用系统语音。<br>版本 build-20260728g　若仍看到旧内容请强制刷新（Ctrl+F5）</footer>
+<footer>本页为单一 HTML 档，离线可用。按键／整词／背诵录音见 audio/ 资料夹。缺档则用系统语音。<br>版本 build-20260819a　若仍看到旧内容请强制刷新（Ctrl+F5）</footer>
 
 <script>
 'use strict';
@@ -613,7 +613,6 @@ const WORDS=[
   {w:'趴踢',s:[{k:['ㄆ','ㄚ'],t:1},{k:['ㄊ','ㄧ'],t:1}]},
   {w:'桃桃',s:[{k:['ㄊ','ㄠ'],t:2},{k:['ㄊ','ㄠ'],t:2}]},
   {w:'可恶',s:[{k:['ㄎ','ㄜ'],t:3},{k:['ㄨ'],t:4}]},
-  {w:'四爱',s:[{k:['ㄙ'],t:4},{k:['ㄞ'],t:4}]},
   {w:'泡茶',s:[{k:['ㄆ','ㄠ'],t:4},{k:['ㄔ','ㄚ'],t:2}]},
   {w:'标哥',s:[{k:['ㄅ','ㄧ','ㄠ'],t:1},{k:['ㄍ','ㄜ'],t:1}]},
   {w:'小桃纸',s:[{k:['ㄒ','ㄧ','ㄠ'],t:3},{k:['ㄊ','ㄠ'],t:2},{k:['ㄓ'],t:3}]},
@@ -623,8 +622,6 @@ const WORDS=[
   {w:'中央空调',s:[{k:['ㄓ','ㄨ','ㄥ'],t:1},{k:['ㄧ','ㄤ'],t:1},{k:['ㄎ','ㄨ','ㄥ'],t:1},{k:['ㄊ','ㄧ','ㄠ'],t:2}]},
   {w:'小姚同志',s:[{k:['ㄒ','ㄧ','ㄠ'],t:3},{k:['ㄧ','ㄠ'],t:2},{k:['ㄊ','ㄨ','ㄥ'],t:2},{k:['ㄓ'],t:4}]},
   {w:'丹麦女孩',s:[{k:['ㄉ','ㄢ'],t:1},{k:['ㄇ','ㄞ'],t:4},{k:['ㄋ','ㄩ'],t:3},{k:['ㄏ','ㄞ'],t:2}]},
-  {w:'早点睡',s:[{k:['ㄗ','ㄠ'],t:3},{k:['ㄉ','ㄧ','ㄢ'],t:3},{k:['ㄕ','ㄨ','ㄟ'],t:4}]},
-  {w:'心的距离',s:[{k:['ㄒ','ㄧ','ㄣ'],t:1},{k:['ㄉ','ㄜ'],t:5},{k:['ㄐ','ㄩ'],t:4},{k:['ㄌ','ㄧ'],t:2}]},
   {w:'同流合污',s:[{k:['ㄊ','ㄨ','ㄥ'],t:2},{k:['ㄌ','ㄧ','ㄡ'],t:2},{k:['ㄏ','ㄜ'],t:2},{k:['ㄨ'],t:1}]},
   {w:'晾衣服',s:[{k:['ㄌ','ㄧ','ㄤ'],t:4},{k:['ㄧ'],t:1},{k:['ㄈ','ㄨ'],t:5}]},
   {w:'语音房',s:[{k:['ㄩ'],t:3},{k:['ㄧ','ㄣ'],t:1},{k:['ㄈ','ㄤ'],t:2}]},
@@ -637,24 +634,15 @@ const WORDS=[
   {w:'蜜薯干',s:[{k:['ㄇ','ㄧ'],t:4},{k:['ㄕ','ㄨ'],t:3},{k:['ㄍ','ㄢ'],t:1}]},
   {w:'广州',s:[{k:['ㄍ','ㄨ','ㄤ'],t:3},{k:['ㄓ','ㄡ'],t:1}]},
   {w:'双标',s:[{k:['ㄕ','ㄨ','ㄤ'],t:1},{k:['ㄅ','ㄧ','ㄠ'],t:1}]},
-  {w:'陪伴是最长情的告白',s:[{k:['ㄆ','ㄟ'],t:2},{k:['ㄅ','ㄢ'],t:4},{k:['ㄕ'],t:4},{k:['ㄗ','ㄨ','ㄟ'],t:4},{k:['ㄔ','ㄤ'],t:2},{k:['ㄑ','ㄧ','ㄥ'],t:2},{k:['ㄉ','ㄜ'],t:5},{k:['ㄍ','ㄠ'],t:4},{k:['ㄅ','ㄞ'],t:2}]},
   {w:'惩罚',s:[{k:['ㄔ','ㄥ'],t:2},{k:['ㄈ','ㄚ'],t:2}]},
-  {w:'尤物',s:[{k:['ㄧ','ㄡ'],t:2},{k:['ㄨ'],t:4}]},
   {w:'浪人的',s:[{k:['ㄌ','ㄤ'],t:4},{k:['ㄖ','ㄣ'],t:2},{k:['ㄉ','ㄜ'],t:5}]},
   {w:'英雄',s:[{k:['ㄧ','ㄥ'],t:1},{k:['ㄒ','ㄩ','ㄥ'],t:2}]},
-  {w:'拥有',s:[{k:['ㄩ','ㄥ'],t:1},{k:['ㄧ','ㄡ'],t:3}]},
-  {w:'永远',s:[{k:['ㄩ','ㄥ'],t:3},{k:['ㄩ','ㄢ'],t:3}]},
   {w:'富翁',s:[{k:['ㄈ','ㄨ'],t:4},{k:['ㄨ','ㄥ'],t:1}]},
   {w:'方大同',s:[{k:['ㄈ','ㄤ'],t:1},{k:['ㄉ','ㄚ'],t:4},{k:['ㄊ','ㄨ','ㄥ'],t:2}]},
   {w:'好嘛',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄇ','ㄚ'],t:5}]},
   {w:'好吧',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄅ','ㄚ'],t:5}]},
   {w:'快乐',s:[{k:['ㄎ','ㄨ','ㄞ'],t:4},{k:['ㄌ','ㄜ'],t:4}]},
   {w:'好热',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄖ','ㄜ'],t:4}]},
-  {w:'无所屌谓',praise:'遇见你，我再也不是什么都无所屌谓的人了！',s:[{k:['ㄨ'],t:2},{k:['ㄙ','ㄨ','ㄛ'],t:3},{k:['ㄉ','ㄧ','ㄠ'],t:3},{k:['ㄨ','ㄟ'],t:4}]},
-  {w:'好喜欢你',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄒ','ㄧ'],t:3},{k:['ㄏ','ㄨ','ㄢ'],t:1},{k:['ㄋ','ㄧ'],t:3}]},
-  {w:'想你了',s:[{k:['ㄒ','ㄧ','ㄤ'],t:3},{k:['ㄋ','ㄧ'],t:3},{k:['ㄌ','ㄜ'],t:5}]},
-  {w:'比心',s:[{k:['ㄅ','ㄧ'],t:3},{k:['ㄒ','ㄧ','ㄣ'],t:1}]},
-  {w:'灵魂羁绊',s:[{k:['ㄌ','ㄧ','ㄥ'],t:2},{k:['ㄏ','ㄨ','ㄣ'],t:2},{k:['ㄐ','ㄧ'],t:1},{k:['ㄅ','ㄢ'],t:4}]},
 ];
 const BANNED_WORDS=new Set(['舔狗']); // 绝对不进入练习题
 
@@ -789,7 +777,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='20260728g'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='20260819a'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1110,19 +1098,11 @@ const PRAISES=[
   '不要再对了！要爱了要爱了！',
   '可恶呀！你实在是踏棒惹！比心～'
 ];
-function pickPraise(wordObj){
-  // 词条自带 praise 字段时，固定用它（无所屌谓）
-  if(wordObj && wordObj.praise) return wordObj.praise;
-  const w = typeof wordObj==='string' ? wordObj : (wordObj && wordObj.w);
-  if(w && w.indexOf('无所')>=0 && w.indexOf('屌')>=0){
-    return '遇见你，我再也不是什么都无所屌谓的人了！';
-  }
+function pickPraise(){
   return PRAISES[Math.floor(Math.random()*PRAISES.length)];
 }
-function isSpecialWord(wordObj){
-  if(wordObj && wordObj.praise) return true;
-  const w = typeof wordObj==='string' ? wordObj : (wordObj && wordObj.w);
-  return !!(w && w.indexOf('无所')>=0 && w.indexOf('屌')>=0);
+function isSpecialWord(){
+  return false;
 }
 
 function sylZhuyin(syms,t){
@@ -1210,13 +1190,8 @@ function typeSym(sym){
     recomputeProgress();
     const t=currentWord();
     if(t && typing.progress===t.s.length){
-      // 直接依词条决定称赞，避免字串比对失败
-      const praise = t.praise
-        ? t.praise
-        : ((t.w && t.w.indexOf('无所')>=0 && t.w.indexOf('屌')>=0)
-            ? '遇见你，我再也不是什么都无所屌谓的人了！'
-            : PRAISES[Math.floor(Math.random()*PRAISES.length)]);
-      const special = !!(t.praise || (t.w && t.w.indexOf('屌')>=0));
+      const praise = pickPraise();
+      const special = false;
       renderTarget(true, praise);
       toast(praise);
       ding();
@@ -1378,7 +1353,7 @@ function toast(msg){
   if(!el) return;
   el.textContent=msg; el.classList.add('show');
   clearTimeout(toastTimer);
-  const hold = (msg && msg.indexOf('无所屌谓的人')>=0) ? 5200 : 2800;
+  const hold = 2800;
   toastTimer=setTimeout(()=>el.classList.remove('show'), hold);
 }
 
