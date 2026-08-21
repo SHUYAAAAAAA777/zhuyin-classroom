@@ -500,7 +500,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。按键／整词／背诵录音见 audio/ 资料夹。缺档则用系统语音。<br>版本 build-20260821d　若仍看到旧内容请强制刷新（Ctrl+F5）<div class="made-on">最初制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。按键／整词／背诵录音见 audio/ 资料夹。缺档则用系统语音。<br>版本 build-20260821e　若仍看到旧内容请强制刷新（Ctrl+F5）<div class="made-on">最初制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -782,7 +782,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='20260821d'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='20260821e'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1100,7 +1100,7 @@ const PRAISES=[
   '无处安放的魅力啊！不要太会了好吗！',
   '学这么快？不要太聪明了，求你！',
   '太厉害惹（跪～ 你得到了阿吹的膜拜！',
-  '不要再对了！要爱了要爱了！',
+  '不要再对了！太优秀了，被你给气死！',
   '可恶呀！你实在是踏棒惹！比心～'
 ];
 function pickPraise(){
