@@ -499,7 +499,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。按键／整词／背诵录音见 audio/ 资料夹。缺档则用系统语音。<br>版本 build-20260821b　若仍看到旧内容请强制刷新（Ctrl+F5）</footer>
+<footer>本页为单一 HTML 档，离线可用。按键／整词／背诵录音见 audio/ 资料夹。缺档则用系统语音。<br>版本 build-20260821c　若仍看到旧内容请强制刷新（Ctrl+F5）</footer>
 
 <script>
 'use strict';
@@ -646,7 +646,7 @@ const WORDS=[
   {w:'好吧',s:[{k:['ㄏ','ㄠ'],t:3},{k:['ㄅ','ㄚ'],t:5}]},
   {w:'快乐',s:[{k:['ㄎ','ㄨ','ㄞ'],t:4},{k:['ㄌ','ㄜ'],t:4}]},
   {w:'好热',s:[{k:['ㄏ','ㄞ'],t:3},{k:['ㄖ','ㄝ'],t:4}]},
-  {w:'无所屌谓',s:[{k:['ㄨ'],t:2},{k:['ㄙ','ㄨ','ㄛ'],t:3},{k:['ㄉ','ㄧ','ㄠ'],t:3},{k:['ㄨ','ㄒ'],t:4}]},
+  {w:'无所屌谓',s:[{k:['ㄨ'],t:2},{k:['ㄙ','ㄨ','ㄛ'],t:3},{k:['ㄉ','ㄧ','ㄠ'],t:3},{k:['ㄨ','ㄟ'],t:4}]},
 ];
 const BANNED_WORDS=new Set(['舔狗']); // 绝对不进入练习题
 
@@ -781,7 +781,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='20260821b'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='20260821c'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
