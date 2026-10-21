@@ -71,6 +71,7 @@ header .sub{font-size:13px; color:var(--mut); margin-top:2px; letter-spacing:.3p
 }
 .iconbtn:hover{border-color:var(--acc-soft); background:#fff}
 #voiceWarn{display:none; font-size:12px; color:#8a5a2b; background:#f7ead8; border:1px solid #e8d2b4; border-radius:8px; padding:4px 8px}
+#audioStatus{display:none}
 
 /* ========== 分页 ========== */
 .tabs{
@@ -500,7 +501,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0032　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0033　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -782,7 +783,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='0032'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='0033'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
