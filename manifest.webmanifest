@@ -1,0 +1,17 @@
+{
+  "name": "阿吹的注音教室",
+  "short_name": "注音教室",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#efe6dc",
+  "theme_color": "#8a6245",
+  "icons": [
+    {
+      "src": "DF.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -9,6 +9,10 @@
 <title>阿吹的注音教室｜给拼音使用者的注音打字入门</title>
 <meta name="description" content="拼音对照注音、键盘键位记忆、按键发音的注音学习网页">
 <link rel="icon" href="DF.png" type="image/png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#8a6245">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <!-- 大陆版：不引用 Google Fonts（境内连不上），改用系统内建字型 -->
 <style>
 /* ========== 设计变数：暖茶色 Ins 质感 ========== */
@@ -70,8 +74,8 @@ header .sub{font-size:13px; color:var(--mut); margin-top:2px; letter-spacing:.3p
   padding:7px 12px; font-size:14px; cursor:pointer; font-family:inherit; color:var(--ink);
 }
 .iconbtn:hover{border-color:var(--acc-soft); background:#fff}
-#voiceWarn{display:none; font-size:12px; color:#8a5a2b; background:#f7ead8; border:1px solid #e8d2b4; border-radius:8px; padding:4px 8px}
 #audioStatus{display:none}
+#voiceWarn{display:none; font-size:12px; color:#8a5a2b; background:#f7ead8; border:1px solid #e8d2b4; border-radius:8px; padding:4px 8px}
 
 /* ========== 分页 ========== */
 .tabs{
@@ -376,6 +380,26 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   .tabs button{font-size:11.5px}
   .key .kz{font-size:clamp(11px, 3.4vw, 14px)}
 }
+
+.today{font-size:12.5px;color:var(--mut);margin-top:3px}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.badge{font-size:11px;padding:2px 8px;border-radius:999px;background:#f4ebe1;border:1px solid #e2d5c6;color:#6a4f3d}
+.badge.on{background:#8a6245;color:#fff;border-color:#8a6245}
+.row-practice{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.row-practice button,.mini-btn{border:1px solid var(--line);background:#fffdf9;border-radius:9px;padding:6px 10px;font-family:inherit;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.row-practice button:disabled{opacity:.45;cursor:default}
+.split-box{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(247,240,232,.65)}
+.split-box h3{margin:0 0 8px;font-size:15px;color:#4a3a2f}
+.split-box input,.custom-add input{padding:7px 10px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:14px;background:#fffdf9;color:var(--ink)}
+.py-out{margin-top:8px;font-size:14px;line-height:1.7}
+.tone-memo{text-align:center;font-size:12.5px;color:var(--mut);margin:8px 0 4px}
+.custom-add{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
+.lock-note{font-size:12px;color:var(--mut);flex-basis:100%}
+#tTimer{font-weight:800;color:var(--acc);min-width:3em}
+.cover-line{font-size:12.5px;color:var(--mut);margin-top:8px}
+#installBtn[hidden]{display:none}
+@media (max-width:720px){ .hz kbd{display:none} }
+
 </style>
 </head>
 <body>
@@ -385,10 +409,13 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   <div>
     <h1>阿吹的注音教室</h1>
     <div class="sub">给拼音使用者的注音打字入门・点按键就会发音</div>
+    <div class="today" id="todayLine"></div>
+    <div class="badges" id="badgeRow"></div>
   </div>
   <div class="hcontrols">
     <span id="voiceWarn">找不到中文语音，建议用 Edge（Windows 内建）开启</span>
     <button class="iconbtn" id="soundBtn" title="音效开关">🔊 音效开</button>
+    <button class="iconbtn" id="installBtn" hidden type="button">加到主画面</button>
     <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键 + 整词 + 背诵示范">键 0/42 · 词 0/58 · 诵 0/1</span>
     <select id="voiceSel" title="选择发音语音（整词朗读用）"></select>
   </div>
@@ -417,12 +444,20 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
         <span><i class="li"></i>声母（21）</span><span><i class="lm"></i>介音（3）</span>
         <span><i class="lf"></i>韵母（13）</span><span><i class="lt"></i>声调（5）</span>
       </div>
+      <div class="row-practice" id="rowPractice"></div>
     </div>
 
     <div class="panel">
       <h2>拼音 ↔ 注音 对照卡</h2>
       <p class="desc">每张卡片：注音符号、对应拼音、键盘位置、例字。点卡片听符号发音，点例字听整个字。</p>
       <div id="chartCols"></div>
+      <div class="split-box">
+        <h3>拼音拆成注音</h3>
+        <input id="pyIn" placeholder="例如 zhong、liu、nv" maxlength="12">
+        <button type="button" class="mini-btn" id="pyBtn">拆开</button>
+        <div class="py-out" id="pyOut"></div>
+        <div class="cover-line" id="coverLine"></div>
+      </div>
     </div>
 
     <div class="panel tips">
@@ -445,13 +480,51 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
     <div class="panel">
       <div class="imewarn desktop-only" id="imeWarn">练习前请先切到<b>英文输入</b>（搜狗／QQ 输入法按 <kbd>Shift</kbd>，或按 <kbd>Win</kbd>＋<kbd>空白键</kbd> 换输入法），否则按键会被输入法拦截。</div>
       <div class="imewarn mobile-only">手机请直接点下方虚拟键盘练习；空白键＝一声。若要听发音，请把手机音量打开。</div>
-      <div class="drill-bar" style="margin-bottom:12px">
-        <label>题目顺序
+      <div class="drill-bar" style="margin-bottom:8px">
+        <label>词库
+          <select id="tBank">
+            <option value="nick">昵称词</option>
+            <option value="daily">日常词</option>
+            <option value="sent">短句</option>
+            <option value="trap">陷阱题</option>
+            <option value="wrong">只练错题</option>
+            <option value="custom">我的词</option>
+          </select>
+        </label>
+        <label>阶段
+          <select id="tStage">
+            <option value="all">不限</option>
+            <option value="1">单字</option>
+            <option value="2">双字词</option>
+            <option value="3">短句</option>
+          </select>
+        </label>
+        <label>顺序
           <select id="tOrder">
             <option value="len">按字数（短 → 长）</option>
             <option value="random">随机排序</option>
+            <option value="spaced">错得多的先出现</option>
           </select>
         </label>
+        <label id="tTrapWrap">陷阱
+          <select id="tTrap">
+            <option value="all">六类都练</option>
+            <option value="ong">ong → ㄨㄥ</option>
+            <option value="iu">iu → ㄧㄡ</option>
+            <option value="ui">ui → ㄨㄟ</option>
+            <option value="un">un → ㄨㄣ</option>
+            <option value="v">ü → ㄩ</option>
+            <option value="zhi">zhi 组不打 i</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="tBlind"> 盲打</label>
+        <label><input type="checkbox" id="tDictate"> 听写（不看字）</label>
+        <button type="button" class="mini-btn" id="tTimed">60 秒计时</button>
+        <span id="tTimer"></span>
+      </div>
+      <div class="custom-add">
+        <input id="customIn" placeholder="输入想练的词，例如 今天" maxlength="12">
+        <button type="button" class="mini-btn" id="customAdd">加入我的词</button>
       </div>
       <div id="target"></div>
       <div id="line" class="line"></div>
@@ -501,7 +574,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0033　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0034　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -783,7 +856,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='0033'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='0034'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1065,35 +1138,498 @@ function buildChart(){
 /* ================================================================
    第 6 部分：分页二（打字练习）
 ================================================================ */
+const SYLS=[{"w":"我","s":[{"k":["ㄨ","ㄛ"],"t":3}]},{"w":"你","s":[{"k":["ㄋ","ㄧ"],"t":3}]},{"w":"他","s":[{"k":["ㄊ","ㄚ"],"t":1}]},{"w":"她","s":[{"k":["ㄊ","ㄚ"],"t":1}]},{"w":"大","s":[{"k":["ㄉ","ㄚ"],"t":4}]},{"w":"小","s":[{"k":["ㄒ","ㄧ","ㄠ"],"t":3}]},{"w":"天","s":[{"k":["ㄊ","ㄧ","ㄢ"],"t":1}]},{"w":"人","s":[{"k":["ㄖ","ㄣ"],"t":2}]},{"w":"中","s":[{"k":["ㄓ","ㄨ","ㄥ"],"t":1}]},{"w":"水","s":[{"k":["ㄕ","ㄨ","ㄟ"],"t":3}]},{"w":"吃","s":[{"k":["ㄔ"],"t":1}]},{"w":"喝","s":[{"k":["ㄏ","ㄜ"],"t":1}]},{"w":"来","s":[{"k":["ㄌ","ㄞ"],"t":2}]},{"w":"去","s":[{"k":["ㄑ","ㄩ"],"t":4}]},{"w":"看","s":[{"k":["ㄎ","ㄢ"],"t":4}]},{"w":"说","s":[{"k":["ㄕ","ㄨ","ㄛ"],"t":1}]},{"w":"好","s":[{"k":["ㄏ","ㄠ"],"t":3}]},{"w":"不","s":[{"k":["ㄅ","ㄨ"],"t":4}]},{"w":"是","s":[{"k":["ㄕ"],"t":4}]},{"w":"有","s":[{"k":["ㄧ","ㄡ"],"t":3}]},{"w":"没","s":[{"k":["ㄇ","ㄟ"],"t":2}]},{"w":"多","s":[{"k":["ㄉ","ㄨ","ㄛ"],"t":1}]},{"w":"少","s":[{"k":["ㄕ","ㄠ"],"t":3}]},{"w":"请","s":[{"k":["ㄑ","ㄧ","ㄥ"],"t":3}]},{"w":"再","s":[{"k":["ㄗ","ㄞ"],"t":4}]},{"w":"高","s":[{"k":["ㄍ","ㄠ"],"t":1}]},{"w":"低","s":[{"k":["ㄉ","ㄧ"],"t":1}]},{"w":"快","s":[{"k":["ㄎ","ㄨ","ㄞ"],"t":4}]},{"w":"慢","s":[{"k":["ㄇ","ㄢ"],"t":4}]},{"w":"走","s":[{"k":["ㄗ","ㄡ"],"t":3}]},{"w":"跑","s":[{"k":["ㄆ","ㄠ"],"t":3}]},{"w":"听","s":[{"k":["ㄊ","ㄧ","ㄥ"],"t":1}]},{"w":"读","s":[{"k":["ㄉ","ㄨ"],"t":2}]},{"w":"写","s":[{"k":["ㄒ","ㄧ","ㄝ"],"t":3}]},{"w":"想","s":[{"k":["ㄒ","ㄧ","ㄤ"],"t":3}]},{"w":"要","s":[{"k":["ㄧ","ㄠ"],"t":4}]},{"w":"会","s":[{"k":["ㄏ","ㄨ","ㄟ"],"t":4}]},{"w":"能","s":[{"k":["ㄋ","ㄥ"],"t":2}]},{"w":"给","s":[{"k":["ㄍ","ㄟ"],"t":3}]},{"w":"买","s":[{"k":["ㄇ","ㄞ"],"t":3}]},{"w":"卖","s":[{"k":["ㄇ","ㄞ"],"t":4}]},{"w":"开","s":[{"k":["ㄎ","ㄞ"],"t":1}]},{"w":"关","s":[{"k":["ㄍ","ㄨ","ㄢ"],"t":1}]},{"w":"花","s":[{"k":["ㄏ","ㄨ","ㄚ"],"t":1}]},{"w":"鱼","s":[{"k":["ㄩ"],"t":2}]},{"w":"猫","s":[{"k":["ㄇ","ㄠ"],"t":1}]},{"w":"鸟","s":[{"k":["ㄋ","ㄧ","ㄠ"],"t":3}]},{"w":"山","s":[{"k":["ㄕ","ㄢ"],"t":1}]},{"w":"海","s":[{"k":["ㄏ","ㄞ"],"t":3}]},{"w":"七","s":[{"k":["ㄑ","ㄧ"],"t":1}]},{"w":"四","s":[{"k":["ㄙ"],"t":4}]},{"w":"十","s":[{"k":["ㄕ"],"t":2}]},{"w":"日","s":[{"k":["ㄖ"],"t":4}]},{"w":"月","s":[{"k":["ㄩ","ㄝ"],"t":4}]},{"w":"年","s":[{"k":["ㄋ","ㄧ","ㄢ"],"t":2}]},{"w":"车","s":[{"k":["ㄔ","ㄜ"],"t":1}]},{"w":"门","s":[{"k":["ㄇ","ㄣ"],"t":2}]},{"w":"书","s":[{"k":["ㄕ","ㄨ"],"t":1}]},{"w":"字","s":[{"k":["ㄗ"],"t":4}]},{"w":"钱","s":[{"k":["ㄑ","ㄧ","ㄢ"],"t":2}]},{"w":"爱","s":[{"k":["ㄞ"],"t":4}]},{"w":"手","s":[{"k":["ㄕ","ㄡ"],"t":3}]},{"w":"心","s":[{"k":["ㄒ","ㄧ","ㄣ"],"t":1}]},{"w":"风","s":[{"k":["ㄈ","ㄥ"],"t":1}]},{"w":"雨","s":[{"k":["ㄩ"],"t":3}]},{"w":"雪","s":[{"k":["ㄒ","ㄩ","ㄝ"],"t":3}]},{"w":"云","s":[{"k":["ㄩ","ㄣ"],"t":2}]},{"w":"星","s":[{"k":["ㄒ","ㄧ","ㄥ"],"t":1}]},{"w":"红","s":[{"k":["ㄏ","ㄨ","ㄥ"],"t":2}]},{"w":"绿","s":[{"k":["ㄌ","ㄩ"],"t":4}]},{"w":"白","s":[{"k":["ㄅ","ㄞ"],"t":2}]},{"w":"黑","s":[{"k":["ㄏ","ㄟ"],"t":1}]},{"w":"蓝","s":[{"k":["ㄌ","ㄢ"],"t":2}]},{"w":"新","s":[{"k":["ㄒ","ㄧ","ㄣ"],"t":1}]},{"w":"旧","s":[{"k":["ㄐ","ㄧ","ㄡ"],"t":4}]},{"w":"长","s":[{"k":["ㄔ","ㄤ"],"t":2}]},{"w":"短","s":[{"k":["ㄉ","ㄨ","ㄢ"],"t":3}]},{"w":"热","s":[{"k":["ㄖ","ㄜ"],"t":4}]},{"w":"冷","s":[{"k":["ㄌ","ㄥ"],"t":3}]},{"w":"对","s":[{"k":["ㄉ","ㄨ","ㄟ"],"t":4}]},{"w":"错","s":[{"k":["ㄘ","ㄨ","ㄛ"],"t":4}]},{"w":"从","s":[{"k":["ㄘ","ㄨ","ㄥ"],"t":2}]},{"w":"到","s":[{"k":["ㄉ","ㄠ"],"t":4}]},{"w":"在","s":[{"k":["ㄗ","ㄞ"],"t":4}]},{"w":"和","s":[{"k":["ㄏ","ㄜ"],"t":2}]},{"w":"也","s":[{"k":["ㄧ","ㄝ"],"t":3}]},{"w":"都","s":[{"k":["ㄉ","ㄡ"],"t":1}]},{"w":"很","s":[{"k":["ㄏ","ㄣ"],"t":3}]},{"w":"太","s":[{"k":["ㄊ","ㄞ"],"t":4}]},{"w":"最","s":[{"k":["ㄗ","ㄨ","ㄟ"],"t":4}]},{"w":"这","s":[{"k":["ㄓ","ㄜ"],"t":4}]},{"w":"那","s":[{"k":["ㄋ","ㄚ"],"t":4}]},{"w":"哪","s":[{"k":["ㄋ","ㄚ"],"t":3}]},{"w":"谁","s":[{"k":["ㄕ","ㄟ"],"t":2}]},{"w":"女","s":[{"k":["ㄋ","ㄩ"],"t":3}]},{"w":"学","s":[{"k":["ㄒ","ㄩ","ㄝ"],"t":2}]},{"w":"知","s":[{"k":["ㄓ"],"t":1}]},{"w":"六","s":[{"k":["ㄌ","ㄧ","ㄡ"],"t":4}]},{"w":"九","s":[{"k":["ㄐ","ㄧ","ㄡ"],"t":3}]},{"w":"公","s":[{"k":["ㄍ","ㄨ","ㄥ"],"t":1}]},{"w":"文","s":[{"k":["ㄨ","ㄣ"],"t":2}]},{"w":"问","s":[{"k":["ㄨ","ㄣ"],"t":4}]},{"w":"春","s":[{"k":["ㄔ","ㄨ","ㄣ"],"t":1}]},{"w":"二","s":[{"k":["ㄦ"],"t":4}]},{"w":"上","s":[{"k":["ㄕ","ㄤ"],"t":4}]},{"w":"下","s":[{"k":["ㄒ","ㄧ","ㄚ"],"t":4}]}];
+const DAILY=[{"w":"今天","s":[{"k":["ㄐ","ㄧ","ㄣ"],"t":1},{"k":["ㄊ","ㄧ","ㄢ"],"t":1}]},{"w":"明天","s":[{"k":["ㄇ","ㄧ","ㄥ"],"t":2},{"k":["ㄊ","ㄧ","ㄢ"],"t":1}]},{"w":"昨天","s":[{"k":["ㄗ","ㄨ","ㄛ"],"t":2},{"k":["ㄊ","ㄧ","ㄢ"],"t":1}]},{"w":"现在","s":[{"k":["ㄒ","ㄧ","ㄢ"],"t":4},{"k":["ㄗ","ㄞ"],"t":4}]},{"w":"早上","s":[{"k":["ㄗ","ㄠ"],"t":3},{"k":["ㄕ","ㄤ"],"t":4}]},{"w":"中午","s":[{"k":["ㄓ","ㄨ","ㄥ"],"t":1},{"k":["ㄨ"],"t":3}]},{"w":"晚上","s":[{"k":["ㄨ","ㄢ"],"t":3},{"k":["ㄕ","ㄤ"],"t":4}]},{"w":"时候","s":[{"k":["ㄕ"],"t":2},{"k":["ㄏ","ㄡ"],"t":4}]},{"w":"时间","s":[{"k":["ㄕ"],"t":2},{"k":["ㄐ","ㄧ","ㄢ"],"t":1}]},{"w":"小时","s":[{"k":["ㄒ","ㄧ","ㄠ"],"t":3},{"k":["ㄕ"],"t":2}]},{"w":"分钟","s":[{"k":["ㄈ","ㄣ"],"t":1},{"k":["ㄓ","ㄨ","ㄥ"],"t":1}]},{"w":"周末","s":[{"k":["ㄓ","ㄡ"],"t":1},{"k":["ㄇ","ㄛ"],"t":4}]},{"w":"知道","s":[{"k":["ㄓ"],"t":1},{"k":["ㄉ","ㄠ"],"t":4}]},{"w":"明白","s":[{"k":["ㄇ","ㄧ","ㄥ"],"t":2},{"k":["ㄅ","ㄞ"],"t":2}]},{"w":"喜欢","s":[{"k":["ㄒ","ㄧ"],"t":3},{"k":["ㄏ","ㄨ","ㄢ"],"t":1}]},{"w":"可以","s":[{"k":["ㄎ","ㄜ"],"t":3},{"k":["ㄧ"],"t":3}]},{"w":"不行","s":[{"k":["ㄅ","ㄨ"],"t":4},{"k":["ㄒ","ㄧ","ㄥ"],"t":2}]},{"w":"什么","s":[{"k":["ㄕ","ㄣ"],"t":2},{"k":["ㄇ","ㄜ"],"t":5}]},{"w":"这个","s":[{"k":["ㄓ","ㄜ"],"t":4},{"k":["ㄍ","ㄜ"],"t":5}]},{"w":"没有","s":[{"k":["ㄇ","ㄟ"],"t":2},{"k":["ㄧ","ㄡ"],"t":3}]},{"w":"因为","s":[{"k":["ㄧ","ㄣ"],"t":1},{"k":["ㄨ","ㄟ"],"t":4}]},{"w":"所以","s":[{"k":["ㄙ","ㄨ","ㄛ"],"t":3},{"k":["ㄧ"],"t":3}]},{"w":"但是","s":[{"k":["ㄉ","ㄢ"],"t":4},{"k":["ㄕ"],"t":4}]},{"w":"如果","s":[{"k":["ㄖ","ㄨ"],"t":2},{"k":["ㄍ","ㄨ","ㄛ"],"t":3}]},{"w":"还是","s":[{"k":["ㄏ","ㄞ"],"t":2},{"k":["ㄕ"],"t":4}]},{"w":"已经","s":[{"k":["ㄧ"],"t":3},{"k":["ㄐ","ㄧ","ㄥ"],"t":1}]},{"w":"正在","s":[{"k":["ㄓ","ㄥ"],"t":4},{"k":["ㄗ","ㄞ"],"t":4}]},{"w":"一起","s":[{"k":["ㄧ"],"t":4},{"k":["ㄑ","ㄧ"],"t":3}]},{"w":"自己","s":[{"k":["ㄗ"],"t":4},{"k":["ㄐ","ㄧ"],"t":3}]},{"w":"大家","s":[{"k":["ㄉ","ㄚ"],"t":4},{"k":["ㄐ","ㄧ","ㄚ"],"t":1}]},{"w":"中国","s":[{"k":["ㄓ","ㄨ","ㄥ"],"t":1},{"k":["ㄍ","ㄨ","ㄛ"],"t":2}]},{"w":"再见","s":[{"k":["ㄗ","ㄞ"],"t":4},{"k":["ㄐ","ㄧ","ㄢ"],"t":4}]},{"w":"请问","s":[{"k":["ㄑ","ㄧ","ㄥ"],"t":3},{"k":["ㄨ","ㄣ"],"t":4}]},{"w":"多少","s":[{"k":["ㄉ","ㄨ","ㄛ"],"t":1},{"k":["ㄕ","ㄠ"],"t":3}]},{"w":"地方","s":[{"k":["ㄉ","ㄧ"],"t":4},{"k":["ㄈ","ㄤ"],"t":1}]},{"w":"东西","s":[{"k":["ㄉ","ㄨ","ㄥ"],"t":1},{"k":["ㄒ","ㄧ"],"t":1}]},{"w":"家人","s":[{"k":["ㄐ","ㄧ","ㄚ"],"t":1},{"k":["ㄖ","ㄣ"],"t":2}]},{"w":"妈妈","s":[{"k":["ㄇ","ㄚ"],"t":1},{"k":["ㄇ","ㄚ"],"t":5}]},{"w":"爸爸","s":[{"k":["ㄅ","ㄚ"],"t":4},{"k":["ㄅ","ㄚ"],"t":5}]},{"w":"学生","s":[{"k":["ㄒ","ㄩ","ㄝ"],"t":2},{"k":["ㄕ","ㄥ"],"t":1}]},{"w":"学校","s":[{"k":["ㄒ","ㄩ","ㄝ"],"t":2},{"k":["ㄒ","ㄧ","ㄠ"],"t":4}]},{"w":"同学","s":[{"k":["ㄊ","ㄨ","ㄥ"],"t":2},{"k":["ㄒ","ㄩ","ㄝ"],"t":2}]},{"w":"老师","s":[{"k":["ㄌ","ㄠ"],"t":3},{"k":["ㄕ"],"t":1}]},{"w":"工作","s":[{"k":["ㄍ","ㄨ","ㄥ"],"t":1},{"k":["ㄗ","ㄨ","ㄛ"],"t":4}]},{"w":"上班","s":[{"k":["ㄕ","ㄤ"],"t":4},{"k":["ㄅ","ㄢ"],"t":1}]},{"w":"下班","s":[{"k":["ㄒ","ㄧ","ㄚ"],"t":4},{"k":["ㄅ","ㄢ"],"t":1}]},{"w":"手机","s":[{"k":["ㄕ","ㄡ"],"t":3},{"k":["ㄐ","ㄧ"],"t":1}]},{"w":"电话","s":[{"k":["ㄉ","ㄧ","ㄢ"],"t":4},{"k":["ㄏ","ㄨ","ㄚ"],"t":4}]},{"w":"天气","s":[{"k":["ㄊ","ㄧ","ㄢ"],"t":1},{"k":["ㄑ","ㄧ"],"t":4}]},{"w":"下雨","s":[{"k":["ㄒ","ㄧ","ㄚ"],"t":4},{"k":["ㄩ"],"t":3}]},{"w":"喝水","s":[{"k":["ㄏ","ㄜ"],"t":1},{"k":["ㄕ","ㄨ","ㄟ"],"t":3}]},{"w":"睡觉","s":[{"k":["ㄕ","ㄨ","ㄟ"],"t":4},{"k":["ㄐ","ㄧ","ㄠ"],"t":4}]},{"w":"起床","s":[{"k":["ㄑ","ㄧ"],"t":3},{"k":["ㄔ","ㄨ","ㄤ"],"t":2}]},{"w":"吃饭","s":[{"k":["ㄔ"],"t":1},{"k":["ㄈ","ㄢ"],"t":4}]},{"w":"说话","s":[{"k":["ㄕ","ㄨ","ㄛ"],"t":1},{"k":["ㄏ","ㄨ","ㄚ"],"t":4}]},{"w":"看见","s":[{"k":["ㄎ","ㄢ"],"t":4},{"k":["ㄐ","ㄧ","ㄢ"],"t":4}]},{"w":"听见","s":[{"k":["ㄊ","ㄧ","ㄥ"],"t":1},{"k":["ㄐ","ㄧ","ㄢ"],"t":4}]},{"w":"走路","s":[{"k":["ㄗ","ㄡ"],"t":3},{"k":["ㄌ","ㄨ"],"t":4}]},{"w":"开车","s":[{"k":["ㄎ","ㄞ"],"t":1},{"k":["ㄔ","ㄜ"],"t":1}]},{"w":"坐车","s":[{"k":["ㄗ","ㄨ","ㄛ"],"t":4},{"k":["ㄔ","ㄜ"],"t":1}]},{"w":"回家","s":[{"k":["ㄏ","ㄨ","ㄟ"],"t":2},{"k":["ㄐ","ㄧ","ㄚ"],"t":1}]},{"w":"出去","s":[{"k":["ㄔ","ㄨ"],"t":1},{"k":["ㄑ","ㄩ"],"t":4}]},{"w":"进来","s":[{"k":["ㄐ","ㄧ","ㄣ"],"t":4},{"k":["ㄌ","ㄞ"],"t":2}]},{"w":"马上","s":[{"k":["ㄇ","ㄚ"],"t":3},{"k":["ㄕ","ㄤ"],"t":4}]},{"w":"快点","s":[{"k":["ㄎ","ㄨ","ㄞ"],"t":4},{"k":["ㄉ","ㄧ","ㄢ"],"t":3}]},{"w":"好吃","s":[{"k":["ㄏ","ㄠ"],"t":3},{"k":["ㄔ"],"t":1}]},{"w":"好看","s":[{"k":["ㄏ","ㄠ"],"t":3},{"k":["ㄎ","ㄢ"],"t":4}]},{"w":"好玩","s":[{"k":["ㄏ","ㄠ"],"t":3},{"k":["ㄨ","ㄢ"],"t":2}]},{"w":"高兴","s":[{"k":["ㄍ","ㄠ"],"t":1},{"k":["ㄒ","ㄧ","ㄥ"],"t":4}]},{"w":"生气","s":[{"k":["ㄕ","ㄥ"],"t":1},{"k":["ㄑ","ㄧ"],"t":4}]},{"w":"开心","s":[{"k":["ㄎ","ㄞ"],"t":1},{"k":["ㄒ","ㄧ","ㄣ"],"t":1}]},{"w":"难过","s":[{"k":["ㄋ","ㄢ"],"t":2},{"k":["ㄍ","ㄨ","ㄛ"],"t":4}]},{"w":"身体","s":[{"k":["ㄕ","ㄣ"],"t":1},{"k":["ㄊ","ㄧ"],"t":3}]},{"w":"医院","s":[{"k":["ㄧ"],"t":1},{"k":["ㄩ","ㄢ"],"t":4}]},{"w":"医生","s":[{"k":["ㄧ"],"t":1},{"k":["ㄕ","ㄥ"],"t":1}]},{"w":"吃药","s":[{"k":["ㄔ"],"t":1},{"k":["ㄧ","ㄠ"],"t":4}]},{"w":"休息","s":[{"k":["ㄒ","ㄧ","ㄡ"],"t":1},{"k":["ㄒ","ㄧ"],"t":2}]},{"w":"运动","s":[{"k":["ㄩ","ㄣ"],"t":4},{"k":["ㄉ","ㄨ","ㄥ"],"t":4}]},{"w":"音乐","s":[{"k":["ㄧ","ㄣ"],"t":1},{"k":["ㄩ","ㄝ"],"t":4}]},{"w":"电影","s":[{"k":["ㄉ","ㄧ","ㄢ"],"t":4},{"k":["ㄧ","ㄥ"],"t":3}]},{"w":"看书","s":[{"k":["ㄎ","ㄢ"],"t":4},{"k":["ㄕ","ㄨ"],"t":1}]},{"w":"写字","s":[{"k":["ㄒ","ㄧ","ㄝ"],"t":3},{"k":["ㄗ"],"t":4}]},{"w":"读书","s":[{"k":["ㄉ","ㄨ"],"t":2},{"k":["ㄕ","ㄨ"],"t":1}]},{"w":"问题","s":[{"k":["ㄨ","ㄣ"],"t":4},{"k":["ㄊ","ㄧ"],"t":2}]},{"w":"答案","s":[{"k":["ㄉ","ㄚ"],"t":2},{"k":["ㄢ"],"t":4}]},{"w":"正确","s":[{"k":["ㄓ","ㄥ"],"t":4},{"k":["ㄑ","ㄩ","ㄝ"],"t":4}]},{"w":"错误","s":[{"k":["ㄘ","ㄨ","ㄛ"],"t":4},{"k":["ㄨ"],"t":4}]},{"w":"颜色","s":[{"k":["ㄧ","ㄢ"],"t":2},{"k":["ㄙ","ㄜ"],"t":4}]},{"w":"红色","s":[{"k":["ㄏ","ㄨ","ㄥ"],"t":2},{"k":["ㄙ","ㄜ"],"t":4}]},{"w":"绿色","s":[{"k":["ㄌ","ㄩ"],"t":4},{"k":["ㄙ","ㄜ"],"t":4}]},{"w":"蓝色","s":[{"k":["ㄌ","ㄢ"],"t":2},{"k":["ㄙ","ㄜ"],"t":4}]},{"w":"白色","s":[{"k":["ㄅ","ㄞ"],"t":2},{"k":["ㄙ","ㄜ"],"t":4}]},{"w":"黑色","s":[{"k":["ㄏ","ㄟ"],"t":1},{"k":["ㄙ","ㄜ"],"t":4}]},{"w":"春天","s":[{"k":["ㄔ","ㄨ","ㄣ"],"t":1},{"k":["ㄊ","ㄧ","ㄢ"],"t":1}]},{"w":"夏天","s":[{"k":["ㄒ","ㄧ","ㄚ"],"t":4},{"k":["ㄊ","ㄧ","ㄢ"],"t":1}]},{"w":"秋天","s":[{"k":["ㄑ","ㄧ","ㄡ"],"t":1},{"k":["ㄊ","ㄧ","ㄢ"],"t":1}]},{"w":"冬天","s":[{"k":["ㄉ","ㄨ","ㄥ"],"t":1},{"k":["ㄊ","ㄧ","ㄢ"],"t":1}]},{"w":"苹果","s":[{"k":["ㄆ","ㄧ","ㄥ"],"t":2},{"k":["ㄍ","ㄨ","ㄛ"],"t":3}]},{"w":"米饭","s":[{"k":["ㄇ","ㄧ"],"t":3},{"k":["ㄈ","ㄢ"],"t":4}]},{"w":"面条","s":[{"k":["ㄇ","ㄧ","ㄢ"],"t":4},{"k":["ㄊ","ㄧ","ㄠ"],"t":2}]},{"w":"牛奶","s":[{"k":["ㄋ","ㄧ","ㄡ"],"t":2},{"k":["ㄋ","ㄞ"],"t":3}]},{"w":"咖啡","s":[{"k":["ㄎ","ㄚ"],"t":1},{"k":["ㄈ","ㄟ"],"t":1}]},{"w":"太阳","s":[{"k":["ㄊ","ㄞ"],"t":4},{"k":["ㄧ","ㄤ"],"t":2}]},{"w":"月亮","s":[{"k":["ㄩ","ㄝ"],"t":4},{"k":["ㄌ","ㄧ","ㄤ"],"t":4}]},{"w":"星星","s":[{"k":["ㄒ","ㄧ","ㄥ"],"t":1},{"k":["ㄒ","ㄧ","ㄥ"],"t":1}]},{"w":"名字","s":[{"k":["ㄇ","ㄧ","ㄥ"],"t":2},{"k":["ㄗ"],"t":4}]},{"w":"地址","s":[{"k":["ㄉ","ㄧ"],"t":4},{"k":["ㄓ"],"t":3}]},{"w":"左边","s":[{"k":["ㄗ","ㄨ","ㄛ"],"t":3},{"k":["ㄅ","ㄧ","ㄢ"],"t":1}]},{"w":"右边","s":[{"k":["ㄧ","ㄡ"],"t":4},{"k":["ㄅ","ㄧ","ㄢ"],"t":1}]},{"w":"前面","s":[{"k":["ㄑ","ㄧ","ㄢ"],"t":2},{"k":["ㄇ","ㄧ","ㄢ"],"t":4}]},{"w":"后面","s":[{"k":["ㄏ","ㄡ"],"t":4},{"k":["ㄇ","ㄧ","ㄢ"],"t":4}]},{"w":"这里","s":[{"k":["ㄓ","ㄜ"],"t":4},{"k":["ㄌ","ㄧ"],"t":3}]},{"w":"那里","s":[{"k":["ㄋ","ㄚ"],"t":4},{"k":["ㄌ","ㄧ"],"t":3}]},{"w":"哪里","s":[{"k":["ㄋ","ㄚ"],"t":3},{"k":["ㄌ","ㄧ"],"t":3}]},{"w":"厕所","s":[{"k":["ㄘ","ㄜ"],"t":4},{"k":["ㄙ","ㄨ","ㄛ"],"t":3}]},{"w":"车站","s":[{"k":["ㄔ","ㄜ"],"t":1},{"k":["ㄓ","ㄢ"],"t":4}]},{"w":"机场","s":[{"k":["ㄐ","ㄧ"],"t":1},{"k":["ㄔ","ㄤ"],"t":3}]},{"w":"银行","s":[{"k":["ㄧ","ㄣ"],"t":2},{"k":["ㄏ","ㄤ"],"t":2}]},{"w":"超市","s":[{"k":["ㄔ","ㄠ"],"t":1},{"k":["ㄕ"],"t":4}]},{"w":"餐厅","s":[{"k":["ㄘ","ㄢ"],"t":1},{"k":["ㄊ","ㄧ","ㄥ"],"t":1}]},{"w":"杯子","s":[{"k":["ㄅ","ㄟ"],"t":1},{"k":["ㄗ"],"t":3}]},{"w":"筷子","s":[{"k":["ㄎ","ㄨ","ㄞ"],"t":4},{"k":["ㄗ"],"t":3}]},{"w":"鸡蛋","s":[{"k":["ㄐ","ㄧ"],"t":1},{"k":["ㄉ","ㄢ"],"t":4}]},{"w":"水果","s":[{"k":["ㄕ","ㄨ","ㄟ"],"t":3},{"k":["ㄍ","ㄨ","ㄛ"],"t":3}]},{"w":"蔬菜","s":[{"k":["ㄕ","ㄨ"],"t":1},{"k":["ㄘ","ㄞ"],"t":4}]},{"w":"面包","s":[{"k":["ㄇ","ㄧ","ㄢ"],"t":4},{"k":["ㄅ","ㄠ"],"t":1}]},{"w":"欢迎","s":[{"k":["ㄏ","ㄨ","ㄢ"],"t":1},{"k":["ㄧ","ㄥ"],"t":2}]},{"w":"生日","s":[{"k":["ㄕ","ㄥ"],"t":1},{"k":["ㄖ"],"t":4}]},{"w":"帮忙","s":[{"k":["ㄅ","ㄤ"],"t":1},{"k":["ㄇ","ㄤ"],"t":2}]},{"w":"小心","s":[{"k":["ㄒ","ㄧ","ㄠ"],"t":3},{"k":["ㄒ","ㄧ","ㄣ"],"t":1}]},{"w":"安全","s":[{"k":["ㄢ"],"t":1},{"k":["ㄑ","ㄩ","ㄢ"],"t":2}]},{"w":"健康","s":[{"k":["ㄐ","ㄧ","ㄢ"],"t":4},{"k":["ㄎ","ㄤ"],"t":1}]},{"w":"漂亮","s":[{"k":["ㄆ","ㄧ","ㄠ"],"t":4},{"k":["ㄌ","ㄧ","ㄤ"],"t":4}]},{"w":"干净","s":[{"k":["ㄍ","ㄢ"],"t":1},{"k":["ㄐ","ㄧ","ㄥ"],"t":4}]},{"w":"便宜","s":[{"k":["ㄆ","ㄧ","ㄢ"],"t":2},{"k":["ㄧ"],"t":2}]},{"w":"拼音","s":[{"k":["ㄆ","ㄧ","ㄣ"],"t":1},{"k":["ㄧ","ㄣ"],"t":1}]},{"w":"注音","s":[{"k":["ㄓ","ㄨ"],"t":4},{"k":["ㄧ","ㄣ"],"t":1}]},{"w":"电脑","s":[{"k":["ㄉ","ㄧ","ㄢ"],"t":4},{"k":["ㄋ","ㄠ"],"t":3}]},{"w":"朋友","s":[{"k":["ㄆ","ㄥ"],"t":2},{"k":["ㄧ","ㄡ"],"t":3}]},{"w":"学习","s":[{"k":["ㄒ","ㄩ","ㄝ"],"t":2},{"k":["ㄒ","ㄧ"],"t":2}]},{"w":"中文","s":[{"k":["ㄓ","ㄨ","ㄥ"],"t":1},{"k":["ㄨ","ㄣ"],"t":2}]},{"w":"台湾","s":[{"k":["ㄊ","ㄞ"],"t":2},{"k":["ㄨ","ㄢ"],"t":1}]},{"w":"谢谢","s":[{"k":["ㄒ","ㄧ","ㄝ"],"t":4},{"k":["ㄒ","ㄧ","ㄝ"],"t":5}]},{"w":"你好","s":[{"k":["ㄋ","ㄧ"],"t":3},{"k":["ㄏ","ㄠ"],"t":3}]},{"w":"我们","s":[{"k":["ㄨ","ㄛ"],"t":3},{"k":["ㄇ","ㄣ"],"t":5}]},{"w":"为什么","s":[{"k":["ㄨ","ㄟ"],"t":4},{"k":["ㄕ","ㄣ"],"t":2},{"k":["ㄇ","ㄜ"],"t":5}]},{"w":"对不起","s":[{"k":["ㄉ","ㄨ","ㄟ"],"t":4},{"k":["ㄅ","ㄨ"],"t":4},{"k":["ㄑ","ㄧ"],"t":3}]},{"w":"没关系","s":[{"k":["ㄇ","ㄟ"],"t":2},{"k":["ㄍ","ㄨ","ㄢ"],"t":1},{"k":["ㄒ","ㄧ"],"t":5}]},{"w":"不客气","s":[{"k":["ㄅ","ㄨ"],"t":4},{"k":["ㄎ","ㄜ"],"t":4},{"k":["ㄑ","ㄧ"],"t":5}]},{"w":"等一下","s":[{"k":["ㄉ","ㄥ"],"t":3},{"k":["ㄧ"],"t":2},{"k":["ㄒ","ㄧ","ㄚ"],"t":4}]}];
+const SENTS=[{"w":"我今天去学校","s":[{"k":["ㄨ","ㄛ"],"t":3},{"k":["ㄐ","ㄧ","ㄣ"],"t":1},{"k":["ㄊ","ㄧ","ㄢ"],"t":1},{"k":["ㄑ","ㄩ"],"t":4},{"k":["ㄒ","ㄩ","ㄝ"],"t":2},{"k":["ㄒ","ㄧ","ㄠ"],"t":4}]},{"w":"请问厕所在哪里","s":[{"k":["ㄑ","ㄧ","ㄥ"],"t":3},{"k":["ㄨ","ㄣ"],"t":4},{"k":["ㄘ","ㄜ"],"t":4},{"k":["ㄙ","ㄨ","ㄛ"],"t":3},{"k":["ㄗ","ㄞ"],"t":4},{"k":["ㄋ","ㄚ"],"t":3},{"k":["ㄌ","ㄧ"],"t":3}]},{"w":"我想喝一杯水","s":[{"k":["ㄨ","ㄛ"],"t":3},{"k":["ㄒ","ㄧ","ㄤ"],"t":3},{"k":["ㄏ","ㄜ"],"t":1},{"k":["ㄧ"],"t":4},{"k":["ㄅ","ㄟ"],"t":1},{"k":["ㄕ","ㄨ","ㄟ"],"t":3}]},{"w":"明天早上见","s":[{"k":["ㄇ","ㄧ","ㄥ"],"t":2},{"k":["ㄊ","ㄧ","ㄢ"],"t":1},{"k":["ㄗ","ㄠ"],"t":3},{"k":["ㄕ","ㄤ"],"t":4},{"k":["ㄐ","ㄧ","ㄢ"],"t":4}]},{"w":"这个多少钱","s":[{"k":["ㄓ","ㄜ"],"t":4},{"k":["ㄍ","ㄜ"],"t":5},{"k":["ㄉ","ㄨ","ㄛ"],"t":1},{"k":["ㄕ","ㄠ"],"t":3},{"k":["ㄑ","ㄧ","ㄢ"],"t":2}]},{"w":"我不会说中文","s":[{"k":["ㄨ","ㄛ"],"t":3},{"k":["ㄅ","ㄨ"],"t":4},{"k":["ㄏ","ㄨ","ㄟ"],"t":4},{"k":["ㄕ","ㄨ","ㄛ"],"t":1},{"k":["ㄓ","ㄨ","ㄥ"],"t":1},{"k":["ㄨ","ㄣ"],"t":2}]},{"w":"请再说一次","s":[{"k":["ㄑ","ㄧ","ㄥ"],"t":3},{"k":["ㄗ","ㄞ"],"t":4},{"k":["ㄕ","ㄨ","ㄛ"],"t":1},{"k":["ㄧ"],"t":2},{"k":["ㄘ"],"t":4}]},{"w":"现在几点了","s":[{"k":["ㄒ","ㄧ","ㄢ"],"t":4},{"k":["ㄗ","ㄞ"],"t":4},{"k":["ㄐ","ㄧ"],"t":3},{"k":["ㄉ","ㄧ","ㄢ"],"t":3},{"k":["ㄌ","ㄜ"],"t":5}]},{"w":"我们一起吃饭","s":[{"k":["ㄨ","ㄛ"],"t":3},{"k":["ㄇ","ㄣ"],"t":5},{"k":["ㄧ"],"t":4},{"k":["ㄑ","ㄧ"],"t":3},{"k":["ㄔ"],"t":1},{"k":["ㄈ","ㄢ"],"t":4}]},{"w":"外面正在下雨","s":[{"k":["ㄨ","ㄞ"],"t":4},{"k":["ㄇ","ㄧ","ㄢ"],"t":4},{"k":["ㄓ","ㄥ"],"t":4},{"k":["ㄗ","ㄞ"],"t":4},{"k":["ㄒ","ㄧ","ㄚ"],"t":4},{"k":["ㄩ"],"t":3}]},{"w":"我很高兴认识你","s":[{"k":["ㄨ","ㄛ"],"t":3},{"k":["ㄏ","ㄣ"],"t":3},{"k":["ㄍ","ㄠ"],"t":1},{"k":["ㄒ","ㄧ","ㄥ"],"t":4},{"k":["ㄖ","ㄣ"],"t":4},{"k":["ㄕ"],"t":4},{"k":["ㄋ","ㄧ"],"t":3}]},{"w":"请帮我一下","s":[{"k":["ㄑ","ㄧ","ㄥ"],"t":3},{"k":["ㄅ","ㄤ"],"t":1},{"k":["ㄨ","ㄛ"],"t":3},{"k":["ㄧ"],"t":2},{"k":["ㄒ","ㄧ","ㄚ"],"t":4}]}];
+const TRAPS=[{"w":"中","s":[{"k":["ㄓ","ㄨ","ㄥ"],"t":1}],"cat":"ong"},{"w":"公","s":[{"k":["ㄍ","ㄨ","ㄥ"],"t":1}],"cat":"ong"},{"w":"通","s":[{"k":["ㄊ","ㄨ","ㄥ"],"t":1}],"cat":"ong"},{"w":"空","s":[{"k":["ㄎ","ㄨ","ㄥ"],"t":1}],"cat":"ong"},{"w":"红","s":[{"k":["ㄏ","ㄨ","ㄥ"],"t":2}],"cat":"ong"},{"w":"龙","s":[{"k":["ㄌ","ㄨ","ㄥ"],"t":2}],"cat":"ong"},{"w":"虫","s":[{"k":["ㄔ","ㄨ","ㄥ"],"t":2}],"cat":"ong"},{"w":"风","s":[{"k":["ㄈ","ㄥ"],"t":1}],"cat":"ong"},{"w":"工","s":[{"k":["ㄍ","ㄨ","ㄥ"],"t":1}],"cat":"ong"},{"w":"同","s":[{"k":["ㄊ","ㄨ","ㄥ"],"t":2}],"cat":"ong"},{"w":"六","s":[{"k":["ㄌ","ㄧ","ㄡ"],"t":4}],"cat":"iu"},{"w":"九","s":[{"k":["ㄐ","ㄧ","ㄡ"],"t":3}],"cat":"iu"},{"w":"流","s":[{"k":["ㄌ","ㄧ","ㄡ"],"t":2}],"cat":"iu"},{"w":"牛","s":[{"k":["ㄋ","ㄧ","ㄡ"],"t":2}],"cat":"iu"},{"w":"休","s":[{"k":["ㄒ","ㄧ","ㄡ"],"t":1}],"cat":"iu"},{"w":"球","s":[{"k":["ㄑ","ㄧ","ㄡ"],"t":2}],"cat":"iu"},{"w":"有","s":[{"k":["ㄧ","ㄡ"],"t":3}],"cat":"iu"},{"w":"酒","s":[{"k":["ㄐ","ㄧ","ㄡ"],"t":3}],"cat":"iu"},{"w":"秋","s":[{"k":["ㄑ","ㄧ","ㄡ"],"t":1}],"cat":"iu"},{"w":"留","s":[{"k":["ㄌ","ㄧ","ㄡ"],"t":2}],"cat":"iu"},{"w":"对","s":[{"k":["ㄉ","ㄨ","ㄟ"],"t":4}],"cat":"ui"},{"w":"水","s":[{"k":["ㄕ","ㄨ","ㄟ"],"t":3}],"cat":"ui"},{"w":"会","s":[{"k":["ㄏ","ㄨ","ㄟ"],"t":4}],"cat":"ui"},{"w":"最","s":[{"k":["ㄗ","ㄨ","ㄟ"],"t":4}],"cat":"ui"},{"w":"退","s":[{"k":["ㄊ","ㄨ","ㄟ"],"t":4}],"cat":"ui"},{"w":"灰","s":[{"k":["ㄏ","ㄨ","ㄟ"],"t":1}],"cat":"ui"},{"w":"亏","s":[{"k":["ㄎ","ㄨ","ㄟ"],"t":1}],"cat":"ui"},{"w":"追","s":[{"k":["ㄓ","ㄨ","ㄟ"],"t":1}],"cat":"ui"},{"w":"吹","s":[{"k":["ㄔ","ㄨ","ㄟ"],"t":1}],"cat":"ui"},{"w":"贵","s":[{"k":["ㄍ","ㄨ","ㄟ"],"t":4}],"cat":"ui"},{"w":"论","s":[{"k":["ㄌ","ㄨ","ㄣ"],"t":4}],"cat":"un"},{"w":"春","s":[{"k":["ㄔ","ㄨ","ㄣ"],"t":1}],"cat":"un"},{"w":"文","s":[{"k":["ㄨ","ㄣ"],"t":2}],"cat":"un"},{"w":"问","s":[{"k":["ㄨ","ㄣ"],"t":4}],"cat":"un"},{"w":"轮","s":[{"k":["ㄌ","ㄨ","ㄣ"],"t":2}],"cat":"un"},{"w":"村","s":[{"k":["ㄘ","ㄨ","ㄣ"],"t":1}],"cat":"un"},{"w":"困","s":[{"k":["ㄎ","ㄨ","ㄣ"],"t":4}],"cat":"un"},{"w":"准","s":[{"k":["ㄓ","ㄨ","ㄣ"],"t":3}],"cat":"un"},{"w":"顺","s":[{"k":["ㄕ","ㄨ","ㄣ"],"t":4}],"cat":"un"},{"w":"温","s":[{"k":["ㄨ","ㄣ"],"t":1}],"cat":"un"},{"w":"女","s":[{"k":["ㄋ","ㄩ"],"t":3}],"cat":"v"},{"w":"鱼","s":[{"k":["ㄩ"],"t":2}],"cat":"v"},{"w":"去","s":[{"k":["ㄑ","ㄩ"],"t":4}],"cat":"v"},{"w":"月","s":[{"k":["ㄩ","ㄝ"],"t":4}],"cat":"v"},{"w":"学","s":[{"k":["ㄒ","ㄩ","ㄝ"],"t":2}],"cat":"v"},{"w":"雪","s":[{"k":["ㄒ","ㄩ","ㄝ"],"t":3}],"cat":"v"},{"w":"绿","s":[{"k":["ㄌ","ㄩ"],"t":4}],"cat":"v"},{"w":"雨","s":[{"k":["ㄩ"],"t":3}],"cat":"v"},{"w":"句","s":[{"k":["ㄐ","ㄩ"],"t":4}],"cat":"v"},{"w":"愿","s":[{"k":["ㄩ","ㄢ"],"t":4}],"cat":"v"},{"w":"知","s":[{"k":["ㄓ"],"t":1}],"cat":"zhi"},{"w":"吃","s":[{"k":["ㄔ"],"t":1}],"cat":"zhi"},{"w":"是","s":[{"k":["ㄕ"],"t":4}],"cat":"zhi"},{"w":"日","s":[{"k":["ㄖ"],"t":4}],"cat":"zhi"},{"w":"只","s":[{"k":["ㄓ"],"t":3}],"cat":"zhi"},{"w":"车","s":[{"k":["ㄔ","ㄜ"],"t":1}],"cat":"zhi"},{"w":"十","s":[{"k":["ㄕ"],"t":2}],"cat":"zhi"},{"w":"人","s":[{"k":["ㄖ","ㄣ"],"t":2}],"cat":"zhi"},{"w":"这","s":[{"k":["ㄓ","ㄜ"],"t":4}],"cat":"zhi"},{"w":"时","s":[{"k":["ㄕ"],"t":2}],"cat":"zhi"}];
+function splitPinyin(raw){
+  const src=String(raw||'').trim();
+  if(!src) return {error:'先输入拼音，例如 zhong、liu、nv'};
+  const toneMap={'ā':['a',1],'á':['a',2],'ǎ':['a',3],'à':['a',4],
+    'ē':['e',1],'é':['e',2],'ě':['e',3],'è':['e',4],
+    'ī':['i',1],'í':['i',2],'ǐ':['i',3],'ì':['i',4],
+    'ō':['o',1],'ó':['o',2],'ǒ':['o',3],'ò':['o',4],
+    'ū':['u',1],'ú':['u',2],'ǔ':['u',3],'ù':['u',4],
+    'ǖ':['v',1],'ǘ':['v',2],'ǚ':['v',3],'ǜ':['v',4]};
+  let tone=0;
+  let s='';
+  for(const ch of src.toLowerCase().replace(/ü/g,'v')){
+    if(toneMap[ch]){ s+=toneMap[ch][0]; tone=toneMap[ch][1]; }
+    else s+=ch;
+  }
+  s=s.replace(/[^a-z0-5]/g,'');
+  const td=s.match(/[1-5]$/);
+  if(td){ tone=+td[0]; s=s.slice(0,-1); }
+  if(!s) return {error:'看不懂这个拼音'};
+  const initials=['zh','ch','sh','b','p','m','f','d','t','n','l','g','k','h','j','q','x','r','z','c','s'];
+  const iniZh={b:'ㄅ',p:'ㄆ',m:'ㄇ',f:'ㄈ',d:'ㄉ',t:'ㄊ',n:'ㄋ',l:'ㄌ',g:'ㄍ',k:'ㄎ',h:'ㄏ',j:'ㄐ',q:'ㄑ',x:'ㄒ',zh:'ㄓ',ch:'ㄔ',sh:'ㄕ',r:'ㄖ',z:'ㄗ',c:'ㄘ',s:'ㄙ'};
+  const finals={
+    iang:'ㄧㄤ',iong:'ㄩㄥ',uang:'ㄨㄤ',
+    ang:'ㄤ',eng:'ㄥ',ong:'ㄨㄥ',
+    iao:'ㄧㄠ',ian:'ㄧㄢ',uai:'ㄨㄞ',uan:'ㄨㄢ',van:'ㄩㄢ',
+    ia:'ㄧㄚ',ie:'ㄧㄝ',iu:'ㄧㄡ',in:'ㄧㄣ',ing:'ㄧㄥ',
+    ua:'ㄨㄚ',uo:'ㄨㄛ',ui:'ㄨㄟ',un:'ㄨㄣ',ue:'ㄩㄝ',ve:'ㄩㄝ',vn:'ㄩㄣ',
+    ai:'ㄞ',ei:'ㄟ',ao:'ㄠ',ou:'ㄡ',an:'ㄢ',en:'ㄣ',er:'ㄦ',
+    a:'ㄚ',o:'ㄛ',e:'ㄜ',i:'ㄧ',u:'ㄨ',v:'ㄩ'
+  };
+  const ymap={yi:'ㄧ',ya:'ㄧㄚ',yo:'ㄧㄛ',ye:'ㄧㄝ',yao:'ㄧㄠ',you:'ㄧㄡ',yan:'ㄧㄢ',yin:'ㄧㄣ',yang:'ㄧㄤ',ying:'ㄧㄥ',yong:'ㄩㄥ',yu:'ㄩ',yue:'ㄩㄝ',yuan:'ㄩㄢ',yun:'ㄩㄣ'};
+  const wmap={wu:'ㄨ',wa:'ㄨㄚ',wo:'ㄨㄛ',wai:'ㄨㄞ',wei:'ㄨㄟ',wan:'ㄨㄢ',wen:'ㄨㄣ',wang:'ㄨㄤ',weng:'ㄨㄥ'};
+  const toneName=['','一声','二声','三声','四声','轻声'];
+  function pack(steps,z){
+    if(tone) steps.push('声调：'+toneName[tone]+'（空白／6／3／4／7）');
+    return {steps, z, tone};
+  }
+  if(ymap[s]) return pack([s+' 的 y 只是拼写规则，注音写成 '+ymap[s]], ymap[s]);
+  if(wmap[s]) return pack([s+' 的 w 只是拼写规则，注音写成 '+wmap[s]], wmap[s]);
+  let ini='', rest=s;
+  for(const i of initials){
+    if(s.startsWith(i)){ ini=i; rest=s.slice(i.length); break; }
+  }
+  const zero={zh:1,ch:1,sh:1,r:1,z:1,c:1,s:1};
+  const jqx={j:1,q:1,x:1};
+  if(jqx[ini]) rest=rest.replace(/^u/,'v');
+  if(zero[ini] && (rest==='' || rest==='i')){
+    return pack([ini+' 的 i 不用打，注音只有 '+iniZh[ini]], iniZh[ini]);
+  }
+  const keys=Object.keys(finals).sort((a,b)=>b.length-a.length);
+  let matched='', fz='';
+  for(const k of keys){ if(rest===k){ matched=k; fz=finals[k]; break; } }
+  if(!fz) return {error:'不认识这个韵母：'+(rest||'（空）')};
+  const iz=ini?iniZh[ini]:'';
+  const steps=['拼音 '+src];
+  if(ini) steps.push('声母 '+ini+' → '+iz);
+  if(matched==='ong') steps.push('ong 不是 o+ng，注音要打 ㄨㄥ');
+  else if(matched==='iong') steps.push('iong 其实是 ㄩㄥ');
+  else if(matched==='iu') steps.push('iu 是缩写，注音要打全 ㄧㄡ');
+  else if(matched==='ui') steps.push('ui 是缩写，注音要打全 ㄨㄟ');
+  else if(matched==='un' && !jqx[ini]) steps.push('un 是缩写，注音要打全 ㄨㄣ');
+  else if(jqx[ini] && 'v ve van vn ue'.split(' ').indexOf(matched)>=0) steps.push('j／q／x 后面的 u 其实是 ü，注音用 ㄩ');
+  else steps.push('韵母 '+matched+' → '+fz);
+  steps.push('合起来：'+(iz+fz));
+  return pack(steps, iz+fz);
+}
+const COLS=[
+  {name:'第1行 ㄅㄆㄇㄈ', zs:['ㄅ','ㄆ','ㄇ','ㄈ']},
+  {name:'第2行 ㄉㄊㄋㄌ', zs:['ㄉ','ㄊ','ㄋ','ㄌ']},
+  {name:'第3行 ㄍㄎㄏ', zs:['ㄍ','ㄎ','ㄏ']},
+  {name:'第4行 ㄐㄑㄒ', zs:['ㄐ','ㄑ','ㄒ']},
+  {name:'第5行 ㄓㄔㄕㄖ', zs:['ㄓ','ㄔ','ㄕ','ㄖ']},
+  {name:'第6行 ㄗㄘㄙ', zs:['ㄗ','ㄘ','ㄙ']},
+  {name:'第7行 ㄧㄨㄩ', zs:['ㄧ','ㄨ','ㄩ']},
+  {name:'第8行 ㄚㄛㄜㄝ', zs:['ㄚ','ㄛ','ㄜ','ㄝ']},
+  {name:'第9行 ㄞㄟㄠㄡ', zs:['ㄞ','ㄟ','ㄠ','ㄡ']},
+  {name:'第10行 ㄢㄣㄤㄥ', zs:['ㄢ','ㄣ','ㄤ','ㄥ']},
+  {name:'第11行 ㄦ', zs:['ㄦ']}
+];
+function defaultProg(){
+  return {words:{}, keys:{}, days:{}, streak:{last:'',n:0}, bestStreak:0, bestCpm:0,
+    phase:0, s1:0, s2:0, colUnlock:1, colOk:{}, syms:{}, custom:[], badges:[]};
+}
+function loadProg(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('zk-learn')||'{}');
+    const base=defaultProg();
+    return Object.assign(base, saved, {
+      words:saved.words||{}, keys:saved.keys||{}, days:saved.days||{},
+      streak:Object.assign(base.streak, saved.streak||{}),
+      colOk:saved.colOk||{}, syms:saved.syms||{}, custom:saved.custom||[], badges:saved.badges||[]
+    });
+  }catch(e){ return defaultProg(); }
+}
+let prog=loadProg();
+function saveProg(){ try{ localStorage.setItem('zk-learn', JSON.stringify(prog)); }catch(e){} }
+function todayKey(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function yesterdayKey(){
+  const d=new Date(); d.setDate(d.getDate()-1);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function touchDay(){
+  const t=todayKey();
+  if(prog.streak.last!==t){
+    prog.streak.n = prog.streak.last===yesterdayKey() ? (prog.streak.n||0)+1 : 1;
+    prog.streak.last=t;
+  }
+  if(!prog.days[t]) prog.days[t]={n:0, ok:0};
+}
+function noteResult(word, ok){
+  touchDay();
+  const t=todayKey();
+  prog.days[t].n++;
+  if(ok) prog.days[t].ok++;
+  if(word){
+    const r=prog.words[word]||{ok:0,bad:0,streak:0};
+    if(ok){ r.ok++; r.streak=(r.streak||0)+1; }
+    else { r.bad++; r.streak=0; }
+    r.last=t;
+    prog.words[word]=r;
+  }
+  checkBadges();
+  saveProg();
+  renderSummary();
+}
+function noteKey(z, ok){
+  const r=prog.keys[z]||{ok:0,bad:0};
+  if(ok) r.ok++; else r.bad++;
+  prog.keys[z]=r;
+}
+function onStageClear(stage){
+  if(stage==='1'){
+    prog.s1=(prog.s1||0)+1;
+    if(prog.s1>=12 && prog.phase<1){ prog.phase=1; toast('双字词阶段解锁了，可以练日常词了'); }
+  }
+  if(stage==='2'){
+    prog.s2=(prog.s2||0)+1;
+    if(prog.s2>=12 && prog.phase<2){ prog.phase=2; toast('短句阶段解锁了'); }
+  }
+  refreshLocks();
+}
+function explainMismatch(typed, expected){
+  const parts=[];
+  const initials=SYMBOLS.filter(s=>s.group==='initial').map(s=>s.z);
+  const a=typed.syms, b=expected.k;
+  if(typed.tone!==expected.t){
+    parts.push('声调应该是'+TONES[expected.t-1].name);
+  }
+  if(a.join('')!==b.join('')){
+    const aIni=initials.indexOf(a[0])>=0?a[0]:'';
+    const bIni=initials.indexOf(b[0])>=0?b[0]:'';
+    if(aIni!==bIni) parts.push('声母应该是 '+(bIni||'（没有）')+'，你打了 '+(aIni||'没有'));
+    const aRest=(aIni?a.slice(1):a).join('');
+    const bRest=(bIni?b.slice(1):b).join('');
+    if(aRest!==bRest) parts.push('韵母应该是 '+(bRest||'（没有）')+'，你打了 '+(aRest||'没有'));
+  }
+  return parts.join('。')||'这个字不对，再试一次';
+}
+function allPools(){
+  return SYLS.concat(DAILY, SENTS, TRAPS, WORDS, prog.custom||[]);
+}
+function buildCharMap(){
+  const map={};
+  for(const item of allPools()){
+    const chars=[...item.w];
+    if(chars.length!==item.s.length) continue;
+    chars.forEach((ch,i)=>{ if(!map[ch]) map[ch]={k:item.s[i].k.slice(), t:item.s[i].t}; });
+  }
+  map['一']={k:['ㄧ'], t:1};
+  map['不']={k:['ㄅ','ㄨ'], t:4};
+  map['的']={k:['ㄉ','ㄜ'], t:5};
+  return map;
+}
+let CHARMAP={};
+function uniqueWords(list){
+  const seen=new Set();
+  return list.filter(w=>{
+    if(seen.has(w.w)) return false;
+    seen.add(w.w); return true;
+  });
+}
+function activeItems(){
+  if(typing.stage==='1') return SYLS.slice();
+  if(typing.stage==='3') return SENTS.slice();
+  let items;
+  if(typing.bank==='nick') items=WORDS.filter(w=>!BANNED_WORDS.has(w.w));
+  else if(typing.bank==='daily') items=DAILY.slice();
+  else if(typing.bank==='sent') items=SENTS.slice();
+  else if(typing.bank==='trap') items=TRAPS.filter(w=>typing.trap==='all'||w.cat===typing.trap);
+  else if(typing.bank==='wrong'){
+    items=uniqueWords(allPools().filter(w=>{
+      const r=prog.words[w.w];
+      return r && r.bad>0 && r.streak<2;
+    }));
+  }else if(typing.bank==='custom') items=(prog.custom||[]).slice();
+  else items=WORDS.filter(w=>!BANNED_WORDS.has(w.w));
+  if(typing.stage==='2') items=items.filter(w=>[...w.w].length===2);
+  return items;
+}
+function orderItems(items){
+  const arr=items.slice();
+  if(typing.order==='random'||typing.order==='spaced'){
+    const wt=typing.order==='spaced' ? (it)=>{
+      const r=prog.words[it.w];
+      if(!r) return 3;
+      if(r.streak>=3) return 0.35;
+      return 1+r.bad*2+(r.streak===0?1.6:0);
+    } : ()=>1;
+    arr.sort((a,b)=>(wt(b)*Math.random())-(wt(a)*Math.random()));
+  }else{
+    arr.sort((a,b)=>[...a.w].length-[...b.w].length || a.w.localeCompare(b.w,'zh'));
+  }
+  return arr;
+}
+function phoneLayout(){ return window.matchMedia('(max-width:720px)').matches; }
+function showKeyHint(){ return typing.hint && !phoneLayout(); }
+function coveredReport(){
+  const set=new Set();
+  allPools().forEach(item=>item.s.forEach(s=>s.k.forEach(z=>set.add(z))));
+  const all=SYMBOLS.map(s=>s.z);
+  const miss=all.filter(z=>!set.has(z));
+  return {n:all.length-miss.length, total:all.length, miss};
+}
+function seenSymbolCount(){
+  return SYMBOLS.filter(s=>prog.syms && prog.syms[s.z]).length;
+}
+const BADGE_DEFS=[
+  {id:'combo10', name:'连对 10 题'},
+  {id:'allsym', name:'37 个符号都打对过'},
+  {id:'days7', name:'连续练习 7 天'},
+  {id:'colrow', name:'练完一整行'},
+  {id:'speed', name:'一分钟 30 字'}
+];
+function checkBadges(){
+  const got=new Set(prog.badges||[]);
+  const ok={
+    combo10:(prog.bestStreak||0)>=10 || Number(localStorage.getItem('zk-best')||0)>=10,
+    allsym:seenSymbolCount()>=SYMBOLS.length,
+    days7:(prog.streak.n||0)>=7,
+    colrow:(prog.colUnlock||1)>1,
+    speed:(prog.bestCpm||0)>=30
+  };
+  BADGE_DEFS.forEach(b=>{
+    if(ok[b.id] && !got.has(b.id)){
+      got.add(b.id);
+      toast('得到徽章：'+b.name);
+    }
+  });
+  prog.badges=[...got];
+}
+function renderSummary(){
+  const line=document.getElementById('todayLine');
+  const row=document.getElementById('badgeRow');
+  if(!line) return;
+  const t=prog.days[todayKey()]||{n:0,ok:0};
+  const acc=t.n?Math.round(t.ok/t.n*100)+'%':'–';
+  line.textContent='今天练了 '+t.n+' 题，正确率 '+acc+'，连续 '+(prog.streak.n||0)+' 天';
+  if(row){
+    const got=new Set(prog.badges||[]);
+    row.innerHTML=BADGE_DEFS.map(b=>`<span class="badge${got.has(b.id)?' on':''}">${b.name}</span>`).join('');
+  }
+  const cover=document.getElementById('coverLine');
+  if(cover){
+    const c=coveredReport();
+    cover.textContent=c.miss.length
+      ? ('词库覆盖 '+c.n+'/'+c.total+' 个符号，还缺 '+c.miss.join(' '))
+      : ('词库已覆盖全部 '+c.total+' 个符号。你亲自打对过 '+seenSymbolCount()+'/'+c.total+' 个。');
+  }
+}
+function refreshLocks(){
+  const st=document.getElementById('tStage');
+  const bk=document.getElementById('tBank');
+  if(st) [...st.options].forEach(o=>{
+    if(o.value==='2') o.disabled=prog.phase<1;
+    if(o.value==='3') o.disabled=prog.phase<2;
+  });
+  if(bk) [...bk.options].forEach(o=>{
+    if(o.value==='daily') o.disabled=prog.phase<1;
+    if(o.value==='sent') o.disabled=prog.phase<2;
+  });
+  const scope=document.getElementById('dScope');
+  if(scope) [...scope.options].forEach(o=>{
+    if(o.value.indexOf('col')===0){
+      const i=+o.value.slice(3);
+      o.disabled=i>=(prog.colUnlock||1);
+    }
+  });
+  paintRows();
+}
+function paintRows(){
+  const box=document.getElementById('rowPractice');
+  if(!box) return;
+  box.innerHTML=COLS.map((c,i)=>{
+    const locked=i>=(prog.colUnlock||1);
+    return `<button type="button" data-col="${i}" ${locked?'disabled':''}>${locked?'锁 ':'练 '}${c.name}</button>`;
+  }).join('')+'<span class="lock-note">左边这一竖行答对 8 次，就打开下一行。上方的「全部」随时可以练。</span>';
+  box.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const i=+btn.dataset.col;
+      if(i>=(prog.colUnlock||1)){ toast('先把上一行练熟'); return; }
+      const sel=document.getElementById('dScope');
+      if(sel) sel.value='col'+i;
+      drill.scope='col'+i;
+      switchTab('drill');
+      drillReset();
+    });
+  });
+}
+function fillScope(){
+  const sel=document.getElementById('dScope');
+  if(!sel || sel.dataset.ready) return;
+  sel.dataset.ready='1';
+  const opt=document.createElement('option');
+  opt.value='wrong'; opt.textContent='只考错键';
+  sel.appendChild(opt);
+  COLS.forEach((c,i)=>{
+    const o=document.createElement('option');
+    o.value='col'+i; o.textContent=c.name;
+    sel.appendChild(o);
+  });
+}
+function addCustomWord(text){
+  const raw=(text||'').trim().replace(/\s+/g,'');
+  if(!raw){ toast('先输入想练的词'); return; }
+  if([...raw].length>12){ toast('先练 12 个字以内的词'); return; }
+  const missing=[];
+  const s=[];
+  for(const ch of raw){
+    const hit=CHARMAP[ch];
+    if(!hit) missing.push(ch);
+    else s.push({k:hit.k.slice(), t:hit.t});
+  }
+  if(missing.length){
+    toast('这几个字还没有注音：'+missing.join(' ')+'。换个常用词试试');
+    return;
+  }
+  prog.custom=(prog.custom||[]).filter(w=>w.w!==raw);
+  prog.custom.push({w:raw, s});
+  saveProg();
+  CHARMAP=buildCharMap();
+  if(typing.bank!=='custom'){
+    typing.bank='custom';
+    const bk=document.getElementById('tBank');
+    if(bk) bk.value='custom';
+  }
+  rebuildQueue(false);
+  clearTyping(); renderLine(); renderTarget();
+  toast('已加入：'+raw);
+}
+function startTimed(){
+  if(typing.timer){ clearInterval(typing.timer); typing.timer=null; }
+  typing.timed=true;
+  typing.timeLeft=60;
+  typing.timedChars=0;
+  const el=document.getElementById('tTimer');
+  const btn=document.getElementById('tTimed');
+  if(btn) btn.textContent='计时中';
+  const tick=()=>{
+    if(el) el.textContent=typing.timeLeft+' 秒';
+    if(typing.timeLeft<=0){
+      clearInterval(typing.timer); typing.timer=null; typing.timed=false;
+      const n=typing.timedChars||0;
+      if(n> (prog.bestCpm||0)) prog.bestCpm=n;
+      checkBadges(); saveProg(); renderSummary();
+      if(btn) btn.textContent='60 秒计时';
+      if(el) el.textContent='';
+      toast('一分钟打了 '+n+' 个字');
+      return;
+    }
+    typing.timeLeft--;
+  };
+  tick();
+  typing.timer=setInterval(tick, 1000);
+}
+function setupLearn(){
+  CHARMAP=buildCharMap();
+  fillScope();
+  refreshLocks();
+  renderSummary();
+  document.querySelectorAll('.kbd-caption').forEach(el=>{
+    if(el.dataset.memo) return;
+    el.dataset.memo='1';
+    el.insertAdjacentHTML('afterend','<div class="tone-memo">声调口诀：空白一声、6 二声、3 三声、4 四声、7 轻声（记「空六三四七」）</div>');
+  });
+  const bank=document.getElementById('tBank');
+  const stage=document.getElementById('tStage');
+  const trap=document.getElementById('tTrapWrap');
+  const blind=document.getElementById('tBlind');
+  const dictate=document.getElementById('tDictate');
+  if(bank){
+    if(bank.querySelector('option[value="'+typing.bank+'"]') && !bank.querySelector('option[value="'+typing.bank+'"]').disabled) bank.value=typing.bank;
+    else typing.bank='nick';
+    bank.addEventListener('change',e=>{
+      typing.bank=e.target.value;
+      const trapBox=document.getElementById('tTrapWrap');
+      if(trapBox) trapBox.style.display=typing.bank==='trap'?'':'none';
+      rebuildQueue(false); clearTyping(); renderLine(); renderTarget();
+      e.target.blur();
+    });
+  }
+  if(trap){
+    trap.style.display=typing.bank==='trap'?'':'none';
+    const trapSel=document.getElementById('tTrap');
+    if(trapSel){
+      trapSel.value=typing.trap||'all';
+      trapSel.addEventListener('change',e=>{
+        typing.trap=e.target.value;
+        rebuildQueue(false); clearTyping(); renderLine(); renderTarget();
+        e.target.blur();
+      });
+    }
+  }
+  if(stage){
+    if(!stage.querySelector('option[value="'+typing.stage+'"]') || stage.querySelector('option[value="'+typing.stage+'"]').disabled) typing.stage='all';
+    stage.value=typing.stage;
+    stage.addEventListener('change',e=>{
+      typing.stage=e.target.value;
+      rebuildQueue(false); clearTyping(); renderLine(); renderTarget();
+      e.target.blur();
+    });
+  }
+  if(blind){
+    blind.addEventListener('change',e=>{
+      document.getElementById('kb-type').classList.toggle('blind', e.target.checked);
+      e.target.blur();
+    });
+  }
+  if(dictate){
+    dictate.addEventListener('change',e=>{
+      typing.dictate=e.target.checked;
+      typing.spokenQi=-1;
+      renderTarget();
+      e.target.blur();
+    });
+  }
+  const timed=document.getElementById('tTimed');
+  if(timed) timed.addEventListener('click',e=>{ startTimed(); e.target.blur(); });
+  const add=document.getElementById('customAdd');
+  if(add) add.addEventListener('click',e=>{
+    addCustomWord(document.getElementById('customIn').value);
+    e.target.blur();
+  });
+  const py=document.getElementById('pyBtn');
+  if(py) py.addEventListener('click',e=>{
+    const r=splitPinyin(document.getElementById('pyIn').value);
+    const out=document.getElementById('pyOut');
+    const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); out.innerHTML=r.error ? esc(r.error) : r.steps.map(x=>'<div>'+esc(x)+'</div>').join('');
+    e.target.blur();
+  });
+  const install=document.getElementById('installBtn');
+  window.addEventListener('beforeinstallprompt', ev=>{
+    ev.preventDefault();
+    window.__installPrompt=ev;
+    if(install) install.hidden=false;
+  });
+  if(install) install.addEventListener('click', async ()=>{
+    const ev=window.__installPrompt;
+    if(!ev){ toast('手机浏览器菜单里选「加到主画面」，就能像 App 一样打开'); return; }
+    ev.prompt();
+    window.__installPrompt=null;
+    install.hidden=true;
+  });
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  }
+}
+
 const typing={
   buf:[],line:[],qi:0,progress:0,queue:[],
   order:localStorage.getItem('zk-order')||'len',
-  hint:localStorage.getItem('zk-hint')!=='0',warned:false
+  hint:localStorage.getItem('zk-hint')!=='0',warned:false,
+  bank:'nick', stage:'all', trap:'all', dictate:false, timed:false, timeLeft:0,
+  timedChars:0, timer:null, missed:false, typeStreak:0, spokenQi:-1
 };
 const lineEl=()=>document.getElementById('line');
 
-function rebuildQueue(keepWord){
-  const prev = keepWord && typing.queue.length ? WORDS[typing.queue[typing.qi]] : null;
-  const items = WORDS
-    .map((w,i)=>({i,len:w.w.length,w:w.w}))
-    .filter(x=>!BANNED_WORDS.has(x.w));
-  if(typing.order==='random'){
-    for(let i=items.length-1;i>0;i--){
-      const j=Math.floor(Math.random()*(i+1));
-      [items[i],items[j]]=[items[j],items[i]];
-    }
-  }else{
-    items.sort((a,b)=>a.len-b.len || a.i-b.i);
-  }
-  typing.queue = items.map(x=>x.i);
+function rebuildQueue(){
+  typing.queue = orderItems(activeItems());
   typing.qi = 0;
-  if(prev){
-    const found = typing.queue.indexOf(WORDS.indexOf(prev));
-    if(found>=0) typing.qi = found;
-  }
   typing.progress = 0;
+  typing.missed = false;
+  typing.spokenQi = -1;
+  refreshLocks();
 }
-function currentWord(){ return WORDS[typing.queue[typing.qi]]; }
+function currentWord(){ return typing.queue[typing.qi]; }
 
 const PRAISES=[
   '欧买尬～泥辣魔腻害呀！！！',
@@ -1124,26 +1660,39 @@ function renderLine(){
   const cur=typing.buf.length?
     `<div class="syl building"><div class="sz">${typing.buf.join('')}</div><div class="sp">再按声调键…</div></div>`:'';
   const el=lineEl();
-  el.innerHTML=(chips+cur)||`<div class="line-empty">直接敲键盘打打看：<kbd>S</kbd>（ㄋ）→ <kbd>U</kbd>（ㄧ）→ <kbd>3</kbd>（ˇ）就打出「ㄋㄧˇ＝nǐ 你」</div>`;
+  const demo=phoneLayout()
+    ? '直接点键盘：先点注音，最后点声调（空白＝一声）'
+    : '直接敲键盘打打看：<kbd>S</kbd>（ㄋ）→ <kbd>U</kbd>（ㄧ）→ <kbd>3</kbd>（ˇ）就打出「ㄋㄧˇ＝nǐ 你」';
+  el.innerHTML=(chips+cur)||`<div class="line-empty">${demo}</div>`;
   el.scrollLeft=el.scrollWidth;
 }
 function sylHintHTML(s,ok){
   const parts=s.k.map(z=>{
     const key=Z2SYM[z]?Z2SYM[z].key:'?';
-    return `<span class="hz">${z}${typing.hint?`<kbd>${key}</kbd>`:''}</span>`;
+    const tip=showKeyHint()?`<kbd>${key}</kbd>`:'';
+    return `<span class="hz">${z}${tip}</span>`;
   }).join('');
   const tn=TONES[s.t-1];
   const tmark=tn.mark||'ˉ';
-  return `<span class="hsyl${ok?' ok':''}">${parts}<span class="hz ht">${tmark}${typing.hint?`<kbd>${tn.key}</kbd>`:''}</span></span>`;
+  const ttip=showKeyHint()?`<kbd>${tn.key}</kbd>`:'';
+  return `<span class="hsyl${ok?' ok':''}">${parts}<span class="hz ht">${tmark}${ttip}</span></span>`;
 }
 function renderTarget(done, praise){
   const t=currentWord();
-  if(!t) return;
-  document.getElementById('target').innerHTML=`<div class="tg${done?' done':''}">
-    <div class="tg-label">跟 着 打 · 第 ${typing.qi+1}／${typing.queue.length} 题</div>
-    <div class="tg-word" id="tgWord" title="点我听发音">${t.w}</div>
-    <div class="tg-syls">${t.s.map((s,i)=>sylHintHTML(s,i<typing.progress)).join('')}</div>
-    ${done && praise ? `<div class="tg-praise${isSpecialWord(t)?' special':''}">${praise}</div>` : ''}
+  const box=document.getElementById('target');
+  if(!t){
+    const why=typing.bank==='wrong'?'错题本还是空的，先正常练，打错的会自动进来':'这个范围还没有题目，换一个词库或阶段';
+    box.innerHTML=`<div class="tg"><div class="tg-label">${why}</div></div>`;
+    return;
+  }
+  const pass=typing.stage==='1'?(' · 过关 '+(prog.s1||0)+'/12'):(typing.stage==='2'?(' · 过关 '+(prog.s2||0)+'/12'):'');
+  const safe=String(t.w).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); const word=typing.dictate?'请听':safe;
+  const syls=typing.dictate?'':`<div class="tg-syls">${t.s.map((s,i)=>sylHintHTML(s,i<typing.progress)).join('')}</div>`;
+  box.innerHTML=`<div class="tg${done?' done':''}">
+    <div class="tg-label">跟 着 打 · 第 ${typing.qi+1}／${typing.queue.length} 题${pass}</div>
+    <div class="tg-word${typing.dictate?' dictate':''}" id="tgWord" title="点我听发音">${word}</div>
+    ${syls}
+    ${done && praise ? `<div class="tg-praise">${praise}</div>` : ''}
     <div class="tg-btns">
       <button id="tgSpeak">🔊 念一次</button>
       <button id="tgNext">换一个 ▸</button>
@@ -1158,12 +1707,15 @@ function renderTarget(done, praise){
     renderTarget(); e.target.blur(); };
   document.getElementById('tgClear').onclick=e=>{
     clearTyping(); renderLine(); renderTarget(); e.target.blur(); };
+  if(typing.dictate && !done && typing.spokenQi!==typing.qi){
+    typing.spokenQi=typing.qi;
+    setTimeout(()=>speakWord(t.w), 280);
+  }
 }
 function nextWord(){
   typing.qi++;
-  if(typing.qi>=typing.queue.length){
-    rebuildQueue(false);
-  }
+  typing.missed=false;
+  if(typing.qi>=typing.queue.length) rebuildQueue();
   clearTyping();
   renderLine();
   renderTarget();
@@ -1181,6 +1733,7 @@ function recomputeProgress(){
   typing.progress=p;
 }
 function typeSym(sym){
+  if(typing.timed && typing.timeLeft<=0 && !typing.timer) return;
   if(sym.group==='tone'){
     if(!typing.buf.length){
       const el=lineEl(); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
@@ -1191,20 +1744,43 @@ function typeSym(sym){
     const syl={syms:typing.buf.slice(),tone:sym.t,
                py:toPinyin(typing.buf,sym.t),base:toPinyin(typing.buf,0)};
     typing.line.push(syl); typing.buf=[];
-    click(); renderLine();
+    click();
+    const t=currentWord();
+    const expect=t && t.s[typing.line.length-1];
+    if(expect){
+      const ok=syl.syms.join('')===expect.k.join('') && syl.tone===expect.t;
+      if(!ok){
+        typing.line.pop();
+        typing.typeStreak=0;
+        noteResult(t.w, false);
+        expect.k.forEach(z=>noteKey(z,false));
+        saveProg();
+        const el=lineEl(); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+        buzz();
+        toast(explainMismatch(syl, expect));
+        renderLine();
+        renderTarget();
+        return;
+      }
+      expect.k.forEach(z=>{ noteKey(z,true); prog.syms[z]=1; });
+    }
+    renderLine();
     const prev=typing.progress;
     recomputeProgress();
-    const t=currentWord();
     if(t && typing.progress===t.s.length){
       const praise = pickPraise();
-      const special = false;
+      typing.typeStreak=(typing.typeStreak||0)+1;
+      if(typing.typeStreak>(prog.bestStreak||0)) prog.bestStreak=typing.typeStreak;
+      noteResult(t.w, true);
+      if(typing.stage==='1'||typing.stage==='2') onStageClear(typing.stage);
+      if(typing.timed) typing.timedChars=(typing.timedChars||0)+[...t.w].length;
       renderTarget(true, praise);
       toast(praise);
       ding();
-      speakWord(t.w);
-      setTimeout(()=>{ clearTyping(); renderLine(); nextWord(); }, special? 8000 : 2200);
+      if(!typing.dictate) speakWord(t.w);
+      setTimeout(()=>{ clearTyping(); renderLine(); nextWord(); }, typing.timed?700:2200);
     }else{
-      if(typing.progress>prev && typing.progress>0) speak(t.w[typing.progress-1]);
+      if(t && typing.progress>prev && typing.progress>0 && !typing.dictate) speak(t.w[typing.progress-1]);
       renderTarget();
     }
   }else{
@@ -1219,7 +1795,6 @@ function typeSym(sym){
   }
 }
 
-// 把打字区的内容整句念出来：每个音节查 SYL_CHARS 找同音字；查不到就退回念注音原文
 function speakLine(slow){
   if(!typing.line.length){ toast('打字区还是空的，先打几个字吧'); return; }
   const parts=typing.line.map(s=>{
@@ -1239,6 +1814,18 @@ function drillPool(){
   if(drill.scope==='ini')  return SYMBOLS.filter(s=>s.group==='initial');
   if(drill.scope==='fin')  return SYMBOLS.filter(s=>s.group!=='initial');
   if(drill.scope==='tone') return TONES;
+  if(drill.scope==='wrong'){
+    const bad=SYMBOLS.filter(s=>{ const r=prog.keys[s.z]; return r && r.bad>0 && r.ok<3; });
+    if(!bad.length) return SYMBOLS.concat(TONES);
+    return bad;
+  }
+  if(String(drill.scope).indexOf('col')===0){
+    const i=+String(drill.scope).slice(3);
+    const set={};
+    ((COLS[i]&&COLS[i].zs)||[]).forEach(z=>{ set[z]=1; });
+    const list=SYMBOLS.filter(s=>set[s.z]);
+    return list.length?list:SYMBOLS;
+  }
   return SYMBOLS.concat(TONES);
 }
 function drillStats(){
@@ -1282,7 +1869,19 @@ function drillAnswer(sym){
   if(sym.code===c.code){
     drill.cur=null;
     drill.score++; drill.att++; drill.streak++;
+    if(c.z){ noteKey(c.z,true); prog.syms[c.z]=1; }
+    if(String(drill.scope).indexOf('col')===0 && c.z){
+      const ci=+String(drill.scope).slice(3);
+      prog.colOk[ci]=(prog.colOk[ci]||0)+1;
+      if(prog.colOk[ci]>=8 && (prog.colUnlock||1)===ci+1 && ci+1<COLS.length){
+        prog.colUnlock=ci+2;
+        toast(COLS[ci].name+' 过关，下一行打开了');
+        refreshLocks();
+      }
+    }
     if(drill.streak>drill.best){ drill.best=drill.streak; localStorage.setItem('zk-best',String(drill.best)); }
+    if(drill.streak>(prog.bestStreak||0)) prog.bestStreak=drill.streak;
+    checkBadges(); saveProg(); renderSummary();
     flashKey(kb,sym.code,'good',400);
     ding();
     if(drill.mode!=='listen') speakKey(c);
@@ -1290,6 +1889,8 @@ function drillAnswer(sym){
     setTimeout(nextQ,430);
   }else{
     drill.att++; drill.streak=0; drill.misses++;
+    if(c.z) noteKey(c.z,false);
+    saveProg();
     flashKey(kb,sym.code,'bad',400);
     const p=document.getElementById('dPrompt');
     p.classList.remove('shake'); void p.offsetWidth; p.classList.add('shake');
@@ -1424,6 +2025,7 @@ function init(){
     e.target.blur();
   });
 
+  setupLearn();
   if('speechSynthesis' in window){
     loadVoices();
     speechSynthesis.onvoiceschanged=loadVoices;
