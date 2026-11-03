@@ -580,7 +580,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0041　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0042　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -862,7 +862,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='0041'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='0042'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1815,7 +1815,7 @@ function typeSym(sym){
       renderTarget(true, praise);
       ding();
       if(!typing.dictate) speakWord(t.w);
-      setTimeout(()=>{ clearTyping(); renderLine(); nextWord(); }, typing.timed?700:2200);
+      setTimeout(()=>{ clearTyping(); renderLine(); nextWord(); }, typing.timed?2800:6500);
     }else{
       if(t && typing.progress>prev && typing.progress>0 && !typing.dictate) speak(t.w[typing.progress-1]);
       renderTarget();
@@ -2000,7 +2000,7 @@ function toast(msg){
   if(!el) return;
   el.textContent=msg; el.classList.add('show');
   clearTimeout(toastTimer);
-  const hold = 2800;
+  const hold = Math.min(14000, Math.max(7500, String(msg||'').length*160));
   toastTimer=setTimeout(()=>el.classList.remove('show'), hold);
 }
 
