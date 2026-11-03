@@ -580,7 +580,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0039　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0040　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -862,7 +862,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='0039'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='0040'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1287,11 +1287,11 @@ function noteKey(z, ok){
 function onStageClear(stage){
   if(stage==='1'){
     prog.s1=(prog.s1||0)+1;
-    if(prog.s1>=12 && prog.phase<1){ prog.phase=1; toast('双字词阶段解锁了，可以练日常词了'); }
+    if(prog.s1>=12 && prog.phase<1){ prog.phase=1; toast('解锁了！日常词和双字词可以玩了'); }
   }
   if(stage==='2'){
     prog.s2=(prog.s2||0)+1;
-    if(prog.s2>=12 && prog.phase<2){ prog.phase=2; toast('短句阶段解锁了'); }
+    if(prog.s2>=12 && prog.phase<2){ prog.phase=2; toast('短句也解锁了，再往后面练练看'); }
   }
   refreshLocks();
 }
@@ -1447,9 +1447,11 @@ function refreshLocks(){
   });
   const hint=document.getElementById('lockHint');
   if(hint){
-    if((prog.phase||0)<1) hint.textContent='\uD83D\uDD12 表示还没解锁。把「阶段」选成「单字」，答对 12 题后，日常词和双字词就会打开。';
-    else if((prog.phase||0)<2) hint.textContent='\uD83D\uDD12 表示还没解锁。把「阶段」选成「双字词」，再答对 12 题后，短句就会打开。';
-    else hint.textContent='';
+    const left1=Math.max(0, 12-(prog.s1||0));
+    const left2=Math.max(0, 12-(prog.s2||0));
+    if((prog.phase||0)<1) hint.textContent='🔒 学会之后，还能解锁更多精彩内容。单字再答对 '+left1+' 题，日常词就会打开。';
+    else if((prog.phase||0)<2) hint.textContent='🔒 还有更多内容等着你。双字词再答对 '+left2+' 题，短句就会解锁。';
+    else hint.textContent='精彩内容都解锁了，去玩玩看吧。';
   }
   paintRows();
 }
@@ -1459,7 +1461,7 @@ function paintRows(){
   box.innerHTML=COLS.map((c,i)=>{
     const locked=i>=(prog.colUnlock||1);
     return `<button type="button" data-col="${i}" ${locked?'disabled':''}>${locked?'🔒 ':'练 '}${c.name}</button>`;
-  }).join('')+'<span class="lock-note">左边这一竖行答对 8 次，就打开下一行。上方的「全部」随时可以练。</span>';
+  }).join('')+'<span class="lock-note">🔒 的行要先练会才能打开。这一行再答对几次，下一行就会出现。</span>';
   box.querySelectorAll('button').forEach(btn=>{
     btn.addEventListener('click',()=>{
       const i=+btn.dataset.col;
@@ -1635,7 +1637,7 @@ const typing={
   buf:[],line:[],qi:0,progress:0,queue:[],
   order:localStorage.getItem('zk-order')||'len',
   hint:localStorage.getItem('zk-hint')!=='0',warned:false,
-  bank:'nick', stage:'all', trap:'all', dictate:false, timed:false, timeLeft:0,
+  bank:'nick', stage:'1', trap:'all', dictate:false, timed:false, timeLeft:0,
   timedChars:0, timer:null, missed:false, typeStreak:0, spokenQi:-1
 };
 const lineEl=()=>document.getElementById('line');
@@ -1704,7 +1706,7 @@ function renderTarget(done, praise){
     box.innerHTML=`<div class="tg"><div class="tg-label">${why}</div></div>`;
     return;
   }
-  const pass=typing.stage==='1'?(' · 过关 '+(prog.s1||0)+'/12'):(typing.stage==='2'?(' · 过关 '+(prog.s2||0)+'/12'):'');
+  const pass=typing.stage==='1'?(' · 解锁 '+(prog.s1||0)+'/12'):(typing.stage==='2'?(' · 解锁 '+(prog.s2||0)+'/12'):'');
   const safe=String(t.w).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); const word=typing.dictate?'请听':safe;
   const syls=typing.dictate?'':`<div class="tg-syls">${t.s.map((s,i)=>sylHintHTML(s,i<typing.progress)).join('')}</div>`;
   box.innerHTML=`<div class="tg${done?' done':''}">
