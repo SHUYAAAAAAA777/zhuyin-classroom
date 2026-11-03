@@ -527,6 +527,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
         <button type="button" class="mini-btn" id="tTimed">60 秒计时</button>
         <span id="tTimer"></span>
       </div>
+      <p class="desc" id="lockHint"></p>
       <div class="custom-add">
         <input id="customIn" placeholder="输入想练的词，例如 今天" maxlength="12">
         <button type="button" class="mini-btn" id="customAdd">加入我的词</button>
@@ -579,7 +580,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0037　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0038　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -861,7 +862,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='0037'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='0038'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1422,24 +1423,34 @@ function renderSummary(){
       : ('词库已覆盖全部 '+c.total+' 个符号。你亲自打对过 '+seenSymbolCount()+'/'+c.total+' 个。');
   }
 }
+function paintOption(o, locked){
+  if(!o.dataset.name) o.dataset.name=o.textContent.replace(/^\uD83D\uDD12\s*/,'');
+  o.disabled=!!locked;
+  o.textContent=locked ? '\uD83D\uDD12 '+o.dataset.name : o.dataset.name;
+}
 function refreshLocks(){
   const st=document.getElementById('tStage');
   const bk=document.getElementById('tBank');
   if(st) [...st.options].forEach(o=>{
-    if(o.value==='2') o.disabled=prog.phase<1;
-    if(o.value==='3') o.disabled=prog.phase<2;
+    const locked=(o.value==='2' && prog.phase<1) || (o.value==='3' && prog.phase<2);
+    paintOption(o, locked);
   });
   if(bk) [...bk.options].forEach(o=>{
-    if(o.value==='daily') o.disabled=prog.phase<1;
-    if(o.value==='sent') o.disabled=prog.phase<2;
+    const locked=(o.value==='daily' && prog.phase<1) || (o.value==='sent' && prog.phase<2);
+    paintOption(o, locked);
   });
   const scope=document.getElementById('dScope');
   if(scope) [...scope.options].forEach(o=>{
-    if(o.value.indexOf('col')===0){
-      const i=+o.value.slice(3);
-      o.disabled=i>=(prog.colUnlock||1);
-    }
+    if(o.value.indexOf('col')!==0) return;
+    const i=+o.value.slice(3);
+    paintOption(o, i>=(prog.colUnlock||1));
   });
+  const hint=document.getElementById('lockHint');
+  if(hint){
+    if((prog.phase||0)<1) hint.textContent='\uD83D\uDD12 表示还没解锁。把「阶段」选成「单字」，答对 12 题后，日常词和双字词就会打开。';
+    else if((prog.phase||0)<2) hint.textContent='\uD83D\uDD12 表示还没解锁。把「阶段」选成「双字词」，再答对 12 题后，短句就会打开。';
+    else hint.textContent='';
+  }
   paintRows();
 }
 function paintRows(){
@@ -1447,7 +1458,7 @@ function paintRows(){
   if(!box) return;
   box.innerHTML=COLS.map((c,i)=>{
     const locked=i>=(prog.colUnlock||1);
-    return `<button type="button" data-col="${i}" ${locked?'disabled':''}>${locked?'锁 ':'练 '}${c.name}</button>`;
+    return `<button type="button" data-col="${i}" ${locked?'disabled':''}>${locked?'🔒 ':'练 '}${c.name}</button>`;
   }).join('')+'<span class="lock-note">左边这一竖行答对 8 次，就打开下一行。上方的「全部」随时可以练。</span>';
   box.querySelectorAll('button').forEach(btn=>{
     btn.addEventListener('click',()=>{
