@@ -488,8 +488,8 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
       <div class="drill-bar" style="margin-bottom:8px">
         <label>词库
           <select id="tBank">
-            <option value="nick">昵称词</option>
-            <option value="daily">日常词</option>
+            <option value="daily" selected>日常词</option>
+            <option value="nick">★ 更多精彩内容-你真的要学这些词吗？</option>
             <option value="sent">短句</option>
             <option value="trap">陷阱题</option>
             <option value="wrong">只练错题</option>
@@ -580,7 +580,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0044　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0045　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -862,7 +862,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='0044'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='0045'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1436,7 +1436,7 @@ function refreshLocks(){
     paintOption(o, locked);
   });
   if(bk) [...bk.options].forEach(o=>{
-    const locked=(o.value==='daily' && prog.phase<1) || (o.value==='sent' && prog.phase<2);
+    const locked=(o.value==='sent' && prog.phase<2);
     paintOption(o, locked);
   });
   const scope=document.getElementById('dScope');
@@ -1449,7 +1449,7 @@ function refreshLocks(){
   if(hint){
     const left1=Math.max(0, 12-(prog.s1||0));
     const left2=Math.max(0, 12-(prog.s2||0));
-    if((prog.phase||0)<1) hint.textContent='🔒 学会之后，还能解锁更多精彩内容。单字再答对 '+left1+' 题，日常词就会打开。';
+    if((prog.phase||0)<1) hint.textContent='🔒 学会之后，还能解锁更多精彩内容。单字再答对 '+left1+' 题，双字词就会打开。';
     else if((prog.phase||0)<2) hint.textContent='🔒 还有更多内容等着你。双字词再答对 '+left2+' 题，短句就会解锁。';
     else hint.textContent='精彩内容都解锁了，去玩玩看吧。';
   }
@@ -1557,7 +1557,7 @@ function setupLearn(){
   const dictate=document.getElementById('tDictate');
   if(bank){
     if(bank.querySelector('option[value="'+typing.bank+'"]') && !bank.querySelector('option[value="'+typing.bank+'"]').disabled) bank.value=typing.bank;
-    else typing.bank='nick';
+    else typing.bank='daily';
     bank.addEventListener('change',e=>{
       typing.bank=e.target.value;
       const trapBox=document.getElementById('tTrapWrap');
@@ -1637,7 +1637,7 @@ const typing={
   buf:[],line:[],qi:0,progress:0,queue:[],
   order:'random',
   hint:localStorage.getItem('zk-hint')!=='0',warned:false,
-  bank:'nick', stage:'all', trap:'all', dictate:false, timed:false, timeLeft:0,
+  bank:'daily', stage:'all', trap:'all', dictate:false, timed:false, timeLeft:0,
   timedChars:0, timer:null, missed:false, typeStreak:0, spokenQi:-1
 };
 const lineEl=()=>document.getElementById('line');
