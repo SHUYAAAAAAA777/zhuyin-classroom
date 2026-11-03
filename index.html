@@ -580,7 +580,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0040　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0041　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -862,7 +862,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='0040'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='0041'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1659,10 +1659,27 @@ const PRAISES=[
   '学这么快？不要太聪明了，求你！',
   '太厉害惹（跪～ 你得到了阿吹的膜拜！',
   '不要再对了！太优秀了，被你给气死！',
-  '可恶呀！你实在是踏棒惹！比心～'
+  '可恶呀！你实在是踏棒惹！比心～',
+  'wow~很猛唉！',
+  '你怎么这么聪明啊！天生的吗？',
+  '学的那么快！不要私藏秘诀唉！教教我呗！',
+  '有没有人说过你很难亲近？这么聪明那么厉害还特别低调~'
 ];
 function pickPraise(){
   return PRAISES[Math.floor(Math.random()*PRAISES.length)];
+}
+const COMFORTS=[
+  '没关系的！再来一次你绝对会答对好吗？',
+  '没事！康忙~都是一些手拿把掐的小单词',
+  '没关系的！我不会因为你没答对就不承认你是我朋友！',
+  '害！小失误而已 再来亿次！康忙！',
+  '其实注音他真的没什么了，我相信你只是手不小心按到旁边的键！你肯定是对的！',
+  '害~有的时候就是会这样~没事的！',
+  '嗨呀！这么不小心吗？注意点！老师会打你的寿桃！',
+  'Wow~没想到呀真是没想到！你居然错在这，寿桃翘起来！等着挨打呗！'
+];
+function pickComfort(){
+  return COMFORTS[Math.floor(Math.random()*COMFORTS.length)];
 }
 function isSpecialWord(){
   return false;
@@ -1778,7 +1795,7 @@ function typeSym(sym){
         saveProg();
         const el=lineEl(); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
         buzz();
-        toast(explainMismatch(syl, expect));
+        toast(explainMismatch(syl, expect)+'\n'+pickComfort());
         renderLine();
         renderTarget();
         return;
