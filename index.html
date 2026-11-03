@@ -506,8 +506,8 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
         </label>
         <label>顺序
           <select id="tOrder">
-            <option value="len">按字数（短 → 长）</option>
             <option value="random">随机排序</option>
+            <option value="len">按字数（短 → 长）</option>
             <option value="spaced">错得多的先出现</option>
           </select>
         </label>
@@ -580,7 +580,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0042　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0043　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -862,7 +862,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='0042'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='0043'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1635,9 +1635,9 @@ function setupLearn(){
 
 const typing={
   buf:[],line:[],qi:0,progress:0,queue:[],
-  order:localStorage.getItem('zk-order')||'len',
+  order:'random',
   hint:localStorage.getItem('zk-hint')!=='0',warned:false,
-  bank:'nick', stage:'1', trap:'all', dictate:false, timed:false, timeLeft:0,
+  bank:'nick', stage:'all', trap:'all', dictate:false, timed:false, timeLeft:0,
   timedChars:0, timer:null, missed:false, typeStreak:0, spokenQi:-1
 };
 const lineEl=()=>document.getElementById('line');
