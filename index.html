@@ -136,8 +136,10 @@ kbd{
 .key.cat-f{border-top-color:var(--cf)} .key.cat-f .kp{color:var(--cf)}
 .key.cat-t{border-top-color:var(--ct)} .key.cat-t .kp{color:var(--ct)}
 .key.ghost{opacity:.28; pointer-events:none}
-.key.space{width:calc(var(--kw)*6.2)}
+.key.space{width:calc(var(--kw)*5)}
 .key.space .kz{font-size:13.5px; font-weight:500; color:#8a6d1f}
+.key.backspace{width:calc(var(--kw)*2.15)}
+.key.backspace .kz{font-size:14px; font-weight:700; color:#6a4038}
 .key.good{background:#d1fae5}
 .key.bad{background:#fee2e2; animation:shake .3s}
 .key.hintkey{outline:3px solid var(--ci); animation:pulse 1s infinite}
@@ -338,8 +340,10 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   .key .kq{font-size:7px; top:1px; left:2px}
   .key .kz{font-size:clamp(12px, 3.6vw, 16px); font-weight:800}
   .key .kp{display:none}
-  .key.space{width:min(calc(100% - 8px), calc(var(--kw) * 9)); max-width:100%}
+  .key.space{width:min(calc(100% - var(--kw) * 2.4 - 16px), calc(var(--kw) * 7)); max-width:calc(100% - 78px)}
   .key.space .kz{font-size:12px; white-space:nowrap}
+  .key.backspace{width:calc(var(--kw) * 2.2); flex:none}
+  .key.backspace .kz{font-size:13px; font-weight:700}
 
   .card{width:calc(50% - 6px); padding:10px 6px}
   .card .cz{font-size:28px}
@@ -574,7 +578,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0034　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0035　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -856,7 +860,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='0034'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='0035'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1082,7 +1086,7 @@ function buildKeyboard(el){
     : '空白键＝一声（完成这个字）';
   el.innerHTML =
     ROWS.map((r,i)=>`<div class="krow r${i}">`+r.map(keyHTML).join('')+'</div>').join('') +
-    `<div class="krow rs"><div class="key space cat-t" data-code="Space"><span class="kz">${spaceLabel}</span></div></div>`;
+    `<div class="krow rs"><div class="key space cat-t" data-code="Space"><span class="kz">${spaceLabel}</span></div><div class="key backspace" data-code="Backspace"><span class="kz">删除</span></div></div>`;
   el.addEventListener('click',ev=>{
     const k=ev.target.closest('.key[data-code]');
     if(k) handleCode(k.dataset.code);
