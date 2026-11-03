@@ -107,6 +107,9 @@ kbd{
 .key.ghost{opacity:.28; pointer-events:none}
 .key.space{width:calc(var(--kw)*6.2)}
 .key.space .kz{font-size:13.5px; font-weight:500; color:#8a6d1f}
+.key.backspace{cursor:pointer; opacity:1; background:#fff}
+.key.backspace .bk-name{font-size:8px; font-weight:800; line-height:1.05; letter-spacing:-0.05em; color:#26282f; text-align:center; max-width:100%; white-space:nowrap}
+.key.backspace .bk-arrow{font-size:16px; line-height:1; color:#26282f}
 .key.good{background:#d1fae5}
 .key.bad{background:#fee2e2; animation:shake .3s}
 .key.hintkey{outline:3px solid var(--acc); animation:pulse 1s infinite}
@@ -283,6 +286,8 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   .key .kp{display:none}
   .key.space{width:min(calc(100% - 8px), calc(var(--kw) * 9)); max-width:100%}
   .key.space .kz{font-size:12px; white-space:nowrap}
+  .key.backspace .bk-name{font-size:clamp(5.5px, 1.35vw, 8px)}
+  .key.backspace .bk-arrow{font-size:clamp(12px, 3.2vw, 16px)}
 
   .card{width:calc(50% - 6px); padding:10px 6px}
   .card .cz{font-size:28px}
@@ -745,6 +750,9 @@ function qlabel(code){
 }
 function keyHTML(code){
   const s=CODE2SYM[code], q=qlabel(code);
+  if(code==='Equal'){
+    return `<div class="key backspace" data-code="Backspace"><span class="bk-name">backspace</span><span class="bk-arrow">←</span></div>`;
+  }
   if(!s) return `<div class="key ghost"><span class="kq">${q}</span></div>`;
   const cat={initial:'i',medial:'m',final:'f',tone:'t'}[s.group];
   const main = s.group==='tone' ? s.mark : s.z;
@@ -1006,13 +1014,16 @@ const KB={};
 
 function handleCode(code){
   // 特殊鍵
+  if(code==='Backspace'){
+    const kbNow=KB[state.tab];
+    if(kbNow) flashKey(kbNow,'Backspace','active',150);
+    if(state.tab!=='type') switchTab('type');
+    if(typing.buf.length) typing.buf.pop();
+    else if(typing.line.length) typing.line.pop();
+    recomputeProgress(); renderLine(); renderTarget();
+    return true;
+  }
   if(state.tab==='type'){
-    if(code==='Backspace'){
-      if(typing.buf.length) typing.buf.pop();
-      else typing.line.pop();
-      recomputeProgress(); renderLine(); renderTarget();
-      return true;
-    }
     if(code==='Escape'){
       typing.buf=[]; typing.line=[]; typing.progress=0;
       renderLine(); renderTarget();

@@ -138,8 +138,8 @@ kbd{
 .key.ghost{opacity:.28; pointer-events:none}
 .key.space{width:calc(var(--kw)*6.2)}
 .key.space .kz{font-size:13.5px; font-weight:500; color:#8a6d1f}
-.key.backspace{cursor:pointer}
-.key.backspace .bk-name{font-size:8px; font-weight:700; line-height:1.05; letter-spacing:-0.03em; color:#26282f}
+.key.backspace{cursor:pointer; opacity:1; background:#fff}
+.key.backspace .bk-name{font-size:8px; font-weight:800; line-height:1.05; letter-spacing:-0.05em; color:#26282f; text-align:center; max-width:100%; white-space:nowrap}
 .key.backspace .bk-arrow{font-size:16px; line-height:1; color:#26282f}
 .key.good{background:#d1fae5}
 .key.bad{background:#fee2e2; animation:shake .3s}
@@ -579,7 +579,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0036　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0037　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -861,7 +861,7 @@ function speak(text,rate){
 
 /* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
 const KEY_AUDIO_BASE='audio/keys/';
-const AUDIO_VER='0036'; // 更新录音后改这个，避免浏览器缓存旧档
+const AUDIO_VER='0037'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
 const keyAudioOk={};      // id -> true/false
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
@@ -1616,7 +1616,7 @@ function setupLearn(){
     install.hidden=true;
   });
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(()=>{});
   }
 }
 
@@ -1923,13 +1923,16 @@ const KB={};
 
 function handleCode(code){
   // 特殊键
+  if(code==='Backspace'){
+    const kbNow=KB[state.tab];
+    if(kbNow) flashKey(kbNow,'Backspace','active',150);
+    if(state.tab!=='type') switchTab('type');
+    if(typing.buf.length) typing.buf.pop();
+    else if(typing.line.length) typing.line.pop();
+    recomputeProgress(); renderLine(); renderTarget();
+    return true;
+  }
   if(state.tab==='type'){
-    if(code==='Backspace'){
-      if(typing.buf.length) typing.buf.pop();
-      else typing.line.pop();
-      recomputeProgress(); renderLine(); renderTarget();
-      return true;
-    }
     if(code==='Escape'){
       clearTyping();
       renderLine(); renderTarget();
