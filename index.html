@@ -299,7 +299,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
     --kb-pad:6px;
     /* 最上排 12 颗键，依萤幕宽度自动缩放，避免左右按不到 */
     --kw:calc((100vw - 28px - 2 * var(--kb-pad) - 11 * var(--kb-gap)) / 12);
-    --kh:max(44px, calc(var(--kw) * 1.25));
+    --kh:max(50px, calc(var(--kw) * 1.35));
   }
   body{padding-bottom:24px; overflow-x:hidden}
   main,header,.tabs,footer{
@@ -370,7 +370,13 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   .syl .sz{font-size:18px}
   .drill-bar{gap:8px}
   .drill-bar label{width:100%; justify-content:space-between}
-  .drill-bar select{flex:1; min-height:40px}
+  .drill-bar label.chk{width:auto; justify-content:flex-start; gap:8px; min-height:40px; align-items:center}
+  .drill-bar select{flex:1; min-width:0; max-width:100%; min-height:40px}
+  input[type=checkbox]{width:22px; height:22px}
+  .hcontrols select,.hcontrols button{min-height:42px}
+  .tabs button{min-height:44px}
+  .mini-btn,.row-practice button,.custom-add input,.split-box input{min-height:40px}
+  .custom-add input{flex:1; min-width:0}
   .dbig{font-size:52px}
   .dprompt{min-height:120px}
   .dplay{width:72px; height:72px; font-size:28px}
@@ -382,7 +388,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   :root{
     --kb-gap:2px;
     --kw:calc((100vw - 20px - 2 * var(--kb-pad) - 11 * var(--kb-gap)) / 12);
-    --kh:max(40px, calc(var(--kw) * 1.2));
+    --kh:max(46px, calc(var(--kw) * 1.3));
   }
   .tabs button{font-size:11.5px}
   .key .kz{font-size:clamp(11px, 3.4vw, 14px)}
@@ -524,8 +530,8 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
             <option value="zhi">zhi 组不打 i</option>
           </select>
         </label>
-        <label><input type="checkbox" id="tBlind"> 盲打</label>
-        <label><input type="checkbox" id="tDictate"> 听写（不看字）</label>
+        <label class="chk"><input type="checkbox" id="tBlind"> 盲打</label>
+        <label class="chk"><input type="checkbox" id="tDictate"> 听写（不看字）</label>
         <button type="button" class="mini-btn" id="tTimed">60 秒计时</button>
         <span id="tTimer"></span>
       </div>
@@ -568,7 +574,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
             <option value="tone">声调</option>
           </select>
         </label>
-        <label><input type="checkbox" id="dBlind"> 盲打模式（隐藏键面）</label>
+        <label class="chk"><input type="checkbox" id="dBlind"> 盲打模式（隐藏键面）</label>
       </div>
       <div class="drill-stats">
         答对 <b id="dScore">0</b> ／ <b id="dAtt">0</b>・正确率 <b id="dAcc">–</b>・连对 <b id="dStreak">0</b>・历史最佳连对 <b id="dBest">0</b>
