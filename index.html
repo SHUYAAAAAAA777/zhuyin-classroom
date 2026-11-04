@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0047　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0048　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -969,14 +969,14 @@ function speakWord(text,rate){
 
 /* ---- 背诵示范（ㄅ～ㄦ 一整段录音） ---- */
 const RECITE_AUDIO_URL='audio/recite/recite.mp3';
-let reciteAudio=null, reciteAudioOk=false;
+let reciteAudio=null, reciteAudioOk=false, reciteAudioBad=false;
 function preloadReciteAudio(){
   const a=new Audio(audioUrl(RECITE_AUDIO_URL));
   a.preload='auto';
   reciteAudio=a;
-  reciteAudioOk=false;
+  reciteAudioOk=false; reciteAudioBad=false;
   a.addEventListener('canplaythrough',()=>{ reciteAudioOk=true; updateAudioStatus(); paintReciteBtn(); },{once:true});
-  a.addEventListener('error',()=>{ reciteAudioOk=false; updateAudioStatus(); paintReciteBtn(); },{once:true});
+  a.addEventListener('error',()=>{ reciteAudioOk=false; reciteAudioBad=true; updateAudioStatus(); paintReciteBtn(); },{once:true});
   a.addEventListener('ended',()=>{ paintReciteBtn(false); });
   try{ a.load(); }catch(e){}
   updateAudioStatus();
@@ -992,7 +992,7 @@ function paintReciteBtn(playing){
 }
 function toggleReciteDemo(){
   if(!soundOn){ toast('请先打开右上角音效'); return; }
-  if(!reciteAudioOk || !reciteAudio){
+  if(!reciteAudio || reciteAudioBad){
     toast('还没有背诵示范录音，请把「recite.mp3」放到 audio/recite/');
     return;
   }

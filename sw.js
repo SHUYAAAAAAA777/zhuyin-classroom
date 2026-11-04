@@ -1,5 +1,5 @@
 // 版本号要和 index.html 页尾的「版本」同步；改了页面就一起改这里，旧缓存才会被清掉。
-const CACHE='zhuyin-v0047';
+const CACHE='zhuyin-v0048';
 const CORE=['./','./index.html','./DF.png','./manifest.webmanifest'];
 
 self.addEventListener('install',e=>{
