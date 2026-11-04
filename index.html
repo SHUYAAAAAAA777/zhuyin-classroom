@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0046　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0047　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -872,7 +872,8 @@ function speak(text,rate){
 const KEY_AUDIO_BASE='audio/keys/';
 const AUDIO_VER='0045'; // 更新录音后改这个，避免浏览器缓存旧档
 const keyAudioCache={};   // id -> Audio
-const keyAudioOk={};      // id -> true/false
+const keyAudioOk={};      // id -> true/false（已确认可播）
+const keyAudioBad={};     // id -> true（档案真的载入失败，才退回系统语音）
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
 function audioIdFor(sym){
   if(!sym) return '';
@@ -904,20 +905,22 @@ function preloadKeyAudio(){
     keyAudioCache[id]=a;
     keyAudioOk[id]=false;
     a.addEventListener('canplaythrough',()=>{ keyAudioOk[id]=true; updateAudioStatus(); },{once:true});
-    a.addEventListener('error',()=>{ keyAudioOk[id]=false; updateAudioStatus(); },{once:true});
+    a.addEventListener('error',()=>{ keyAudioOk[id]=false; keyAudioBad[id]=true; updateAudioStatus(); },{once:true});
     try{ a.load(); }catch(e){}
   });
   updateAudioStatus();
 }
-function playKeyFile(id){
+function playKeyFile(id,onFail){
+  // 只要有这个录音档、且没有载入失败，就一律播你自己的录音（不再等 canplaythrough 事件；
+  // iPhone/Safari 常常不会触发它，会导致误退回系统语音）
   const a=keyAudioCache[id];
-  if(!a || !keyAudioOk[id]) return false;
+  if(!a || keyAudioBad[id]) return false;
   try{
     if('speechSynthesis' in window) speechSynthesis.cancel();
     a.pause();
-    a.currentTime=0;
+    try{ a.currentTime=0; }catch(e){}
     const p=a.play();
-    if(p && p.catch) p.catch(()=>{});
+    if(p && p.catch) p.catch(()=>{ if(keyAudioBad[id] && onFail) onFail(); });
     return true;
   }catch(e){ return false; }
 }
@@ -925,7 +928,7 @@ function playKeyFile(id){
 function speakKey(sym){
   if(!soundOn || !sym) return;
   const id=audioIdFor(sym);
-  if(id && playKeyFile(id)) return;
+  if(id && playKeyFile(id,()=>speak(sym.tts))) return;
   speak(sym.tts);
 }
 
