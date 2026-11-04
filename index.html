@@ -21,13 +21,15 @@
   --panel:#faf6f1;
   --panel2:#e9dfd3;
   --ink:#3a2f28;
-  --mut:#9a8878;
+  --mut:#6b5a4b; /* 次要文字：对比度 ≥4.5:1 */
   --line:#e2d5c6;
   /* 分类色保持原配色，键盘上要一眼分清 */
   --ci:#2f6df6;  /* 声母 蓝 */
   --cm:#8b5cf6;  /* 介音 紫 */
   --cf:#0ea373;  /* 韵母 绿 */
   --ct:#e08a00;  /* 声调 橙 */
+  /* 以下是「小字用」的加深版（白底对比度 ≥4.5:1），色块／边框仍用上面的原色 */
+  --cm-t:#7440e8; --cf-t:#0a7352; --ct-t:#a35a00;
   --acc:#8a6245; /* 主色 暖茶（界面） */
   --acc-soft:#c4a484;
   --glow:rgba(138,98,69,.28);
@@ -85,7 +87,7 @@ header .sub{font-size:13px; color:var(--mut); margin-top:2px; letter-spacing:.3p
 }
 .tabs button{
   flex:1; border:none; background:transparent; padding:10px 6px;
-  font-family:inherit; font-size:15px; font-weight:700; color:#8a7a6a;
+  font-family:inherit; font-size:15px; font-weight:700; color:#6b5a4b;
   border-radius:10px; cursor:pointer; transition:all .15s;
 }
 .tabs button.on{
@@ -128,13 +130,13 @@ kbd{
   border-top:3px solid #d8d5cc;
 }
 .key:active,.key.active{transform:translateY(2px); box-shadow:0 0 0 #d8d5cc}
-.key .kq{position:absolute; top:3px; left:6px; font-size:10px; color:#b6b3aa; font-family:Consolas,monospace}
+.key .kq{position:absolute; top:3px; left:6px; font-size:11px; color:#6f6a60; font-family:Consolas,monospace}
 .key .kz{font-size:21px; font-weight:700; line-height:1.1; color:#26282f}
-.key .kp{font-size:10px; line-height:1; margin-top:1px}
+.key .kp{font-size:11px; line-height:1; margin-top:1px}
 .key.cat-i{border-top-color:var(--ci)} .key.cat-i .kp{color:var(--ci)}
-.key.cat-m{border-top-color:var(--cm)} .key.cat-m .kp{color:var(--cm)}
-.key.cat-f{border-top-color:var(--cf)} .key.cat-f .kp{color:var(--cf)}
-.key.cat-t{border-top-color:var(--ct)} .key.cat-t .kp{color:var(--ct)}
+.key.cat-m{border-top-color:var(--cm)} .key.cat-m .kp{color:var(--cm-t)}
+.key.cat-f{border-top-color:var(--cf)} .key.cat-f .kp{color:var(--cf-t)}
+.key.cat-t{border-top-color:var(--ct)} .key.cat-t .kp{color:var(--ct-t)}
 .key.ghost{opacity:.28; pointer-events:none}
 .key.space{width:calc(var(--kw)*6.2)}
 .key.space .kz{font-size:13.5px; font-weight:500; color:#8a6d1f}
@@ -196,7 +198,7 @@ kbd{
 .card .cz{font-size:34px; font-weight:900; line-height:1.15; color:#3a2f28}
 .card .cp{font-size:15px; font-weight:700; margin:2px 0 6px}
 .card .ck{font-size:12px}
-.card .cex{font-size:11.5px; color:var(--mut); margin-top:7px; border-top:1px dashed var(--line); padding-top:6px}
+.card .cex{font-size:12.5px; color:var(--mut); margin-top:7px; border-top:1px dashed var(--line); padding-top:6px}
 .card .cex:hover{color:var(--acc)}
 .card.cat-i .cp{color:var(--ci)} .card.cat-m .cp{color:var(--cm)}
 .card.cat-f .cp{color:var(--cf)} .card.cat-t .cp{color:var(--ct)}
@@ -349,7 +351,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
   .card{width:calc(50% - 6px); padding:10px 6px}
   .card .cz{font-size:28px}
   .card .cp{font-size:13px}
-  .card .cex{font-size:10.5px}
+  .card .cex{font-size:11.5px}
   .colhead h3{font-size:15px}
   .tips{padding:12px 14px}
   .tips ol{font-size:13px; padding-left:18px}
@@ -580,7 +582,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0045　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0046　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -1638,7 +1640,8 @@ const typing={
   order:'random',
   hint:localStorage.getItem('zk-hint')!=='0',warned:false,
   bank:'daily', stage:'all', trap:'all', dictate:false, timed:false, timeLeft:0,
-  timedChars:0, timer:null, missed:false, typeStreak:0, spokenQi:-1
+  timedChars:0, timer:null, missed:false, typeStreak:0, spokenQi:-1,
+  autoNext:null, waiting:false
 };
 const lineEl=()=>document.getElementById('line');
 
@@ -1689,7 +1692,12 @@ function sylZhuyin(syms,t){
   const tn=TONES[t-1];
   return (t===5?'˙':'')+syms.join('')+((t>=2&&t<=4)?tn.mark:'');
 }
+function cancelAutoNext(){
+  if(typing.autoNext){ clearTimeout(typing.autoNext); typing.autoNext=null; }
+  typing.waiting=false;
+}
 function clearTyping(){
+  cancelAutoNext();
   typing.line=[]; typing.buf=[]; typing.progress=0;
 }
 function renderLine(){
@@ -1815,7 +1823,9 @@ function typeSym(sym){
       renderTarget(true, praise);
       ding();
       if(!typing.dictate) speakWord(t.w);
-      setTimeout(()=>{ clearTyping(); renderLine(); nextWord(); }, typing.timed?2800:6500);
+      cancelAutoNext();
+      typing.waiting=true;
+      typing.autoNext=setTimeout(()=>{ typing.autoNext=null; typing.waiting=false; nextWord(); }, typing.timed?2800:6500);
     }else{
       if(t && typing.progress>prev && typing.progress>0 && !typing.dictate) speak(t.w[typing.progress-1]);
       renderTarget();
@@ -1955,7 +1965,7 @@ function handleCode(code){
   if(code==='Backspace'){
     const kbNow=KB[state.tab];
     if(kbNow) flashKey(kbNow,'Backspace','active',150);
-    if(state.tab!=='type') switchTab('type');
+    if(state.tab!=='type') return true;
     if(typing.buf.length) typing.buf.pop();
     else if(typing.line.length) typing.line.pop();
     recomputeProgress(); renderLine(); renderTarget();
@@ -1967,7 +1977,10 @@ function handleCode(code){
       renderLine(); renderTarget();
       return true;
     }
-    if(code==='Enter'||code==='NumpadEnter'){ speakLine(false); return true; }
+    if(code==='Enter'||code==='NumpadEnter'){
+      if(typing.waiting){ nextWord(); return true; }
+      speakLine(false); return true;
+    }
   }
   if(state.tab==='drill' && code==='Escape'){ drill.streak=0; drillStats(); nextQ(); return true; }
 
@@ -1985,6 +1998,8 @@ document.addEventListener('keydown',e=>{
   if(e.ctrlKey||e.altKey||e.metaKey||e.repeat) return;
   const t=e.target;
   if(t && t.closest && t.closest('select,input,textarea')) return;
+  if(t && t.closest && t.closest('button,a[href]') && (e.code==='Enter'||e.code==='NumpadEnter'||e.code==='Space')
+     && t.matches && t.matches(':focus-visible')) return;
   if(e.isComposing||e.keyCode===229){
     const w=document.getElementById('imeWarn');
     if(w){ w.classList.add('urgent'); }
