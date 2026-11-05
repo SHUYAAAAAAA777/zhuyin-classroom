@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0049　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0050　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -1822,7 +1822,7 @@ function typeSym(sym){
       if(!typing.dictate) speakWord(t.w);
       cancelAutoNext();
       typing.waiting=true;
-      typing.autoNext=setTimeout(()=>{ typing.autoNext=null; typing.waiting=false; nextWord(); }, typing.timed?2800:6500);
+      typing.autoNext=setTimeout(()=>{ typing.autoNext=null; typing.waiting=false; nextWord(); }, typing.timed?2800:5000);
     }else{
       if(t && typing.progress>prev && typing.progress>0 && !typing.dictate) speak(t.w[typing.progress-1]);
       renderTarget();
@@ -2012,7 +2012,10 @@ function toast(msg){
   if(!el) return;
   el.textContent=msg; el.classList.add('show');
   clearTimeout(toastTimer);
-  const hold = Math.min(14000, Math.max(7500, String(msg||'').length*160));
+  // 停留时间：比原本少约 1.5 秒，但保证看得完（约每字 0.12 秒＋1 秒缓冲，最少 5.5 秒）
+  const len=[...String(msg||'')].length;
+  const before=Math.min(14000, Math.max(7500, len*160));
+  const hold=Math.max(5500, before-1500, len*120+1000);
   toastTimer=setTimeout(()=>el.classList.remove('show'), hold);
 }
 
