@@ -429,7 +429,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
     <span id="voiceWarn">找不到中文语音，建议用 Edge（Windows 内建）开启</span>
     <button class="iconbtn" id="soundBtn" title="音效开关">🔊 音效开</button>
     <button class="iconbtn" id="installBtn" hidden type="button">加到主画面</button>
-    <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键 + 整词 + 背诵示范">键 0/42 · 词 0/58 · 诵 0/1</span>
+    <span id="audioStatus" class="iconbtn" title="自定义录音载入进度：按键 + 整词 + 背诵示范">键 0/42 · 诵 0/1</span>
     <select id="voiceSel" title="选择发音语音（整词朗读用）"></select>
   </div>
 </header>
@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0048　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0049　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -868,12 +868,16 @@ function speak(text,rate){
   setTimeout(()=>{ if(pendingUtter===u) speechSynthesis.speak(u); },0);
 }
 
-/* ---- 自定义按键录音：有 mp3 就播，没有就退回系统语音 ---- */
+/* ---- 你的录音（按键 ㄅㄆㄇ… 与背诵示范）：一律只播录音，绝不改用系统语音 ----
+ * 做法：用 fetch 把每个 mp3 整档下载成 Blob，存在记忆体里，点击时用同一个播放器播放。
+ * 不再依赖 <audio> 的 canplaythrough/error 事件，也不会一次开几十个 <audio>，
+ * 避免某些浏览器（iPhone/Safari、手机 Chrome）因此判定「载入失败」而退回系统语音。
+ * 万一某个档还没下载完，就直接用网址播放；播放失败会自动重试，仍然只播录音。 */
 const KEY_AUDIO_BASE='audio/keys/';
 const AUDIO_VER='0045'; // 更新录音后改这个，避免浏览器缓存旧档
-const keyAudioCache={};   // id -> Audio
-const keyAudioOk={};      // id -> true/false（已确认可播）
-const keyAudioBad={};     // id -> true（档案真的载入失败，才退回系统语音）
+const keyBlobUrl={};      // id -> blob: 网址（已下载完成）
+const keyAudioOk={};      // id -> true（已下载完成，右上角计数用）
+const keyAudioCache={};   // 保留旧名称给其他程式用（暂停用）
 function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
 function audioIdFor(sym){
   if(!sym) return '';
@@ -891,94 +895,87 @@ function updateAudioStatus(){
   if(!el) return;
   const kids=allKeyAudioIds();
   const kn=kids.filter(id=>keyAudioOk[id]).length;
-  const words=WORDS.map(x=>x.w);
-  const wn=words.filter(w=>wordAudioOk[w]).length;
   const rn=reciteAudioOk?1:0;
-  el.textContent='键 '+kn+'/'+kids.length+' · 词 '+wn+'/'+words.length+' · 诵 '+rn+'/1';
-  el.title='按键 '+kn+'/'+kids.length+'（audio/keys/）；整词 '+wn+'/'+words.length+'（audio/words/）；背诵示范 '+rn+'/1（audio/recite/）。缺档则按键／整词用系统语音，背诵需先录音。';
+  el.textContent='键 '+kn+'/'+kids.length+' · 诵 '+rn+'/1';
+  el.title='你的录音下载进度：按键 '+kn+'/'+kids.length+'（audio/keys/）；背诵示范 '+rn+'/1（audio/recite/）。';
+}
+/** 下载一个录音档成 Blob 网址；失败会重试几次 */
+function fetchAudioBlob(path,tries){
+  tries=tries||4;
+  return fetch(audioUrl(path)).then(r=>{
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.blob();
+  }).then(b=>URL.createObjectURL(b.type?b:new Blob([b],{type:'audio/mpeg'})))
+    .catch(err=> tries>1
+      ? new Promise(res=>setTimeout(res,1000)).then(()=>fetchAudioBlob(path,tries-1))
+      : Promise.reject(err));
 }
 function preloadKeyAudio(){
   const ids=allKeyAudioIds();
-  ids.forEach(id=>{
-    const a=new Audio(audioUrl(KEY_AUDIO_BASE+id+'.mp3'));
-    a.preload='auto';
-    keyAudioCache[id]=a;
-    keyAudioOk[id]=false;
-    a.addEventListener('canplaythrough',()=>{ keyAudioOk[id]=true; updateAudioStatus(); },{once:true});
-    a.addEventListener('error',()=>{ keyAudioOk[id]=false; keyAudioBad[id]=true; updateAudioStatus(); },{once:true});
-    try{ a.load(); }catch(e){}
-  });
+  ids.forEach(id=>{ keyAudioOk[id]=false; });
+  let i=0;
+  const next=()=>{
+    if(i>=ids.length) return;
+    const id=ids[i++];
+    fetchAudioBlob(KEY_AUDIO_BASE+id+'.mp3')
+      .then(u=>{ keyBlobUrl[id]=u; keyAudioOk[id]=true; })
+      .catch(()=>{})
+      .then(()=>{ updateAudioStatus(); next(); });
+  };
+  for(let k=0;k<4;k++) next();   // 同时最多下载 4 个
   updateAudioStatus();
 }
-function playKeyFile(id,onFail){
-  // 只要有这个录音档、且没有载入失败，就一律播你自己的录音（不再等 canplaythrough 事件；
-  // iPhone/Safari 常常不会触发它，会导致误退回系统语音）
-  const a=keyAudioCache[id];
-  if(!a || keyAudioBad[id]) return false;
-  try{
-    if('speechSynthesis' in window) speechSynthesis.cancel();
-    a.pause();
-    try{ a.currentTime=0; }catch(e){}
-    const p=a.play();
-    if(p && p.catch) p.catch(()=>{ if(keyAudioBad[id] && onFail) onFail(); });
-    return true;
-  }catch(e){ return false; }
+let keyPlayer=null;
+function stopKeyPlayer(){ if(keyPlayer){ try{ keyPlayer.pause(); }catch(e){} } }
+/** 播放一个录音档：先用已下载的 Blob；没有就直接用网址；失败自动换新播放器重试 */
+function playRecording(player,id,path,onGiveUp){
+  const src=keyBlobUrl[id] || audioUrl(path);
+  try{ if('speechSynthesis' in window) speechSynthesis.cancel(); }catch(e){}
+  try{ player.pause(); }catch(e){}
+  player.src=src;
+  try{ player.currentTime=0; }catch(e){}
+  const p=player.play();
+  if(p && p.catch) p.catch(err=>{
+    if(err && err.name==='AbortError') return;          // 被下一次点击打断，正常
+    const retry=new Audio(audioUrl(path)+'&r='+Date.now());
+    retry.play().catch(()=>{ if(onGiveUp) onGiveUp(err); });
+  });
 }
-/** 按键／符号发音：优先自定义录音，否则系统 TTS 念示范字 */
+function playKeyFile(id){
+  if(!keyPlayer){ keyPlayer=new Audio(); keyPlayer.preload='auto'; }
+  playRecording(keyPlayer,id,KEY_AUDIO_BASE+id+'.mp3',()=>toast('录音暂时播放不了，请检查网络或音量后再点一次'));
+  return true;
+}
+/** 按键／符号发音：一律播你自己的录音 */
 function speakKey(sym){
   if(!soundOn || !sym) return;
   const id=audioIdFor(sym);
-  if(id && playKeyFile(id,()=>speak(sym.tts))) return;
-  speak(sym.tts);
+  if(id){ playKeyFile(id); return; }
 }
 
-/* ---- 打字练习整词录音 ---- */
-const WORD_AUDIO_BASE='audio/words/';
+/* ---- 打字练习整词：目前没有整词录音，用系统语音念 ---- */
 const wordAudioCache={};
 const wordAudioOk={};
-function preloadWordAudio(){
-  WORDS.forEach(({w})=>{
-    const a=new Audio(audioUrl(WORD_AUDIO_BASE+w+'.mp3'));
-    a.preload='auto';
-    wordAudioCache[w]=a;
-    wordAudioOk[w]=false;
-    a.addEventListener('canplaythrough',()=>{ wordAudioOk[w]=true; updateAudioStatus(); },{once:true});
-    a.addEventListener('error',()=>{ wordAudioOk[w]=false; updateAudioStatus(); },{once:true});
-    try{ a.load(); }catch(e){}
-  });
-  updateAudioStatus();
-}
-function playWordFile(w){
-  const a=wordAudioCache[w];
-  if(!a || !wordAudioOk[w]) return false;
-  try{
-    if('speechSynthesis' in window) speechSynthesis.cancel();
-    a.pause();
-    a.currentTime=0;
-    const p=a.play();
-    if(p && p.catch) p.catch(()=>{});
-    return true;
-  }catch(e){ return false; }
-}
-/** 整词发音：若该词在练习清单且已录音则播录音，否则系统 TTS */
+function preloadWordAudio(){ /* 没有整词录音，不下载 */ }
+/** 整词发音（系统语音） */
 function speakWord(text,rate){
   if(!soundOn || !text) return;
-  if(wordAudioOk[text] && playWordFile(text)) return;
   speak(text, rate);
 }
 
-/* ---- 背诵示范（ㄅ～ㄦ 一整段录音） ---- */
+/* ---- 背诵示范（ㄅ～ㄦ 一整段录音）：只播你的录音 ---- */
 const RECITE_AUDIO_URL='audio/recite/recite.mp3';
-let reciteAudio=null, reciteAudioOk=false, reciteAudioBad=false;
+let reciteAudio=null, reciteAudioOk=false;
 function preloadReciteAudio(){
-  const a=new Audio(audioUrl(RECITE_AUDIO_URL));
-  a.preload='auto';
-  reciteAudio=a;
-  reciteAudioOk=false; reciteAudioBad=false;
-  a.addEventListener('canplaythrough',()=>{ reciteAudioOk=true; updateAudioStatus(); paintReciteBtn(); },{once:true});
-  a.addEventListener('error',()=>{ reciteAudioOk=false; reciteAudioBad=true; updateAudioStatus(); paintReciteBtn(); },{once:true});
-  a.addEventListener('ended',()=>{ paintReciteBtn(false); });
-  try{ a.load(); }catch(e){}
+  reciteAudio=new Audio();
+  reciteAudio.preload='auto';
+  reciteAudio.addEventListener('ended',()=>paintReciteBtn(false));
+  reciteAudio.addEventListener('pause',()=>paintReciteBtn());
+  reciteAudio.addEventListener('playing',()=>paintReciteBtn(true));
+  fetchAudioBlob(RECITE_AUDIO_URL)
+    .then(u=>{ keyBlobUrl.__recite=u; reciteAudioOk=true; })
+    .catch(()=>{})
+    .then(()=>{ updateAudioStatus(); paintReciteBtn(); });
   updateAudioStatus();
   paintReciteBtn();
 }
@@ -992,28 +989,19 @@ function paintReciteBtn(playing){
 }
 function toggleReciteDemo(){
   if(!soundOn){ toast('请先打开右上角音效'); return; }
-  if(!reciteAudio || reciteAudioBad){
-    toast('还没有背诵示范录音，请把「recite.mp3」放到 audio/recite/');
+  if(!reciteAudio) preloadReciteAudio();
+  if(!reciteAudio.paused && !reciteAudio.ended){
+    reciteAudio.pause();
+    try{ reciteAudio.currentTime=0; }catch(e){}
+    paintReciteBtn(false);
     return;
   }
-  try{
-    if('speechSynthesis' in window) speechSynthesis.cancel();
-    if(!reciteAudio.paused && !reciteAudio.ended){
-      reciteAudio.pause();
-      reciteAudio.currentTime=0;
-      paintReciteBtn(false);
-      return;
-    }
-    // 停掉其他自定义音档
-    Object.values(keyAudioCache).forEach(a=>{ try{a.pause();}catch(e){} });
-    Object.values(wordAudioCache).forEach(a=>{ try{a.pause();}catch(e){} });
-    reciteAudio.currentTime=0;
-    const p=reciteAudio.play();
-    if(p && p.catch) p.catch(()=>toast('无法播放背诵示范，请检查音档'));
-    paintReciteBtn(true);
-  }catch(e){
-    toast('无法播放背诵示范');
-  }
+  stopKeyPlayer();
+  playRecording(reciteAudio,'__recite',RECITE_AUDIO_URL,()=>{
+    paintReciteBtn(false);
+    toast('背诵录音暂时播放不了，请检查网络或音量后再点一次');
+  });
+  paintReciteBtn(true);
 }
 
 let actx=null;
