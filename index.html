@@ -937,7 +937,8 @@ function playRecording(player,id,path,onGiveUp){
   const p=player.play();
   if(p && p.catch) p.catch(err=>{
     if(err && err.name==='AbortError') return;          // 被下一次点击打断，正常
-    const retry=new Audio(audioUrl(path)+'&r='+Date.now());
+    const u=audioUrl(path);
+    const retry=new Audio(u.startsWith('data:')?u:u+'&r='+Date.now());
     retry.play().catch(()=>{ if(onGiveUp) onGiveUp(err); });
   });
 }
