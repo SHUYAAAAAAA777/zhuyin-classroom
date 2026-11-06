@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0055　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0056　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -1063,33 +1063,26 @@ function dingDong(){
     });
   });
 }
-/** 答错：滋滋电击声 */
+/** 答错：「爹～欸！」综艺节目按铃答错声（两声往下掉的蜂鸣） */
 function zap(){
   const c=audioCtx(); if(!c) return;
-  const t0=c.currentTime, dur=0.38;
-  const out=c.createGain();
-  out.gain.setValueAtTime(0.0001,t0);
-  out.gain.exponentialRampToValueAtTime(0.13,t0+0.01);
-  out.gain.setValueAtTime(0.13,t0+dur-0.08);
-  out.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
-  // 颤动：用低频方波快速开关音量，做出「滋滋滋」
-  const trem=c.createGain(); trem.gain.value=0.5;
-  const lfo=c.createOscillator(), lfoG=c.createGain();
-  lfo.type='square'; lfo.frequency.value=38; lfoG.gain.value=0.5;
-  lfo.connect(lfoG); lfoG.connect(trem.gain);
-  trem.connect(out); out.connect(c.destination);
-  // 嗡嗡的锯齿波，音高往下掉
-  const o=c.createOscillator(); o.type='sawtooth';
-  o.frequency.setValueAtTime(140,t0); o.frequency.exponentialRampToValueAtTime(70,t0+dur);
-  const og=c.createGain(); og.gain.value=0.6; o.connect(og); og.connect(trem);
-  // 噼啪的电流杂音
-  const n=Math.floor(c.sampleRate*dur), buf=c.createBuffer(1,n,c.sampleRate), d=buf.getChannelData(0);
-  for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
-  const ns=c.createBufferSource(); ns.buffer=buf;
-  const bp=c.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=2600; bp.Q.value=0.8;
-  const ng=c.createGain(); ng.gain.value=0.9;
-  ns.connect(bp); bp.connect(ng); ng.connect(trem);
-  [o,lfo,ns].forEach(x=>{ x.start(t0); x.stop(t0+dur+0.02); });
+  const now=c.currentTime;
+  [[392,0,.17],[262,.19,.34]].forEach(([f,at,dur])=>{
+    const t0=now+at;
+    const g=c.createGain();
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.exponentialRampToValueAtTime(0.09,t0+0.012);
+    g.gain.setValueAtTime(0.09,t0+dur-0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+    const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=2400;
+    lp.connect(g); g.connect(c.destination);
+    // 两个略微走音的方波叠在一起，像电铃那种「嗡」的蜂鸣
+    [[f,'square',.6],[f*1.012,'square',.5],[f/2,'sawtooth',.35]].forEach(([fr,type,v])=>{
+      const o=c.createOscillator(), og=c.createGain();
+      o.type=type; o.frequency.value=fr; og.gain.value=v;
+      o.connect(og); og.connect(lp); o.start(t0); o.stop(t0+dur+0.02);
+    });
+  });
 }
 const click=()=>tone(520,.05,'triangle',.06);
 
