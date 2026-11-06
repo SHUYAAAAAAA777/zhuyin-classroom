@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0051　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0052　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -1822,7 +1822,7 @@ function typeSym(sym){
       if(!typing.dictate) speakWord(t.w);
       cancelAutoNext();
       typing.waiting=true;
-      typing.autoNext=setTimeout(()=>{ typing.autoNext=null; typing.waiting=false; nextWord(); }, typing.timed?2300:4000);
+      typing.autoNext=setTimeout(()=>{ typing.autoNext=null; typing.waiting=false; nextWord(); }, typing.timed?2000:Math.max(1800, [...String(praise||'')].length*100+1000));
     }else{
       if(t && typing.progress>prev && typing.progress>0 && !typing.dictate) speak(t.w[typing.progress-1]);
       renderTarget();
