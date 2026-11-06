@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0054　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0055　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -1043,7 +1043,54 @@ function tone(freq,dur,type,vol){
   }catch(e){}
 }
 const ding =()=>tone(880,.12,'sine',.08);
-const buzz =()=>tone(160,.15,'square',.05);
+const buzz =()=>tone(160,.15,'square',.05);   // 轻提示（顺序不对等），不是答错
+function audioCtx(){
+  if(!soundOn) return null;
+  try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); return actx; }catch(e){ return null; }
+}
+/** 答对：叮咚（门铃般高音→低音） */
+function dingDong(){
+  const c=audioCtx(); if(!c) return;
+  [[1319,0,.55],[1047,.2,.8]].forEach(([f,at,dur])=>{
+    const t0=c.currentTime+at;
+    [[1,'sine',.16],[2,'sine',.04],[3,'triangle',.02]].forEach(([mul,type,vol])=>{
+      const o=c.createOscillator(), g=c.createGain();
+      o.type=type; o.frequency.value=f*mul;
+      g.gain.setValueAtTime(0.0001,t0);
+      g.gain.exponentialRampToValueAtTime(vol,t0+0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+      o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0+dur+0.02);
+    });
+  });
+}
+/** 答错：滋滋电击声 */
+function zap(){
+  const c=audioCtx(); if(!c) return;
+  const t0=c.currentTime, dur=0.38;
+  const out=c.createGain();
+  out.gain.setValueAtTime(0.0001,t0);
+  out.gain.exponentialRampToValueAtTime(0.13,t0+0.01);
+  out.gain.setValueAtTime(0.13,t0+dur-0.08);
+  out.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  // 颤动：用低频方波快速开关音量，做出「滋滋滋」
+  const trem=c.createGain(); trem.gain.value=0.5;
+  const lfo=c.createOscillator(), lfoG=c.createGain();
+  lfo.type='square'; lfo.frequency.value=38; lfoG.gain.value=0.5;
+  lfo.connect(lfoG); lfoG.connect(trem.gain);
+  trem.connect(out); out.connect(c.destination);
+  // 嗡嗡的锯齿波，音高往下掉
+  const o=c.createOscillator(); o.type='sawtooth';
+  o.frequency.setValueAtTime(140,t0); o.frequency.exponentialRampToValueAtTime(70,t0+dur);
+  const og=c.createGain(); og.gain.value=0.6; o.connect(og); og.connect(trem);
+  // 噼啪的电流杂音
+  const n=Math.floor(c.sampleRate*dur), buf=c.createBuffer(1,n,c.sampleRate), d=buf.getChannelData(0);
+  for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
+  const ns=c.createBufferSource(); ns.buffer=buf;
+  const bp=c.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=2600; bp.Q.value=0.8;
+  const ng=c.createGain(); ng.gain.value=0.9;
+  ns.connect(bp); bp.connect(ng); ng.connect(trem);
+  [o,lfo,ns].forEach(x=>{ x.start(t0); x.stop(t0+dur+0.02); });
+}
 const click=()=>tone(520,.05,'triangle',.06);
 
 /* ================================================================
@@ -1824,7 +1871,7 @@ function typeSym(sym){
         expect.k.forEach(z=>noteKey(z,false));
         saveProg();
         const el=lineEl(); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
-        buzz();
+        zap();
         toast(explainMismatch(syl, expect)+'\n'+pickComfort());
         renderLine();
         renderTarget();
@@ -1843,13 +1890,16 @@ function typeSym(sym){
       if(typing.stage==='1'||typing.stage==='2') onStageClear(typing.stage);
       if(typing.timed) typing.timedChars=(typing.timedChars||0)+[...t.w].length;
       renderTarget(true, praise);
-      ding();
-      if(!typing.dictate) speakWord(t.w);
+      dingDong();
+      if(!typing.dictate){ const w=t.w; setTimeout(()=>{ if(currentWord()===t) speakWord(w); },600); }
       cancelAutoNext();
       typing.waiting=true;
       typing.autoNext=setTimeout(()=>{ typing.autoNext=null; typing.waiting=false; nextWord(); }, typing.timed?2000:Math.max(1800, [...String(praise||'')].length*100+1000));
     }else{
-      if(t && typing.progress>prev && typing.progress>0 && !typing.dictate) speak(t.w[typing.progress-1]);
+      if(t && typing.progress>prev && typing.progress>0){
+        if(WORD_RECORDED.has(t.w)) ding();               // 有你录音的词：中间的字只叮一声
+        else if(!typing.dictate) speak(t.w[typing.progress-1]);
+      }
       renderTarget();
     }
   }else{
@@ -1963,7 +2013,7 @@ function drillAnswer(sym){
     flashKey(kb,sym.code,'bad',400);
     const p=document.getElementById('dPrompt');
     p.classList.remove('shake'); void p.offsetWidth; p.classList.add('shake');
-    buzz();
+    zap();
     if(drill.misses>=2){
       const k=kb.querySelector(`.key[data-code="${c.code}"]`);
       if(k) k.classList.add('hintkey');
