@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0053　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0054　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -953,13 +953,38 @@ function speakKey(sym){
   if(id){ playKeyFile(id); return; }
 }
 
-/* ---- 打字练习整词：目前没有整词录音，用系统语音念 ---- */
+/* ---- 打字练习整词：「★ 你真的要学这些词咩？」的 50 个词可用你的录音 ----
+ * 录好的词把名字加进 WORD_RECORDED（档案放 audio/words/词.mp3），就会只播你的录音；
+ * 还没录的词、以及其他词库（单字、日常词、短句…）都用系统语音。 */
+const WORD_AUDIO_BASE='audio/words/';
+const WORD_RECORDED=new Set([
+  // 例：'你好','谢谢',
+]);
 const wordAudioCache={};
 const wordAudioOk={};
-function preloadWordAudio(){ /* 没有整词录音，不下载 */ }
-/** 整词发音（系统语音） */
+let wordPlayer=null;
+function preloadWordAudio(){
+  const list=[...WORD_RECORDED];
+  let i=0;
+  const next=()=>{
+    if(i>=list.length) return;
+    const w=list[i++];
+    fetchAudioBlob(WORD_AUDIO_BASE+w+'.mp3')
+      .then(u=>{ keyBlobUrl['w:'+w]=u; wordAudioOk[w]=true; })
+      .catch(()=>{})
+      .then(next);
+  };
+  for(let k=0;k<3;k++) next();
+}
+/** 整词发音：有你的录音就只播录音，否则系统语音 */
 function speakWord(text,rate){
   if(!soundOn || !text) return;
+  if(WORD_RECORDED.has(text)){
+    if(!wordPlayer){ wordPlayer=new Audio(); wordPlayer.preload='auto'; }
+    stopKeyPlayer();
+    playRecording(wordPlayer,'w:'+text,WORD_AUDIO_BASE+text+'.mp3',()=>toast('录音暂时播放不了，请检查网络或音量后再点一次'));
+    return;
+  }
   speak(text, rate);
 }
 
