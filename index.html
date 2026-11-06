@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0056　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0057　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -1063,11 +1063,11 @@ function dingDong(){
     });
   });
 }
-/** 答错：「爹～欸！」综艺节目按铃答错声（两声往下掉的蜂鸣） */
+/** 答错：「欸～欸！」按铃蜂鸣（同一个低音连响两声） */
 function zap(){
   const c=audioCtx(); if(!c) return;
   const now=c.currentTime;
-  [[392,0,.17],[262,.19,.34]].forEach(([f,at,dur])=>{
+  [[262,0,.2],[262,.24,.34]].forEach(([f,at,dur])=>{   // 同一个低音连按两声
     const t0=now+at;
     const g=c.createGain();
     g.gain.setValueAtTime(0.0001,t0);
