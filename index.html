@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0062　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0063　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -2012,7 +2012,8 @@ function typeSym(sym){
       }
     }else{
       if(t && typing.progress>prev && typing.progress>0){
-        if(!typing.dictate) speak(t.w[typing.progress-1]);   // 打对单个字：系统语音念这个字
+        if(WORD_RECORDED.has(t.w)) ding();                    // 时空胶囊：打对单个字只叮一声，不用系统语音
+        else if(!typing.dictate) speak(t.w[typing.progress-1]); // 其他词库：系统语音念这个字
       }
       renderTarget();
     }
