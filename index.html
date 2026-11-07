@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0063　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0064　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -899,7 +899,23 @@ const AUDIO_VER='0045'; // 更新录音后改这个，避免浏览器缓存旧�
 const keyBlobUrl={};      // id -> blob: 网址（已下载完成）
 const keyAudioOk={};      // id -> true（已下载完成，右上角计数用）
 const keyAudioCache={};   // 保留旧名称给其他程式用（暂停用）
-function audioUrl(path){ return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
+function audioUrl(path){ path=String(path).replace(/\.mp3$/,'.enc'); return path + (path.includes('?')?'&':'?') + 'v=' + AUDIO_VER; }
+/* 录音档是加密的（.enc），播放前在浏览器里解密 */
+const _ZK_A=[76,196,53,161,221,219,115,170,25,34,227,83,13,229,187,9,40,44,225,133,192,112,223,186,184,0,107,248,168,0,53,239];
+const _ZK_B=[20,136,204,94,246,101,141,15,144,247,162,173,24,63,53,97,201,139,183,180,29,6,134,197,84,5,20,148,193,88,235,214];
+let _zkKey=null;
+function audioKey(){
+  if(!_zkKey){
+    const k=new Uint8Array(32);
+    for(let i=0;i<32;i++) k[i]=_ZK_A[i]^_ZK_B[31-i]^((i*73+41)&255);
+    _zkKey=crypto.subtle.importKey('raw',k,{name:'AES-GCM'},false,['decrypt']);
+  }
+  return _zkKey;
+}
+function decryptAudio(buf){
+  const b=new Uint8Array(buf);
+  return audioKey().then(k=>crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},k,b.slice(12)));
+}
 function audioIdFor(sym){
   if(!sym) return '';
   if(sym.group==='tone') return 'tone'+sym.t;
@@ -925,8 +941,8 @@ function fetchAudioBlob(path,tries){
   tries=tries||4;
   return fetch(audioUrl(path)).then(r=>{
     if(!r.ok) throw new Error('HTTP '+r.status);
-    return r.blob();
-  }).then(b=>URL.createObjectURL(b.type?b:new Blob([b],{type:'audio/mpeg'})))
+    return r.arrayBuffer();
+  }).then(decryptAudio).then(plain=>URL.createObjectURL(new Blob([plain],{type:'audio/mpeg'})))
     .catch(err=> tries>1
       ? new Promise(res=>setTimeout(res,1000)).then(()=>fetchAudioBlob(path,tries-1))
       : Promise.reject(err));
@@ -948,20 +964,25 @@ function preloadKeyAudio(){
 }
 let keyPlayer=null;
 function stopKeyPlayer(){ if(keyPlayer){ try{ keyPlayer.pause(); }catch(e){} } }
-/** 播放一个录音档：先用已下载的 Blob；没有就直接用网址；失败自动换新播放器重试 */
+/** 播放一个录音档：先用已解密的 Blob；还没好就先下载解密再播；失败自动重试 */
 function playRecording(player,id,path,onGiveUp){
-  const src=keyBlobUrl[id] || audioUrl(path);
   try{ if('speechSynthesis' in window) speechSynthesis.cancel(); }catch(e){}
   try{ player.pause(); }catch(e){}
-  player.src=src;
-  try{ player.currentTime=0; }catch(e){}
-  const p=player.play();
-  if(p && p.catch) p.catch(err=>{
-    if(err && err.name==='AbortError') return;          // 被下一次点击打断，正常
-    const u=audioUrl(path);
-    const retry=new Audio(u.startsWith('data:')?u:u+'&r='+Date.now());
-    retry.play().catch(()=>{ if(onGiveUp) onGiveUp(err); });
-  });
+  const token=(player.__tok=(player.__tok||0)+1);
+  const go=(src,isRetry)=>{
+    if(player.__tok!==token) return;                    // 已经有更新的点击
+    player.src=src;
+    try{ player.currentTime=0; }catch(e){}
+    const p=player.play();
+    if(p && p.catch) p.catch(err=>{
+      if(err && err.name==='AbortError') return;        // 被下一次点击打断，正常
+      if(isRetry){ if(onGiveUp) onGiveUp(err); return; }
+      delete keyBlobUrl[id];
+      fetchAudioBlob(path,2).then(u=>{ keyBlobUrl[id]=u; go(u,true); }).catch(()=>{ if(onGiveUp) onGiveUp(err); });
+    });
+  };
+  if(keyBlobUrl[id]) return go(keyBlobUrl[id],false);
+  fetchAudioBlob(path,2).then(u=>{ keyBlobUrl[id]=u; go(u,false); }).catch(e=>{ if(onGiveUp) onGiveUp(e); });
 }
 function playKeyFile(id){
   if(!keyPlayer){ keyPlayer=new Audio(); keyPlayer.preload='auto'; }

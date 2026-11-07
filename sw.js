@@ -1,5 +1,5 @@
 // 版本号要和 index.html 页尾的「版本」同步；改了页面就一起改这里，旧缓存才会被清掉。
-const CACHE='zhuyin-v0063';
+const CACHE='zhuyin-v0064';
 const CORE=['./','./index.html','./DF.png','./manifest.webmanifest'];
 
 self.addEventListener('install',e=>{
@@ -28,7 +28,7 @@ self.addEventListener('fetch',e=>{
   }
 
   // 音频（你的录音）：不经过 Service Worker，直接由浏览器自己载入，避免任何缓存机制影响播放
-  if(url.pathname.endsWith('.mp3')) return;
+  if(url.pathname.endsWith('.mp3')||url.pathname.endsWith('.enc')) return;
 
   // 其他资源：线上优先，失败才用缓存
   e.respondWith(fetch(req).then(res=>{

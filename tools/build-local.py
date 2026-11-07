@@ -35,12 +35,12 @@ for sub in ('keys', 'recite', 'words'):
     if not os.path.isdir(d):
         continue
     for name in sorted(os.listdir(d)):
-        if name.endswith('.mp3') and not (sub == 'recite' and name != 'recite.mp3'):
+        if name.endswith('.enc'):
             files.append('audio/%s/%s' % (sub, name))
-embed = 'const EMBED_AUDIO={\n' + ''.join('"%s":"%s",\n' % (f, b64(f, 'audio/mpeg')) for f in files) + '};\n'
+embed = 'const EMBED_AUDIO={\n' + ''.join('"%s":"%s",\n' % (f, b64(f, 'application/octet-stream')) for f in files) + '};\n'
 rep("const AUDIO_VER=", embed + "const AUDIO_VER=")
-rep("function audioUrl(path){ return path",
-    "function audioUrl(path){ const clean=String(path).split('?')[0]; if(EMBED_AUDIO[clean]) return EMBED_AUDIO[clean]; return path")
+rep("function audioUrl(path){ path=String(path).replace(/\\.mp3$/,'.enc');",
+    "function audioUrl(path){ path=String(path).replace(/\\.mp3$/,'.enc'); const clean=path.split('?')[0]; if(EMBED_AUDIO[clean]) return EMBED_AUDIO[clean];")
 
 os.makedirs(os.path.dirname(out), exist_ok=True)
 with open(out, 'w', encoding='utf-8') as f:
