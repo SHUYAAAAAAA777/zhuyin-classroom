@@ -588,7 +588,7 @@ footer{width:min(1080px,96vw); margin:0 auto 40px; font-size:12.5px; color:var(-
 </main>
 
 <div id="toast"></div>
-<footer>本页为单一 HTML 档，离线可用。<br>版本 0061　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
+<footer>本页为单一 HTML 档，离线可用。<br>版本 0062　内容刷新请按（Ctrl+F5）<div class="made-on">制作于 2026年7月26日</div></footer>
 
 <script>
 'use strict';
@@ -754,7 +754,7 @@ const WORDS=[
   {w:'有病去吃药',d:'有病去吃药！',s:[{k:['ㄧ','ㄡ'],t:3},{k:['ㄅ','ㄧ','ㄥ'],t:4},{k:['ㄑ','ㄩ'],t:4},{k:['ㄔ'],t:1},{k:['ㄧ','ㄠ'],t:4}]},
   {w:'枪毙你',s:[{k:['ㄑ','ㄧ','ㄤ'],t:1},{k:['ㄅ','ㄧ'],t:4},{k:['ㄋ','ㄧ'],t:3}]},
   {w:'照顾好自己',s:[{k:['ㄓ','ㄠ'],t:4},{k:['ㄍ','ㄨ'],t:4},{k:['ㄏ','ㄠ'],t:3},{k:['ㄗ'],t:4},{k:['ㄐ','ㄧ'],t:3}]},
-  {w:'真是无处安放的魅力',d:'真是无处安放的魅力~~~',s:[{k:['ㄓ','ㄣ'],t:1},{k:['ㄕ'],t:4},{k:['ㄨ'],t:2},{k:['ㄔ','ㄨ'],t:4},{k:['ㄢ'],t:1},{k:['ㄈ','ㄤ'],t:4},{k:['ㄉ','ㄜ'],t:5},{k:['ㄇ','ㄟ'],t:4},{k:['ㄌ','ㄧ'],t:4}]},
+  {w:'真是无处安放的魅力',d:'真是...无处安放的...魅力~~~',s:[{k:['ㄓ','ㄣ'],t:1},{k:['ㄕ'],t:4},{k:['ㄨ'],t:2},{k:['ㄔ','ㄨ'],t:4},{k:['ㄢ'],t:1},{k:['ㄈ','ㄤ'],t:4},{k:['ㄉ','ㄜ'],t:5},{k:['ㄇ','ㄟ'],t:4},{k:['ㄌ','ㄧ'],t:4}]},
   {w:'龙柱回桃',s:[{k:['ㄌ','ㄨ','ㄥ'],t:2},{k:['ㄓ','ㄨ'],t:4},{k:['ㄏ','ㄨ','ㄟ'],t:2},{k:['ㄊ','ㄠ'],t:2}]},
   {w:'震雷化霖雨信熹日暖煦',d:'震雷化霖雨，信熹日暖煦',s:[{k:['ㄓ','ㄣ'],t:4},{k:['ㄌ','ㄟ'],t:2},{k:['ㄏ','ㄨ','ㄚ'],t:4},{k:['ㄌ','ㄧ','ㄣ'],t:2},{k:['ㄩ'],t:3},{k:['ㄒ','ㄧ','ㄣ'],t:4},{k:['ㄒ','ㄧ'],t:1},{k:['ㄖ'],t:4},{k:['ㄋ','ㄨ','ㄢ'],t:3},{k:['ㄒ','ㄩ'],t:4}]},
 ];
@@ -980,7 +980,77 @@ function speakKey(sym){
  * 还没录的词、以及其他词库（单字、日常词、短句…）都用系统语音。 */
 const WORD_AUDIO_BASE='audio/words/';
 const WORD_RECORDED=new Set([
-  // 例：'你好','谢谢',
+  '你好',
+  '谢谢',
+  '台湾',
+  '吃饭',
+  '朋友',
+  '加油',
+  '我们',
+  '中文',
+  '老师',
+  '注音',
+  '电脑',
+  '学习',
+  '带我吃鸡',
+  '趴踢',
+  '桃桃',
+  '可恶',
+  '泡茶',
+  '标哥',
+  '小桃纸',
+  '姚震霖',
+  '八二狗',
+  '老干部',
+  '中央空调',
+  '小姚同志',
+  '丹麦女孩',
+  '同流合污',
+  '晾衣服',
+  '语音房',
+  '带我飞',
+  '潮汕陈奕迅',
+  '任我行',
+  '潮汕',
+  '汕头',
+  '蜜薯干',
+  '广州',
+  '双标',
+  '惩罚',
+  '尤物',
+  '英雄',
+  '拥有',
+  '永远',
+  '富翁',
+  '方大同',
+  '好嘛',
+  '好吧',
+  '快乐',
+  '好热',
+  '无所屌谓',
+  '死汉斯',
+  '吃美美',
+  '夏洛特烦恼',
+  '打电话',
+  '这样好不好',
+  '大便当',
+  '打游戏',
+  '寿桃',
+  '晚安',
+  '早呀',
+  '豪',
+  '你要好好的',
+  '祝你天天开心',
+  '越来越好',
+  '祝你好梦',
+  '贴脸开大',
+  '神金',
+  '有病去吃药',
+  '枪毙你',
+  '照顾好自己',
+  '真是无处安放的魅力',
+  '龙柱回桃',
+  '震雷化霖雨信熹日暖煦',
 ]);
 const wordAudioCache={};
 const wordAudioOk={};
@@ -999,15 +1069,30 @@ function preloadWordAudio(){
   for(let k=0;k<3;k++) next();
 }
 /** 整词发音：有你的录音就只播录音，否则系统语音 */
-function speakWord(text,rate){
-  if(!soundOn || !text) return;
+function stopWordPlayer(){ if(wordPlayer){ wordPlayer.onended=null; try{ wordPlayer.pause(); }catch(e){} } }
+/** 等系统语音念完（最多等 4 秒），再留 0.3 秒空档才执行 cb，避免和录音重叠 */
+function whenSpeechIdle(cb){
+  const t0=Date.now();
+  (function poll(){
+    const busy=('speechSynthesis' in window) && (speechSynthesis.speaking || speechSynthesis.pending);
+    if(busy && Date.now()-t0<4000) return setTimeout(poll,80);
+    setTimeout(cb,300);
+  })();
+}
+/** 整词发音：有你的录音就只播录音（不用系统语音），否则系统语音。onEnd：录音播完时呼叫 */
+function speakWord(text,rate,onEnd){
+  let done=false; const finish=()=>{ if(done) return; done=true; if(onEnd) onEnd(); };
+  if(!soundOn || !text){ finish(); return; }
   if(WORD_RECORDED.has(text)){
     if(!wordPlayer){ wordPlayer=new Audio(); wordPlayer.preload='auto'; }
-    stopKeyPlayer();
-    playRecording(wordPlayer,'w:'+text,WORD_AUDIO_BASE+text+'.mp3',()=>toast('录音暂时播放不了，请检查网络或音量后再点一次'));
+    stopKeyPlayer(); stopWordPlayer();
+    wordPlayer.onended=finish;
+    setTimeout(finish,15000);   // 保险：万一没收到「播完」也不会卡住
+    playRecording(wordPlayer,'w:'+text,WORD_AUDIO_BASE+text+'.mp3',()=>{ toast('录音暂时播放不了，请检查网络或音量后再点一次'); finish(); });
     return;
   }
   speak(text, rate);
+  finish();
 }
 
 /* ---- 背诵示范（ㄅ～ㄦ 一整段录音）：只播你的录音 ---- */
@@ -1843,6 +1928,7 @@ function renderTarget(done, praise){
   }
 }
 function nextWord(){
+  stopWordPlayer();
   typing.qi++;
   typing.missed=false;
   if(typing.qi>=typing.queue.length) rebuildQueue();
@@ -1906,14 +1992,27 @@ function typeSym(sym){
       if(typing.timed) typing.timedChars=(typing.timedChars||0)+[...t.w].length;
       renderTarget(true, praise);
       dingDong();
-      if(!typing.dictate){ const w=t.w; setTimeout(()=>{ if(currentWord()===t) speakWord(w); },600); }
       cancelAutoNext();
       typing.waiting=true;
-      typing.autoNext=setTimeout(()=>{ typing.autoNext=null; typing.waiting=false; nextWord(); }, typing.timed?2000:Math.max(1800, [...String(praise||'')].length*100+1000));
+      const holdMs=typing.timed?2000:Math.max(1800, [...String(praise||'')].length*100+1000);
+      const goNext=()=>{ typing.autoNext=null; typing.waiting=false; nextWord(); };
+      if(!typing.dictate && WORD_RECORDED.has(t.w)){
+        // 有你录音的词：等前一个字的系统语音念完、叮咚响完，才只播你的录音；录音播完才换下一题
+        const t0=Date.now(), w=t.w;
+        setTimeout(()=>whenSpeechIdle(()=>{
+          if(currentWord()!==t || !typing.waiting) return;
+          speakWord(w,null,()=>{
+            if(currentWord()!==t || !typing.waiting) return;
+            typing.autoNext=setTimeout(goNext, Math.max(400, holdMs-(Date.now()-t0)));
+          });
+        }),900);
+      }else{
+        if(!typing.dictate){ const w=t.w; setTimeout(()=>{ if(currentWord()===t) speakWord(w); },600); }
+        typing.autoNext=setTimeout(goNext, holdMs);
+      }
     }else{
       if(t && typing.progress>prev && typing.progress>0){
-        if(WORD_RECORDED.has(t.w)) ding();               // 有你录音的词：中间的字只叮一声
-        else if(!typing.dictate) speak(t.w[typing.progress-1]);
+        if(!typing.dictate) speak(t.w[typing.progress-1]);   // 打对单个字：系统语音念这个字
       }
       renderTarget();
     }
