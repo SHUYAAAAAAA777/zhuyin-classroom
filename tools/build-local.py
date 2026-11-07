@@ -27,6 +27,7 @@ img = b64('DF.png', 'image/png')
 s = s.replace('href="DF.png"', 'href="%s"' % img).replace('src="DF.png"', 'src="%s"' % img)
 # 2. 本机版不需要 PWA 安装与离线快取
 rep('<link rel="manifest" href="manifest.webmanifest">\n', '')
+rep('<link rel="apple-touch-icon" href="icons/icon-180.png">\n', '')
 s = re.sub(r"\n[^\n]*navigator\.serviceWorker\.register\([^\n]*", '\n', s, count=1)
 # 3. 把录音嵌进去（按键、背诵、整词）
 files = []

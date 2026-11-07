@@ -1,6 +1,6 @@
 // 版本号要和 index.html 页尾的「版本」同步；改了页面就一起改这里，旧缓存才会被清掉。
-const CACHE='zhuyin-v0065';
-const CORE=['./','./index.html','./DF.png','./manifest.webmanifest'];
+const CACHE='zhuyin-v0066';
+const CORE=['./','./index.html','./DF.png','./manifest.webmanifest','./icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png'];
 
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));
@@ -27,8 +27,15 @@ self.addEventListener('fetch',e=>{
     return;
   }
 
-  // 音频（你的录音）：不经过 Service Worker，直接由浏览器自己载入，避免任何缓存机制影响播放
-  if(url.pathname.endsWith('.mp3')||url.pathname.endsWith('.enc')) return;
+  if(url.pathname.endsWith('.mp3')) return;
+  // 加密录音（.enc）：第一次下载后存起来，之后离线也能播（网址带 ?v= 版本号，换录音时自动更新）
+  if(url.pathname.endsWith('.enc')){
+    e.respondWith(caches.open(CACHE).then(c=>c.match(req).then(hit=>hit||fetch(req).then(res=>{
+      if(res.status===200) c.put(req,res.clone()).catch(()=>{});
+      return res;
+    }))));
+    return;
+  }
 
   // 其他资源：线上优先，失败才用缓存
   e.respondWith(fetch(req).then(res=>{
